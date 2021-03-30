@@ -17,11 +17,8 @@ import java.util.concurrent.TimeUnit
 
 open class DigitalComicMuseum : ParsedHttpSource() {
     override val name = "Digital Comic Museum"
-
     override val baseUrl = "https://digitalcomicmuseum.com"
-
     override val lang = "en"
-
     override val supportsLatest = true
 
     override val client: OkHttpClient = network.cloudflareClient.newBuilder()
