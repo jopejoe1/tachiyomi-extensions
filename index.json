@@ -245,10 +245,10 @@
   {
     "name": "Tachiyomi: TCB Scans",
     "pkg": "eu.kanade.tachiyomi.extension.en.tcbscans",
-    "apk": "tachiyomi-en.tcbscans-v1.2.1.apk",
+    "apk": "tachiyomi-en.tcbscans-v1.2.3.apk",
     "lang": "en",
-    "code": 1,
-    "version": "1.2.1",
+    "code": 3,
+    "version": "1.2.3",
     "nsfw": 0
   },
   {
