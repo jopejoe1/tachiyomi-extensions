@@ -19,7 +19,7 @@ import java.util.Calendar
 // Based On TCBScans and MangaMainac sources
 // MangaManiac is a network of sites built by Animemaniac.co.
 
-class MangaMainac(
+abstract class MangaMainac(
     override val name: String,
     override val baseUrl: String,
     override val lang: String,
