@@ -67,7 +67,7 @@ abstract class MangaMainac(
         artist = author
         genre = if ("Genre" in info) substringextract(info, "Genre(s):", "Status") else null
         status = parseStatus(document.select(".intro_content").text())
-        description = if ("Description" in info) info.substringAfter("Description:").trim() else null }
+        description = if ("Description" in info) info.substringAfter("Description:").trim() else null
     }
 
     private fun substringextract(text: String, start: String, end: String): String = text.substringAfter(start).substringBefore(end).trim()
