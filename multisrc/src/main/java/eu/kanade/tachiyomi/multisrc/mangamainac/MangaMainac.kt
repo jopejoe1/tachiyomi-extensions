@@ -13,9 +13,6 @@ import okhttp3.Response
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.util.Calendar
-import eu.kanade.tachiyomi.network.GET
-import eu.kanade.tachiyomi.util.asJsoup
-import rx.Observable
 
 
 // Based On TCBScans sources
@@ -44,7 +41,7 @@ abstract class MangaMainac(
         return manga
     }
 
-    override fun popularMangaNextPageSelector(): String? = throw UnsupportedOperationException()
+    override fun popularMangaNextPageSelector(): String? = null
 
     // latest
     override fun latestUpdatesRequest(page: Int): Request = throw UnsupportedOperationException()
