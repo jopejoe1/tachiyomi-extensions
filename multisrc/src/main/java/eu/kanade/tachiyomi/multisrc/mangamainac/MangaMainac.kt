@@ -40,83 +40,44 @@ abstract class MangaMainac(
         return manga
     }
 
-    override fun popularMangaNextPageSelector(): String? = null
+    override fun popularMangaNextPageSelector(): String? = throw UnsupportedOperationException()
 
     // latest
     override fun latestUpdatesRequest(page: Int): Request = throw UnsupportedOperationException()
-
     override fun latestUpdatesSelector(): String = throw UnsupportedOperationException()
-
     override fun latestUpdatesFromElement(element: Element): SManga = throw UnsupportedOperationException()
-
     override fun latestUpdatesNextPageSelector(): String? = throw UnsupportedOperationException()
 
     // search
-    override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request = popularMangaRequest(page)
-
-    override fun searchMangaSelector(): String = popularMangaSelector()
-
-    override fun searchMangaFromElement(element: Element): SManga = popularMangaFromElement(element)
-
-    override fun searchMangaNextPageSelector(): String? = null
+    override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request = throw UnsupportedOperationException()
+    override fun searchMangaSelector(): String = throw UnsupportedOperationException()
+    override fun searchMangaFromElement(element: Element): SManga = throw UnsupportedOperationException()
+    override fun searchMangaNextPageSelector(): String? = throw UnsupportedOperationException()
 
     // manga details
     override fun mangaDetailsParse(document: Document) = SManga.create().apply {
-        thumbnail_url = document.select(".mangainfo_body > img").attr("src")
+        val info = document.select(".intro_content").text()
         title = document.select(".intro_content h2").text()
-        status = parseStatus(document.select(".intro_content").text())
-        description = document.select(".intro_content").joinToString("\n") { it.text() }
+        author = if ("Author" in info) substringextract(info, "Author(s):", "Released") else null
+        artist = author
+        genre = if ("Genre" in info) substringextract(info, "Genre(s):", "Status") else null
+        status = when (substringextract(info, "Status:", "(")) {
+            "Ongoing" -> SManga.ONGOING
+            "Completed" -> SManga.COMPLETED
+            else -> SManga.UNKNOWN
+        }
+        description = if ("Description" in info) info.substringAfter("Description:").trim() else null
+        thumbnail_url = document.select(".mangainfo_body img").attr("src")
     }
-
-    private fun parseStatus(element: String): Int = when {
-        element.toLowerCase().contains("ongoing (pub") -> SManga.ONGOING
-        element.toLowerCase().contains("completed (pub") -> SManga.COMPLETED
-        else -> SManga.UNKNOWN
-    }
+    private fun substringextract(text: String, start: String, end: String): String = text.substringAfter(start).substringBefore(end).trim()
 
     // chapters
-    override fun chapterListSelector() = "table.chap_tab tr"
-
-    override fun chapterFromElement(element: Element): SChapter {
-        val urlElement = element.select("a").first()
-        val chapter = SChapter.create()
-        chapter.setUrlWithoutDomain(urlElement.attr("href"))
-        chapter.name = element.select("a").text()
-        chapter.date_upload = element.select("#time i").last()?.text()?.let { parseChapterDate(it) }
-            ?: 0
-        return chapter
+    override fun chapterListSelector(): String = ".chap_tab tr"
+    override fun chapterFromElement(element: Element): SChapter = SChapter.create().apply {
+        name = element.select("a").text()
+        url = element.select("a").attr("abs:href")
+        date_upload = parseRelativeDate(element.select("#time").text().substringBefore(" ago"))
     }
-
-    private fun parseChapterDate(date: String): Long {
-        val dateWords: List<String> = date.split(" ")
-        if (dateWords.size == 3) {
-            val timeAgo = Integer.parseInt(dateWords[0])
-            val dates: Calendar = Calendar.getInstance()
-            when {
-                dateWords[1].contains("minute") -> {
-                    dates.add(Calendar.MINUTE, -timeAgo)
-                }
-                dateWords[1].contains("hour") -> {
-                    dates.add(Calendar.HOUR_OF_DAY, -timeAgo)
-                }
-                dateWords[1].contains("day") -> {
-                    dates.add(Calendar.DAY_OF_YEAR, -timeAgo)
-                }
-                dateWords[1].contains("week") -> {
-                    dates.add(Calendar.WEEK_OF_YEAR, -timeAgo)
-                }
-                dateWords[1].contains("month") -> {
-                    dates.add(Calendar.MONTH, -timeAgo)
-                }
-                dateWords[1].contains("year") -> {
-                    dates.add(Calendar.YEAR, -timeAgo)
-                }
-            }
-            return dates.timeInMillis
-        }
-        return 0L
-    }
-
     override fun chapterListParse(response: Response): List<SChapter> {
         val document = response.asJsoup()
         val chapterList = document.select(chapterListSelector()).map { chapterFromElement(it) }
@@ -126,13 +87,9 @@ abstract class MangaMainac(
         else
             chapterList
     }
-
     private fun hasCountdown(chapter: SChapter): Boolean {
         val document = client.newCall(
-            GET(
-                baseUrl + chapter.url,
-                headersBuilder().build()
-            )
+            GET(chapter.url, headersBuilder().build())
         ).execute().asJsoup()
 
         return document
@@ -140,20 +97,33 @@ abstract class MangaMainac(
             .isNotEmpty()
     }
 
-    // pages
-    override fun pageListParse(document: Document): List<Page> {
-        val pages = mutableListOf<Page>()
-        var i = 0
-        document.select(".container .img_container center img").forEach { element ->
-            val url = element.attr("src")
-            i++
-            if (url.isNotEmpty()) {
-                pages.add(Page(i, "", url))
+    // Subtract relative date (e.g. posted 3 days ago)
+    private fun parseRelativeDate(date: String): Long {
+        val calendar = Calendar.getInstance()
+
+        if (date.contains("yesterday")) {
+            calendar.apply { add(Calendar.DAY_OF_MONTH, -1) }
+        } else {
+            val trimmedDate = date.replace("one", "1").removeSuffix("s").split(" ")
+
+            when (trimmedDate[1]) {
+                "year" -> calendar.apply { add(Calendar.YEAR, -trimmedDate[0].toInt()) }
+                "month" -> calendar.apply { add(Calendar.MONTH, -trimmedDate[0].toInt()) }
+                "week" -> calendar.apply { add(Calendar.WEEK_OF_MONTH, -trimmedDate[0].toInt()) }
+                "day" -> calendar.apply { add(Calendar.DAY_OF_MONTH, -trimmedDate[0].toInt()) }
             }
         }
-        return pages
+
+        return calendar.timeInMillis
     }
 
-    override fun imageUrlParse(document: Document) = ""
-}
+    // Pages
 
+    override fun pageListParse(document: Document): List<Page> = mutableListOf<Page>().apply {
+        document.select(".img_container img").forEach { img ->
+            add(Page(size, "", img.attr("src")))
+        }
+    }
+
+    override fun imageUrlParse(document: Document): String = throw Exception("Not Used")
+}
