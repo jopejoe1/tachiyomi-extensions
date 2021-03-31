@@ -25,7 +25,7 @@ abstract class MangaMainac(
     override val lang: String,
 ) : ParsedHttpSource() {
     // Info
-    override val supportsLatest: Boolean = false
+    override val supportsLatest = false
     override val client: OkHttpClient = network.cloudflareClient
 
     // Popular
@@ -53,17 +53,6 @@ abstract class MangaMainac(
     override fun searchMangaNextPageSelector() = throw Exception("Not used")
     override fun searchMangaSelector() = throw Exception("Not used")
     override fun searchMangaFromElement(element: Element) = throw Exception("Not used")
-
-    // Get Override
-    override fun mangaDetailsRequest(manga: SManga): Request {
-        return GET(manga.url, headers)
-    }
-    override fun chapterListRequest(manga: SManga): Request {
-        return GET(manga.url, headers)
-    }
-    override fun pageListRequest(chapter: SChapter): Request {
-        return GET(chapter.url, headers)
-    }
 
     // Details
     override fun mangaDetailsParse(document: Document): SManga = SManga.create().apply {
@@ -100,7 +89,7 @@ abstract class MangaMainac(
     }
     private fun hasCountdown(chapter: SChapter): Boolean {
         val document = client.newCall(
-            GET(chapter.url, headersBuilder().build())
+            GET(baseUrl + chapter.url, headersBuilder().build())
         ).execute().asJsoup()
 
         return document
