@@ -1,5 +1,32 @@
 [
   {
+    "name": "Tachiyomi: Luscious",
+    "pkg": "eu.kanade.tachiyomi.extension.all.luscious",
+    "apk": "tachiyomi-all.luscious-v1.2.1.apk",
+    "lang": "all",
+    "code": 1,
+    "version": "1.2.1",
+    "nsfw": 1
+  },
+  {
+    "name": "Tachiyomi: Luscious (API)",
+    "pkg": "eu.kanade.tachiyomi.extension.all.lusciousapi",
+    "apk": "tachiyomi-all.lusciousapi-v1.2.1.apk",
+    "lang": "all",
+    "code": 1,
+    "version": "1.2.1",
+    "nsfw": 1
+  },
+  {
+    "name": "Tachiyomi: Luscious (Members)",
+    "pkg": "eu.kanade.tachiyomi.extension.all.lusciousmembers",
+    "apk": "tachiyomi-all.lusciousmembers-v1.2.1.apk",
+    "lang": "all",
+    "code": 1,
+    "version": "1.2.1",
+    "nsfw": 1
+  },
+  {
     "name": "Tachiyomi: Digital Comic Museum",
     "pkg": "eu.kanade.tachiyomi.extension.en.digitalcomicmuseum",
     "apk": "tachiyomi-en.digitalcomicmuseum-v1.2.8.apk",
