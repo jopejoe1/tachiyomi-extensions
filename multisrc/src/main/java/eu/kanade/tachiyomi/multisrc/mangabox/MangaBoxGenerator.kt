@@ -24,7 +24,7 @@ class MangaBoxGenerator : ThemeSourceGenerator {
         SingleLang("Mangakakalot.cloud (unoriginal)", "http://mangakakalot.cloud/", "en", className = "MangakakalotCloud", pkgName = "mangakakalotcloud"),
         SingleLang("Mangakakalot.top (unoriginal)", "http://mangakakalot.top/", "en", className = "MangakakalotTop", pkgName = "mangakakalottop"),
         SingleLang("Mangakakalot.live (unoriginal)", "http://mangakakalot.live/", "en", className = "MangakakalotLive", pkgName = "mangakakalotlive"),
-        SingleLang("Mangakakalot.city (unoriginal)", "http://mangakakalot.city/", "en", className = "MangakakalotCity", pkgName = "mangakakalotCity"),
+        SingleLang("Mangakakalot.city (unoriginal)", "http://mangakakalot.city/", "en", className = "MangakakalotCity", pkgName = "mangakakalotcity"),
     )
 
     companion object {
