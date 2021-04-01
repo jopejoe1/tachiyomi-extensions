@@ -9,15 +9,6 @@
     "nsfw": 0
   },
   {
-    "name": "Tachiyomi: Hajime no Ippo Manga",
-    "pkg": "eu.kanade.tachiyomi.extension.en.hajimenoippomanga",
-    "apk": "tachiyomi-en.hajimenoippomanga-v1.2.1.apk",
-    "lang": "en",
-    "code": 1,
-    "version": "1.2.1",
-    "nsfw": 0
-  },
-  {
     "name": "Tachiyomi: Mangabat",
     "pkg": "eu.kanade.tachiyomi.extension.en.mangabat",
     "apk": "tachiyomi-en.mangabat-v1.2.5.apk",
@@ -46,8 +37,8 @@
   },
   {
     "name": "Tachiyomi: Mangakakalot.city (unoriginal)",
-    "pkg": "eu.kanade.tachiyomi.extension.en.mangakakalotCity",
-    "apk": "tachiyomi-en.mangakakalotCity-v1.2.1.apk",
+    "pkg": "eu.kanade.tachiyomi.extension.en.mangakakalotcity",
+    "apk": "tachiyomi-en.mangakakalotcity-v1.2.1.apk",
     "lang": "en",
     "code": 1,
     "version": "1.2.1",
@@ -132,123 +123,6 @@
     "lang": "en",
     "code": 1,
     "version": "1.2.1",
-    "nsfw": 0
-  },
-  {
-    "name": "Tachiyomi: Read Berserk Manga Online",
-    "pkg": "eu.kanade.tachiyomi.extension.en.readberserkmangaonline",
-    "apk": "tachiyomi-en.readberserkmangaonline-v1.2.1.apk",
-    "lang": "en",
-    "code": 1,
-    "version": "1.2.1",
-    "nsfw": 0
-  },
-  {
-    "name": "Tachiyomi: Read Black Clover Manga",
-    "pkg": "eu.kanade.tachiyomi.extension.en.readblackclovermanga",
-    "apk": "tachiyomi-en.readblackclovermanga-v1.2.1.apk",
-    "lang": "en",
-    "code": 1,
-    "version": "1.2.1",
-    "nsfw": 0
-  },
-  {
-    "name": "Tachiyomi: Read Boku No Hero Academia Manga Online",
-    "pkg": "eu.kanade.tachiyomi.extension.en.readbokunoheroacademiamangaonline",
-    "apk": "tachiyomi-en.readbokunoheroacademiamangaonline-v1.2.1.apk",
-    "lang": "en",
-    "code": 1,
-    "version": "1.2.1",
-    "nsfw": 0
-  },
-  {
-    "name": "Tachiyomi: Read Domestic Girlfriend Manga",
-    "pkg": "eu.kanade.tachiyomi.extension.en.readdomesticgirlfriendmanga",
-    "apk": "tachiyomi-en.readdomesticgirlfriendmanga-v1.2.1.apk",
-    "lang": "en",
-    "code": 1,
-    "version": "1.2.1",
-    "nsfw": 0
-  },
-  {
-    "name": "Tachiyomi: Read Jojolion",
-    "pkg": "eu.kanade.tachiyomi.extension.en.readjojolion",
-    "apk": "tachiyomi-en.readjojolion-v1.2.1.apk",
-    "lang": "en",
-    "code": 1,
-    "version": "1.2.1",
-    "nsfw": 0
-  },
-  {
-    "name": "Tachiyomi: Read Kaguya-sama: Love is War",
-    "pkg": "eu.kanade.tachiyomi.extension.en.readkaguyasamaloveiswar",
-    "apk": "tachiyomi-en.readkaguyasamaloveiswar-v1.2.1.apk",
-    "lang": "en",
-    "code": 1,
-    "version": "1.2.1",
-    "nsfw": 0
-  },
-  {
-    "name": "Tachiyomi: Read Nanatsu no Taizai Manga",
-    "pkg": "eu.kanade.tachiyomi.extension.en.readnanatsunotaizaimanga",
-    "apk": "tachiyomi-en.readnanatsunotaizaimanga-v1.2.1.apk",
-    "lang": "en",
-    "code": 1,
-    "version": "1.2.1",
-    "nsfw": 0
-  },
-  {
-    "name": "Tachiyomi: Read One Punch Man Manga Online",
-    "pkg": "eu.kanade.tachiyomi.extension.en.readonepunchmanmangaonline",
-    "apk": "tachiyomi-en.readonepunchmanmangaonline-v1.2.1.apk",
-    "lang": "en",
-    "code": 1,
-    "version": "1.2.1",
-    "nsfw": 0
-  },
-  {
-    "name": "Tachiyomi: Read One Webcomic Manga Online",
-    "pkg": "eu.kanade.tachiyomi.extension.en.readonewebcomicmangaonline",
-    "apk": "tachiyomi-en.readonewebcomicmangaonline-v1.2.1.apk",
-    "lang": "en",
-    "code": 1,
-    "version": "1.2.1",
-    "nsfw": 0
-  },
-  {
-    "name": "Tachiyomi: Read Rent a Girlfriend Manga",
-    "pkg": "eu.kanade.tachiyomi.extension.en.readrentagirlfriendmanga",
-    "apk": "tachiyomi-en.readrentagirlfriendmanga-v1.2.1.apk",
-    "lang": "en",
-    "code": 1,
-    "version": "1.2.1",
-    "nsfw": 0
-  },
-  {
-    "name": "Tachiyomi: Read Shingeki no Kyojin Manga",
-    "pkg": "eu.kanade.tachiyomi.extension.en.readshingekinokyojinmanga",
-    "apk": "tachiyomi-en.readshingekinokyojinmanga-v1.2.1.apk",
-    "lang": "en",
-    "code": 1,
-    "version": "1.2.1",
-    "nsfw": 0
-  },
-  {
-    "name": "Tachiyomi: Read Solo Leveling",
-    "pkg": "eu.kanade.tachiyomi.extension.en.readsololeveling",
-    "apk": "tachiyomi-en.readsololeveling-v1.2.1.apk",
-    "lang": "en",
-    "code": 1,
-    "version": "1.2.1",
-    "nsfw": 0
-  },
-  {
-    "name": "Tachiyomi: TCB Scans",
-    "pkg": "eu.kanade.tachiyomi.extension.en.tcbscans",
-    "apk": "tachiyomi-en.tcbscans-v1.2.3.apk",
-    "lang": "en",
-    "code": 3,
-    "version": "1.2.3",
     "nsfw": 0
   },
   {
