@@ -31,7 +31,7 @@ import java.util.Locale
 abstract class Luscious(
     override val name: String,
     override val baseUrl: String,
-    override val lang: String, ) : HttpSource() {
+    override val lang: String ) : HttpSource() {
 
     override val supportsLatest: Boolean = true
     private val apiBaseUrl: String = "$baseUrl/graphql/nobatch/"
@@ -376,7 +376,7 @@ abstract class Luscious(
         AlbumTypeSelectFilter(getAlbumTypeFilters()),
         ContentTypeSelectFilter(getContentTypeFilters()),
         InterestGroupFilter(getInterestFilters()),
-        //LanguageGroupFilter(getLanguageFilters()),
+        LanguageGroupFilter(getLanguageFilters()),
         TagGroupFilter(getTagFilters()),
         GenreGroupFilter(getGenreFilters())
     )
@@ -402,7 +402,7 @@ abstract class Luscious(
         SelectFilterOption("Date - Upcoming", "date_upcoming"),
         SelectFilterOption("Date - Trending", "date_trending"),
         SelectFilterOption("Date - Featured", "date_featured"),
-        SelectFilterOption("Date - Last Viewed", "date_last_interaction"),
+        SelectFilterOption("Date - Last Viewed", "date_last_interaction")
     )
 
     fun getAlbumTypeFilters() = listOf(
@@ -429,19 +429,19 @@ abstract class Luscious(
         CheckboxFilterOption("Trans x Guy", "9")
     )
 
- //   fun getLanguageFilters() = listOf(
- //       CheckboxFilterOption("English", ENGLISH_LUS_LANG_VAL, false),
- //       CheckboxFilterOption("Japanese", JAPANESE_LUS_LANG_VAL, false),
- //       CheckboxFilterOption("Spanish", SPANISH_LUS_LANG_VAL, false),
- //       CheckboxFilterOption("Italian", ITALIAN_LUS_LANG_VAL, false),
- //       CheckboxFilterOption("German", GERMAN_LUS_LANG_VAL, false),
- //       CheckboxFilterOption("French", FRENCH_LUS_LANG_VAL, false),
- //       CheckboxFilterOption("Chinese", CHINESE_LUS_LANG_VAL, false),
- //       CheckboxFilterOption("Korean", KOREAN_LUS_LANG_VAL, false),
- //       CheckboxFilterOption("Others", OTHERS_LUS_LANG_VAL, false),
- //       CheckboxFilterOption("Portugese", PORTUGESE_LUS_LANG_VAL, false),
- //       CheckboxFilterOption("Thai", THAI_LUS_LANG_VAL, false)
- //   ).filterNot { it.value == lusLang }
+    fun getLanguageFilters() = listOf(
+        CheckboxFilterOption("English", ENGLISH_LUS_LANG_VAL, false),
+        CheckboxFilterOption("Japanese", JAPANESE_LUS_LANG_VAL, false),
+        CheckboxFilterOption("Spanish", SPANISH_LUS_LANG_VAL, false),
+        CheckboxFilterOption("Italian", ITALIAN_LUS_LANG_VAL, false),
+        CheckboxFilterOption("German", GERMAN_LUS_LANG_VAL, false),
+        CheckboxFilterOption("French", FRENCH_LUS_LANG_VAL, false),
+        CheckboxFilterOption("Chinese", CHINESE_LUS_LANG_VAL, false),
+        CheckboxFilterOption("Korean", KOREAN_LUS_LANG_VAL, false),
+        CheckboxFilterOption("Others", OTHERS_LUS_LANG_VAL, false),
+        CheckboxFilterOption("Portugese", PORTUGESE_LUS_LANG_VAL, false),
+        CheckboxFilterOption("Thai", THAI_LUS_LANG_VAL, false)
+    ).filterNot { it.value == lusLang }
 
     fun getTagFilters() = listOf(
         TriStateFilterOption("Big Breasts", "big_breasts"),
@@ -550,17 +550,17 @@ abstract class Luscious(
             SimpleDateFormat("MMMM dd'$it', yyyy", Locale.US)
         }
 
-        //const val ENGLISH_LUS_LANG_VAL = "1"
-        //const val JAPANESE_LUS_LANG_VAL = "2"
-        //const val SPANISH_LUS_LANG_VAL = "3"
-        //const val ITALIAN_LUS_LANG_VAL = "4"
-        //const val GERMAN_LUS_LANG_VAL = "5"
-        //const val FRENCH_LUS_LANG_VAL = "6"
-        //const val CHINESE_LUS_LANG_VAL = "8"
-        //const val KOREAN_LUS_LANG_VAL = "9"
-        //const val OTHERS_LUS_LANG_VAL = "99"
-        //const val PORTUGESE_LUS_LANG_VAL = "100"
-        //const val THAI_LUS_LANG_VAL = "101"
+        const val ENGLISH_LUS_LANG_VAL = "1"
+        const val JAPANESE_LUS_LANG_VAL = "2"
+        const val SPANISH_LUS_LANG_VAL = "3"
+        const val ITALIAN_LUS_LANG_VAL = "4"
+        const val GERMAN_LUS_LANG_VAL = "5"
+        const val FRENCH_LUS_LANG_VAL = "6"
+        const val CHINESE_LUS_LANG_VAL = "8"
+        const val KOREAN_LUS_LANG_VAL = "9"
+        const val OTHERS_LUS_LANG_VAL = "99"
+        const val PORTUGESE_LUS_LANG_VAL = "100"
+        const val THAI_LUS_LANG_VAL = "101"
 
         private const val POPULAR_DEFAULT_SORT_STATE = 0
         private const val LATEST_DEFAULT_SORT_STATE = 7
