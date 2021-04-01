@@ -36,8 +36,8 @@ abstract class Luscious(
     private val apiBaseUrl: String = "$baseUrl/graphql/nobatch/"
     private val gson = Gson()
     override val client: OkHttpClient = network.cloudflareClient
-    private fun lusLang(lang: String) {
-        when (lang) {
+    private fun lusLang(lang: String): String {
+        return when (lang) {
             "en" -> "1"
             "ja" -> "2"
             "es" -> "3"
@@ -286,7 +286,7 @@ abstract class Luscious(
         val document = response.asJsoup()
         return SManga.create().apply {
 
-            artist = document.select(".o-tag--category:contains(Artist:) .o-tag")?.joinToString() { it.text() }
+            artist = document.select(".o-tag--category:contains(Artist:) .o-tag")?.joinToString { it.text() }
             author = artist
 
             genre = parseMangaGenre(document)
