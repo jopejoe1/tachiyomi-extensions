@@ -32,10 +32,12 @@ abstract class Luscious(
     override val name: String,
     override val baseUrl: String,
     override val lang: String, ) : HttpSource() {
+
     override val supportsLatest: Boolean = true
     private val apiBaseUrl: String = "$baseUrl/graphql/nobatch/"
     private val gson = Gson()
     override val client: OkHttpClient = network.cloudflareClient
+    private val lusLang: String = lusLang(lang)
     private fun lusLang(lang: String): String {
         return when (lang) {
             "en" -> "1"
@@ -89,7 +91,7 @@ abstract class Luscious(
 
                             add(
                                 languagesFilter.toJsonObject("language_ids").apply {
-                                    set("value", "+${lusLang(lang)}${get("value").asString}")
+                                    set("value", "+$lusLang${get("value").asString}")
                                 }
                             )
 
@@ -439,7 +441,7 @@ abstract class Luscious(
  //       CheckboxFilterOption("Others", OTHERS_LUS_LANG_VAL, false),
  //       CheckboxFilterOption("Portugese", PORTUGESE_LUS_LANG_VAL, false),
  //       CheckboxFilterOption("Thai", THAI_LUS_LANG_VAL, false)
- //   ).filterNot { it.value == lusLang(lang) }
+ //   ).filterNot { it.value == lusLang }
 
     fun getTagFilters() = listOf(
         TriStateFilterOption("Big Breasts", "big_breasts"),
