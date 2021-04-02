@@ -1,35 +1,8 @@
 [
   {
-    "name": "Tachiyomi: Bulu Manga",
-    "pkg": "eu.kanade.tachiyomi.extension.en.bulumanga",
-    "apk": "tachiyomi-en.bulumanga-v1.2.1.apk",
-    "lang": "en",
-    "code": 1,
-    "version": "1.2.1",
-    "nsfw": 0
-  },
-  {
     "name": "Tachiyomi: Digital Comic Museum",
     "pkg": "eu.kanade.tachiyomi.extension.en.digitalcomicmuseum",
     "apk": "tachiyomi-en.digitalcomicmuseum-v1.2.1.apk",
-    "lang": "en",
-    "code": 1,
-    "version": "1.2.1",
-    "nsfw": 0
-  },
-  {
-    "name": "Tachiyomi: HolyManga",
-    "pkg": "eu.kanade.tachiyomi.extension.en.holymanga",
-    "apk": "tachiyomi-en.holymanga-v1.2.1.apk",
-    "lang": "en",
-    "code": 1,
-    "version": "1.2.1",
-    "nsfw": 0
-  },
-  {
-    "name": "Tachiyomi: Koo Manga",
-    "pkg": "eu.kanade.tachiyomi.extension.en.koomanga",
-    "apk": "tachiyomi-en.koomanga-v1.2.1.apk",
     "lang": "en",
     "code": 1,
     "version": "1.2.1",
@@ -153,15 +126,6 @@
     "nsfw": 0
   },
   {
-    "name": "Tachiyomi: My Toon",
-    "pkg": "eu.kanade.tachiyomi.extension.en.mytoon",
-    "apk": "tachiyomi-en.mytoon-v1.2.1.apk",
-    "lang": "en",
-    "code": 1,
-    "version": "1.2.1",
-    "nsfw": 0
-  },
-  {
     "name": "Tachiyomi: Read Boku no Hero Academia/My Hero Academia Manga",
     "pkg": "eu.kanade.tachiyomi.extension.en.readbokunoheroacademiamyheroacademiamanga",
     "apk": "tachiyomi-en.readbokunoheroacademiamyheroacademiamanga-v1.2.1.apk",
@@ -189,9 +153,9 @@
     "nsfw": 0
   },
   {
-    "name": "Tachiyomi: Read One Punch Man Manga Online",
-    "pkg": "eu.kanade.tachiyomi.extension.en.readonepunchmanmangaonline",
-    "apk": "tachiyomi-en.readonepunchmanmangaonline-v1.2.1.apk",
+    "name": "Tachiyomi: Read One-Punch Man Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readonepunchmanmangaonlinetwo",
+    "apk": "tachiyomi-en.readonepunchmanmangaonlinetwo-v1.2.1.apk",
     "lang": "en",
     "code": 1,
     "version": "1.2.1",
