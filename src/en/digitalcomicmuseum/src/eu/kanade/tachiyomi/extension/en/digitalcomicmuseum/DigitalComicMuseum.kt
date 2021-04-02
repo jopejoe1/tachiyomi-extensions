@@ -115,7 +115,7 @@ open class DigitalComicMuseum : ParsedHttpSource() {
         var pagen = npages.first().toInt()
         var i = 1
         while (i <= pagen){
-            var url = document.select("body > .navbar:first-of-type a#showdiv").attr("abs:herf").replace("#", "&page=$i")
+            var url = document.select("body > .navbar:first-of-type a#showdiv").attr("abs:href").replace("#", "&page=$i")
             add(Page(i, url))
         }
     }
