@@ -21,7 +21,7 @@ abstract class Ww3Read(
     override val baseUrl: String,
     override val lang: String
 ) : ParsedHttpSource() {
-    val sourceList = listOf(
+    open val sourceList = listOf(
         Pair("$name", "$baseUrl")
     ).sortedBy { it.first }.distinctBy { it.second }
 
