@@ -1,30 +1,12 @@
 [
   {
-    "name": "Tachiyomi: Luscious",
-    "pkg": "eu.kanade.tachiyomi.extension.all.luscious",
-    "apk": "tachiyomi-all.luscious-v1.2.3.apk",
-    "lang": "all",
-    "code": 3,
-    "version": "1.2.3",
-    "nsfw": 1
-  },
-  {
-    "name": "Tachiyomi: Luscious (API)",
-    "pkg": "eu.kanade.tachiyomi.extension.all.lusciousapi",
-    "apk": "tachiyomi-all.lusciousapi-v1.2.1.apk",
-    "lang": "all",
+    "name": "Tachiyomi: Bulu yManga",
+    "pkg": "eu.kanade.tachiyomi.extension.en.buluymanga",
+    "apk": "tachiyomi-en.buluymanga-v1.2.1.apk",
+    "lang": "en",
     "code": 1,
     "version": "1.2.1",
-    "nsfw": 1
-  },
-  {
-    "name": "Tachiyomi: Luscious (Members)",
-    "pkg": "eu.kanade.tachiyomi.extension.all.lusciousmembers",
-    "apk": "tachiyomi-all.lusciousmembers-v1.2.1.apk",
-    "lang": "all",
-    "code": 1,
-    "version": "1.2.1",
-    "nsfw": 1
+    "nsfw": 0
   },
   {
     "name": "Tachiyomi: Digital Comic Museum",
@@ -33,6 +15,24 @@
     "lang": "en",
     "code": 8,
     "version": "1.2.8",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: HolyManga",
+    "pkg": "eu.kanade.tachiyomi.extension.en.holymanga",
+    "apk": "tachiyomi-en.holymanga-v1.2.1.apk",
+    "lang": "en",
+    "code": 1,
+    "version": "1.2.1",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Koo Manga",
+    "pkg": "eu.kanade.tachiyomi.extension.en.koomanga",
+    "apk": "tachiyomi-en.koomanga-v1.2.1.apk",
+    "lang": "en",
+    "code": 1,
+    "version": "1.2.1",
     "nsfw": 0
   },
   {
@@ -147,6 +147,15 @@
     "name": "Tachiyomi: Manganelo",
     "pkg": "eu.kanade.tachiyomi.extension.en.manganelo",
     "apk": "tachiyomi-en.manganelo-v1.2.1.apk",
+    "lang": "en",
+    "code": 1,
+    "version": "1.2.1",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: My Toon",
+    "pkg": "eu.kanade.tachiyomi.extension.en.mytoon",
+    "apk": "tachiyomi-en.mytoon-v1.2.1.apk",
     "lang": "en",
     "code": 1,
     "version": "1.2.1",
