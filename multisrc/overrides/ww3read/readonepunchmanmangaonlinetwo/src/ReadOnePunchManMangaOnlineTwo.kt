@@ -1,4 +1,4 @@
-package eu.kanade.tachiyomi.extension.en.readonepunchmanmangaonline2
+package eu.kanade.tachiyomi.extension.en.readonepunchmanmangaonlinetwo
 
 import eu.kanade.tachiyomi.multisrc.ww3read.Ww3Read
 import eu.kanade.tachiyomi.source.model.MangasPage
@@ -14,7 +14,7 @@ import rx.Observable
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
-class ReadOnePunchManMangaOnline2 : Ww3Read("Read One Punch Man Manga Online", "https://ww3.readopm.com", "en") {
+class ReadOnePunchManMangaOnlineTwo : Ww3Read("Read One-Punch Man Manga Online", "https://ww3.readopm.com", "en") {
     override val sourceList = listOf(
         Pair("One Punch Man", "$baseUrl/manga/one-punch-man/"),
         Pair("Onepunch-Man (ONE)", "$baseUrl/manga/onepunch-man-one/"),
