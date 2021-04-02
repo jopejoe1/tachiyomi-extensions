@@ -1,8 +1,8 @@
 [
   {
-    "name": "Tachiyomi: Bulu yManga",
-    "pkg": "eu.kanade.tachiyomi.extension.en.buluymanga",
-    "apk": "tachiyomi-en.buluymanga-v1.2.1.apk",
+    "name": "Tachiyomi: Bulu Manga",
+    "pkg": "eu.kanade.tachiyomi.extension.en.bulumanga",
+    "apk": "tachiyomi-en.bulumanga-v1.2.1.apk",
     "lang": "en",
     "code": 1,
     "version": "1.2.1",
