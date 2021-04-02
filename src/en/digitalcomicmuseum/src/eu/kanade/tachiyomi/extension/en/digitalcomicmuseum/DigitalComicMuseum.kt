@@ -87,9 +87,9 @@ open class DigitalComicMuseum : ParsedHttpSource() {
         val manga = SManga.create()
 
         val base = document.select(".bodyline")
-        manga.thumbnail_url = base.select("tableborder .mainrow img").attr("abs:src")
-        manga.description = base.select("tableborder:contains(description) + table").text()
-        manga.title = base.select("#catname").text()
+        manga.thumbnail_url = base.select("div.tableborder:first-of-type > div#banner + table  tbody > .tableheader + .mainrow img").attr("abs:src")
+        manga.description = base.select("div.tableborder:nth-of-type(2) > div#banner:first-child + table > tbody > tr > [colspan=\"3\"] > [cellpadding=\"3\"]  > tbody > tr.mainrow > td").text()
+        manga.title = base.select(".tableborder:first-of-type > #banner > #catname > a").text()
 
         return manga
     }
@@ -98,35 +98,28 @@ open class DigitalComicMuseum : ParsedHttpSource() {
 
     override fun chapterListParse(response: Response) = throw UnsupportedOperationException("Not used")
 
-    override fun chapterListSelector() = "body"
+    override fun chapterListSelector() = "div.tableborder:first-of-type > div#banner + table .tablefooter > td > table >tbody >tr > td"
 
     override fun chapterFromElement(element: Element): SChapter {
         val chapter = SChapter.create()
-
-        val url = element.select("table + tbody + tr + td.bodyline div.tableorder table + tbody tr.tablefooter td + table + tbody + tr td div a")
-        chapter.setUrlWithoutDomain(url.attr("abs:href"))
-        chapter.name = "Issue"
-
+        chapter.setUrlWithoutDomain(element.select("a").attr("abs:href"))
+        chapter.name = "N/A"
         return chapter
     }
 
     // Pages
 
-    override fun pageListParse(document: Document): List<Page> {
-        val pages = mutableListOf<Page>()
+    override fun pageListParse(document: Document): List<Page> = mutableListOf<Page>().apply {
+        var npages = document.select("#container div[align=\"center\"]").text().substringAfter("of ").trim()
+        var pagen = npages.toInt()
+        var url = document.select("body > .navbar:first-of-type a#showdiv").attr("abs:herf").replace("#", "")
         var i = 1
-        val url = document.select("[alt=Comic Page - ZIP]").attr("abs:src")
-        val check = document.select(".fullscreen").attr("abs:src")
-        val check2 = "https://cdn.digitalcomicmuseum.com/preview/images/fullscreen.png"
-        while (check == check2) {
-            val imgpage = "$baseUrl$url".replace("&page=2", "&page=$i")
-            pages.add(Page(i, imgpage))
-            i + 1
+        while (i <= pagen){
+            add(Page(i, "$url&page=$i"))
         }
-        return pages
     }
 
     override fun imageUrlParse(document: Document): String {
-        return document.select("[alt=Comic Page]").attr("abs:src")
+        return document.select("[alt=\"Comic Page\"]").attr("abs:src")
     }
 }
