@@ -308,10 +308,10 @@
   {
     "name": "Tachiyomi: Digital Comic Museum",
     "pkg": "eu.kanade.tachiyomi.extension.en.digitalcomicmuseum",
-    "apk": "tachiyomi-en.digitalcomicmuseum-v1.2.8.apk",
+    "apk": "tachiyomi-en.digitalcomicmuseum-v1.2.1.apk",
     "lang": "en",
-    "code": 8,
-    "version": "1.2.8",
+    "code": 1,
+    "version": "1.2.1",
     "nsfw": 0
   },
   {
