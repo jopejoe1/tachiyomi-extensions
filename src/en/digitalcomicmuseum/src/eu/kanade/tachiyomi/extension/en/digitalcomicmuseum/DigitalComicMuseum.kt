@@ -62,7 +62,7 @@ open class DigitalComicMuseum : ParsedHttpSource() {
 
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
         return POST(
-            "$baseUrl/index.php?ACT=dosearch",
+            "$baseUrl/index.php",
             body = FormBody.Builder()
                 .add("terms", query)
                 .build(),

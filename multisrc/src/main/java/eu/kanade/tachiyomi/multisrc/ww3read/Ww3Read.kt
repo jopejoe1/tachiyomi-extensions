@@ -73,7 +73,7 @@ abstract class Ww3Read(
     override fun mangaDetailsParse(document: Document): SManga = SManga.create().apply {
         val info = document.select("div.bg-bg-secondary > div.px-6 > div.flex-col").text()
         title = document.select("div.container > h1").text()
-        description = if ("Description" in info) info.substringAfter("Description").trim() else null
+        description = if ("Description" in info) info.substringAfter("Description").trim() else info
         thumbnail_url = document.select("div.flex > img").attr("src")
     }
     // Chapters
@@ -81,7 +81,7 @@ abstract class Ww3Read(
     override fun chapterListSelector(): String = "div.w-full > div.bg-bg-secondary > div.grid"
     override fun chapterFromElement(element: Element): SChapter = SChapter.create().apply {
         val name1 = element.select(".col-span-3 > a").text()
-        val name2 = element.select(".text-xs").text()
+        val name2 = element.select(".text-xs:not(a)").text()
         name = "$name1 - $name2"
         url = element.select(".col-span-3 > a").attr("abs:href")
         date_upload = System.currentTimeMillis()
@@ -90,7 +90,7 @@ abstract class Ww3Read(
     // Pages
 
     override fun pageListParse(document: Document): List<Page> = mutableListOf<Page>().apply {
-        document.select(".img_container img").forEach { img ->
+        document.select(".text-center img,.img_container img").forEach { img ->
             add(Page(size, "", img.attr("src")))
         }
     }
