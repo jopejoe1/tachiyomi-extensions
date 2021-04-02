@@ -111,12 +111,12 @@ open class DigitalComicMuseum : ParsedHttpSource() {
     // Pages
 
     override fun pageListParse(document: Document): List<Page> = mutableListOf<Page>().apply {
-        var npages = document.select("#container div[align=\"center\"]").text().substringAfter("of ").trim()
-        var pagen = npages.toInt()
-        var url = document.select("body > .navbar:first-of-type a#showdiv").attr("abs:herf").replace("#", "")
+        var npages = document.select("#container div[align=\"center\"]").text().substringAfter("of ").trim().split(" ")
+        var pagen = npages.first().toInt()
         var i = 1
         while (i <= pagen){
-            add(Page(i, "$url&page=$i"))
+            var url = document.select("body > .navbar:first-of-type a#showdiv").attr("abs:herf").replace("#", "&page=$i")
+            add(Page(i, url))
         }
     }
 
