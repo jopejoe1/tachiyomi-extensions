@@ -29,7 +29,7 @@ class ReadOnePunchManMangaOnline : Ww3Read("Read One Punch Man Manga Online", "h
 
     override fun mangaDetailsParse(document: Document): SManga = SManga.create().apply {
         description = document.select("div.card-body > p").text()
-        title = if ("Manga" in document.select("h2 > span").text()) info.substringAfter("Manga: ").trim() else null
+        title = document.select("h2 > span").text().substringAfter("Manga: ").trim()
         thumbnail_url = document.select(".card-img-right").attr("src")
     }
     override fun chapterListSelector(): String = "tbody > tr"
