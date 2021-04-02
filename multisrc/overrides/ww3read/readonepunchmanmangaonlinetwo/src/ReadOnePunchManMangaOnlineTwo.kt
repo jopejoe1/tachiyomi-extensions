@@ -22,9 +22,6 @@ class ReadOnePunchManMangaOnlineTwo : Ww3Read("Read One-Punch Man Manga Online",
         Pair("Mob Psycho 100", "$baseUrl/manga/mob-psycho-100/"),
         Pair("Reigen", "$baseUrl/manga/reigen/"),
         Pair("Eyeshield 21", "$baseUrl/manga/eyeshield-21/"),
-        Pair("Colored", "$baseUrl/manga/boku-no-hero-academia-colored/"),
-        Pair("Oumagadoki Zoo", "$baseUrl/manga/oumagadoki-zoo/"),
-        Pair("Sensei no Bulge", "$baseUrl/manga/sensei-no-bulge/")
     ).sortedBy { it.first }.distinctBy { it.second }
 
     override fun mangaDetailsParse(document: Document): SManga = SManga.create().apply {

@@ -104,6 +104,7 @@ open class DigitalComicMuseum : ParsedHttpSource() {
         val chapter = SChapter.create()
         chapter.setUrlWithoutDomain(element.select("a").attr("abs:href"))
         chapter.name = "N/A"
+        chapter.date_upload = System.currentTimeMillis()
         return chapter
     }
 
