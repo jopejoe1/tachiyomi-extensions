@@ -98,7 +98,7 @@ open class DigitalComicMuseum : ParsedHttpSource() {
 
     override fun chapterListParse(response: Response) = throw UnsupportedOperationException("Not used")
 
-    override fun chapterListSelector() = "div.tableborder:first-of-type > div#banner + table .tablefooter > td > table >tbody >tr > td"
+    override fun chapterListSelector() = "div.tableborder:first-of-type > div#banner + table .tablefooter > td > table > tbody > tr > td:nth-of-type(3) div"
 
     override fun chapterFromElement(element: Element): SChapter {
         val chapter = SChapter.create()
