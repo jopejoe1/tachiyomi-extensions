@@ -21,7 +21,6 @@ open class DigitalComicMuseum : ParsedHttpSource() {
     override val lang = "en"
     override val supportsLatest = true
 
-
     override val client: OkHttpClient = network.cloudflareClient.newBuilder()
         .connectTimeout(10, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)

@@ -5,7 +5,7 @@ ext {
     extName = 'Digital Comic Museum'
     pkgNameSuffix = 'en.digitalcomicmuseum'
     extClass = '.DigitalComicMuseum'
-    extVersionCode = 8
+    extVersionCode = 1
     libVersion = '1.2'
 }
 
