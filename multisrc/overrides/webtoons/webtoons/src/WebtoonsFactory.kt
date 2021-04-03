@@ -1,6 +1,7 @@
-package eu.kanade.tachiyomi.extension.all.webtoons
+package eu.kanade.tachiyomi.multisrc.webtoons
 
 import eu.kanade.tachiyomi.multisrc.webtoons.Webtoons
+import eu.kanade.tachiyomi.multisrc.webtoons.WebtoonsDefault
 import eu.kanade.tachiyomi.source.Source
 import eu.kanade.tachiyomi.source.SourceFactory
 

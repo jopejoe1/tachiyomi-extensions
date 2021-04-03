@@ -1,6 +1,7 @@
 package eu.kanade.tachiyomi.multisrc.webtoons
 
 import eu.kanade.tachiyomi.network.GET
+import eu.kanade.tachiyomi.multisrc.webtoons.WebtoonsDefault
 import eu.kanade.tachiyomi.source.model.FilterList
 import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.source.model.SManga
