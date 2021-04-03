@@ -13,8 +13,8 @@ import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
 
-// Based On TCBScans sources
-// MangaManiac is a network of sites built by Animemaniac.co.
+// Based On Old Managamaniac source
+// Multiscrc on the MC logo network
 
 abstract class Ww3Read(
     override val name: String,
@@ -31,17 +31,23 @@ abstract class Ww3Read(
 
     // Popular
 
-    override fun fetchPopularManga(page: Int): Observable<MangasPage> {
-        return Observable.just(MangasPage(sourceList.map { popularMangaFromPair(it.first, it.second) }, false))
-    }
+    //override fun fetchPopularManga(page: Int): Observable<MangasPage> {
+    //    return Observable.just(MangasPage(sourceList.map { popularMangaFromPair(it.first, it.second) }, false))
+    //}
     private fun popularMangaFromPair(name: String, sourceurl: String): SManga = SManga.create().apply {
         title = name
         url = sourceurl
     }
+
     override fun popularMangaRequest(page: Int): Request = throw Exception("Not used")
     override fun popularMangaNextPageSelector(): String? = throw Exception("Not used")
-    override fun popularMangaSelector(): String = throw Exception("Not used")
-    override fun popularMangaFromElement(element: Element) = throw Exception("Not used")
+    override fun popularMangaSelector(): String = "nav a[href*=\"/manga/\"], .container .flex a[href*=\"/manga/\"]"
+    override fun popularMangaFromElement(element: Element): SManga {
+        return SManga.create().apply {
+            url = element.attr("abs:href")
+            title = element.text()
+        }
+    }
 
     // Latest
     override fun latestUpdatesRequest(page: Int): Request = throw Exception("Not used")
