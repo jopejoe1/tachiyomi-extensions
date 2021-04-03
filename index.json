@@ -135,6 +135,24 @@
     "nsfw": 0
   },
   {
+    "name": "Tachiyomi: Read Hunter x Hunter Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readhunterxhuntermangaonline",
+    "apk": "tachiyomi-en.readhunterxhuntermangaonline-v1.2.1.apk",
+    "lang": "en",
+    "code": 1,
+    "version": "1.2.1",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Jujutsu Kaisen Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readjujutsukaisenmangaonline",
+    "apk": "tachiyomi-en.readjujutsukaisenmangaonline-v1.2.1.apk",
+    "lang": "en",
+    "code": 1,
+    "version": "1.2.1",
+    "nsfw": 0
+  },
+  {
     "name": "Tachiyomi: Read Kaguya-sama Manga Online",
     "pkg": "eu.kanade.tachiyomi.extension.en.readkaguyasamamangaonline",
     "apk": "tachiyomi-en.readkaguyasamamangaonline-v1.2.1.apk",
@@ -162,9 +180,36 @@
     "nsfw": 0
   },
   {
+    "name": "Tachiyomi: Read Solo Leveling Manga/Manhwa Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readsololevelingmangamanhwaonline",
+    "apk": "tachiyomi-en.readsololevelingmangamanhwaonline-v1.2.1.apk",
+    "lang": "en",
+    "code": 1,
+    "version": "1.2.1",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read The Promised Neverland Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readthepromisedneverlandmangaonline",
+    "apk": "tachiyomi-en.readthepromisedneverlandmangaonline-v1.2.1.apk",
+    "lang": "en",
+    "code": 1,
+    "version": "1.2.1",
+    "nsfw": 0
+  },
+  {
     "name": "Tachiyomi: Read Tokyo Ghoul Re & Tokyo Ghoul Manga Online",
     "pkg": "eu.kanade.tachiyomi.extension.en.readtokyoghoulretokyoghoulmangaonline",
     "apk": "tachiyomi-en.readtokyoghoulretokyoghoulmangaonline-v1.2.1.apk",
+    "lang": "en",
+    "code": 1,
+    "version": "1.2.1",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Tower of God Manhwa/Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readtowerofgodmanhwamangaonline",
+    "apk": "tachiyomi-en.readtowerofgodmanhwamangaonline-v1.2.1.apk",
     "lang": "en",
     "code": 1,
     "version": "1.2.1",
