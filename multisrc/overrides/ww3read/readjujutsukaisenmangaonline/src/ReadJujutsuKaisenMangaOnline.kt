@@ -4,7 +4,7 @@ import eu.kanade.tachiyomi.multisrc.ww3read.Ww3Read
 import eu.kanade.tachiyomi.source.model.MangasPage
 import eu.kanade.tachiyomi.util.asJsoup
 
-class ReadJujutsuKaisenMangaOnline : Ww3Read("Read Jujutsu Kaisen Manga Online", "https://ww1.readjujutsukaisen.com/", "en") {
+class ReadJujutsuKaisenMangaOnline : Ww3Read("Read Jujutsu Kaisen Manga Online", "https://ww1.readjujutsukaisen.com", "en") {
     override val sourceList = listOf(
         Pair("Jujutsu Kaisen", "$baseUrl/manga/jujutsu-kaisen/"),
         Pair("Jujutsu Kaisen 0", "$baseUrl/manga/jujutsu-kaisen-0/"),
