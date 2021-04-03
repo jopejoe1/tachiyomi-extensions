@@ -14,7 +14,7 @@ import org.jsoup.nodes.Element
 
 
 // Based On Old Managamaniac source
-// Multiscrc on the MC logo network
+// coloction of MC logo sites
 
 abstract class Ww3Read(
     override val name: String,
@@ -39,7 +39,9 @@ abstract class Ww3Read(
         url = sourceurl
     }
 
-    override fun popularMangaRequest(page: Int): Request = throw Exception("Not used")
+    override fun popularMangaRequest(page: Int): Request {
+        return GET(baseUrl, headers)
+    }
     override fun popularMangaNextPageSelector(): String? = throw Exception("Not used")
     override fun popularMangaSelector(): String = "nav a[href*=\"/manga/\"], .container .flex a[href*=\"/manga/\"]"
     override fun popularMangaFromElement(element: Element): SManga {
