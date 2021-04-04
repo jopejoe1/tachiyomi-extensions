@@ -4,7 +4,7 @@ import eu.kanade.tachiyomi.multisrc.mangacatalog.MangaCatalog
 import eu.kanade.tachiyomi.source.model.MangasPage
 import eu.kanade.tachiyomi.util.asJsoup
 
-class ReadAttackOnTitanShingekiNoKyojinManga : MangaCatalog("Read Hunter x Hunter Manga Online", "https://ww2.readhxh.com", "en") {
+class ReadAttackOnTitanShingekiNoKyojinManga : MangaCatalog("Read Attack on Titan/Shingeki no Kyojin Manga", "https://ww7.readsnk.com", "en") {
     override val sourceList = listOf(
         Pair("Shingeki No Kyojin", "$baseUrl/manga/shingeki-no-kyojin/"),
         Pair("Colored", "$baseUrl/manga/shingeki-no-kyojin-colored/"),
