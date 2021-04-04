@@ -5,9 +5,9 @@ import generator.ThemeSourceGenerator
 
 class MangaCatalogGenerator : ThemeSourceGenerator {
 
-    override val themePkg = "ww3read"
+    override val themePkg = "mangacatalog"
 
-    override val themeClass = "Ww3read"
+    override val themeClass = "MangaCatalog"
 
     override val baseVersionCode: Int = 1
 
