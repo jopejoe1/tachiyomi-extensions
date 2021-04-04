@@ -22,8 +22,6 @@ class WebtoonsFactory : SourceFactory {
 }
 class WebtoonsEN : WebtoonsDefault("Webtoons", "https://www.webtoons.com", "en")
 class WebtoonsID : WebtoonsDefault("Webtoons", "https://www.webtoons.com", "id") {
-    override val name: String = "Webtoons.com (Indonesian)"
-
     // Android seems to be unable to parse Indonesian dates; we'll use a short hard-coded table
     // instead.
     private val dateMap: Array<String> = arrayOf(

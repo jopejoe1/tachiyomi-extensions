@@ -43,7 +43,7 @@ class WebtoonsTranslationFactory : SourceFactory {
 }
 class WebtoonsTranslationEN : WebtoonsTranslation("Webtoons Translation", "https://www.webtoons.com", "en", "ENG")
 class WebtoonsTranslationZH_CMN : WebtoonsTranslation("Webtoons Translation (Simplified)", "https://www.webtoons.com", "zh", "CMN")
-class WebtoonsTranslationZH_CMY : WebtoonsTranslation("Webtoons Translation (Traditional)", "https://www.webtoons.com", "zh", "CMT")
+class WebtoonsTranslationZH_CMY : WebtoonsTranslation("Webtoons Translation (Traditional)", "https://www.webtoons.com", "zh-hant", "CMT")
 class WebtoonsTranslationTH : WebtoonsTranslation("Webtoons Translation", "https://www.webtoons.com", "th", "THA")
 class WebtoonsTranslationID : WebtoonsTranslation("Webtoons Translation", "https://www.webtoons.com", "id", "IND")
 class WebtoonsTranslationFR : WebtoonsTranslation("Webtoons Translation", "https://www.webtoons.com", "fr", "FRA")
@@ -55,7 +55,7 @@ class WebtoonsTranslationDE : WebtoonsTranslation("Webtoons Translation", "https
 class WebtoonsTranslationHI : WebtoonsTranslation("Webtoons Translation", "https://www.webtoons.com", "hi", "HIN")
 class WebtoonsTranslationIT : WebtoonsTranslation("Webtoons Translation", "https://www.webtoons.com", "it", "ITA")
 class WebtoonsTranslationJA : WebtoonsTranslation("Webtoons Translation", "https://www.webtoons.com", "ja", "JPN")
-class WebtoonsTranslationPT_POR : WebtoonsTranslation("Webtoons Translation (Brazilian)", "https://www.webtoons.com", "pt", "POR")
+class WebtoonsTranslationPT_POR : WebtoonsTranslation("Webtoons Translation (Brazilian)", "https://www.webtoons.com", "pt-br", "POR")
 class WebtoonsTranslationTR : WebtoonsTranslation("Webtoons Translation", "https://www.webtoons.com", "tr", "TUR")
 class WebtoonsTranslationMS : WebtoonsTranslation("Webtoons Translation", "https://www.webtoons.com", "ms", "MAY")
 class WebtoonsTranslationPL : WebtoonsTranslation("Webtoons Translation", "https://www.webtoons.com", "pl", "POL")
