@@ -1,9 +1,9 @@
-package eu.kanade.tachiyomi.multisrc.ww3read
+package eu.kanade.tachiyomi.multisrc.mangacatalog
 
 import generator.ThemeSourceData.SingleLang
 import generator.ThemeSourceGenerator
 
-class Ww3ReadGenerator : ThemeSourceGenerator {
+class MangaCatalogGenerator : ThemeSourceGenerator {
 
     override val themePkg = "ww3read"
 
@@ -21,13 +21,14 @@ class Ww3ReadGenerator : ThemeSourceGenerator {
         SingleLang("Read Tower of God Manhwa/Manga Online", "https://ww1.readtowerofgod.com", "en", className = "ReadTowerOfGodManhwaMangaOnline"),
         SingleLang("Read Hunter x Hunter Manga Online", "https://ww2.readhxh.com", "en"),
         SingleLang("Read Solo Leveling Manga/Manhwa Online", "https://readsololeveling.org", "en", className = "ReadSoloLevelingMangaManhwaOnline"),
-        SingleLang("Read The Promised Neverland Manga Online", "https://ww3.readneverland.com", "en")
+        SingleLang("Read The Promised Neverland Manga Online", "https://ww3.readneverland.com", "en"),
+        SingleLang("Read Attack on Titan/Shingeki no Kyojin Manga", "https://ww7.readsnk.com", "en", className = "ReadAttackOnTitanShingekiNoKyojinManga")
     )
 
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            Ww3ReadGenerator().createAll()
+            MangaCatalogGenerator().createAll()
         }
     }
 }
