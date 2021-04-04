@@ -1,5 +1,23 @@
 [
   {
+    "name": "Tachiyomi: Webtoons",
+    "pkg": "eu.kanade.tachiyomi.extension.all.webtoons",
+    "apk": "tachiyomi-all.webtoons-v1.2.1.apk",
+    "lang": "all",
+    "code": 1,
+    "version": "1.2.1",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Webtoons Translation",
+    "pkg": "eu.kanade.tachiyomi.extension.all.webtoonstranslation",
+    "apk": "tachiyomi-all.webtoonstranslation-v1.2.1.apk",
+    "lang": "all",
+    "code": 1,
+    "version": "1.2.1",
+    "nsfw": 0
+  },
+  {
     "name": "Tachiyomi: Digital Comic Museum",
     "pkg": "eu.kanade.tachiyomi.extension.en.digitalcomicmuseum",
     "apk": "tachiyomi-en.digitalcomicmuseum-v1.2.1.apk",
@@ -126,6 +144,15 @@
     "nsfw": 0
   },
   {
+    "name": "Tachiyomi: Read Attack on Titan/Shingeki no Kyojin Manga",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readattackontitanshingekinokyojinmanga",
+    "apk": "tachiyomi-en.readattackontitanshingekinokyojinmanga-v1.2.1.apk",
+    "lang": "en",
+    "code": 1,
+    "version": "1.2.1",
+    "nsfw": 0
+  },
+  {
     "name": "Tachiyomi: Read Boku no Hero Academia/My Hero Academia Manga",
     "pkg": "eu.kanade.tachiyomi.extension.en.readbokunoheroacademiamyheroacademiamanga",
     "apk": "tachiyomi-en.readbokunoheroacademiamyheroacademiamanga-v1.2.1.apk",
@@ -222,6 +249,15 @@
     "lang": "en",
     "code": 8,
     "version": "1.2.8",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Dongman Manhua",
+    "pkg": "eu.kanade.tachiyomi.extension.zh.dongmanmanhua",
+    "apk": "tachiyomi-zh.dongmanmanhua-v1.2.1.apk",
+    "lang": "zh",
+    "code": 1,
+    "version": "1.2.1",
     "nsfw": 0
   }
 ]
