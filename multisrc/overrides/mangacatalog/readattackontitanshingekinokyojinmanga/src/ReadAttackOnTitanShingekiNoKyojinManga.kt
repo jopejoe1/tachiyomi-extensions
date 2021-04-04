@@ -3,6 +3,8 @@ package eu.kanade.tachiyomi.extension.en.readattackontitanshingekinokyojinmanga
 import eu.kanade.tachiyomi.multisrc.mangacatalog.MangaCatalog
 import eu.kanade.tachiyomi.source.model.MangasPage
 import eu.kanade.tachiyomi.util.asJsoup
+import eu.kanade.tachiyomi.source.model.SManga
+import eu.kanade.tachiyomi.source.model.Page
 
 class ReadAttackOnTitanShingekiNoKyojinManga : MangaCatalog("Read Attack on Titan/Shingeki no Kyojin Manga", "https://ww7.readsnk.com", "en") {
     override val sourceList = listOf(
