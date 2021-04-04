@@ -19,4 +19,16 @@ class ReadAttackOnTitanShingekiNoKyojinManga : MangaCatalog("Read Attack on Tita
         Pair("Guidebook", "$baseUrl/manga/attack-on-titan-guidebook-inside-outside/"),
         Pair("No Regrets Colored", "$baseUrl/manga/attack-on-titan-no-regrets-colored/"),
     ).sortedBy { it.first }.distinctBy { it.second }
+    override fun chapterListSelector(): String = "div.w-full > .bg-white > .flex"
+    override fun chapterFromElement(element: Element): SChapter = SChapter.create().apply {
+        val name1 = element.select(".flex > a.text-gray-900").text()
+        val name2 = element.select(".flex > div.text-xs").text()
+        if (name2 == ""){
+            name = name1
+        } else {
+            name = "$name1 - $name2"
+        }
+        url = element.select(".ml-auto div.flex a").attr("abs:href")
+        date_upload = System.currentTimeMillis()
+    }
 }
