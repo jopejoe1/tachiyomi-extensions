@@ -50,8 +50,6 @@ open class DigitalComicMuseum : ParsedHttpSource() {
         return GET("$baseUrl/stats.php?ACT=latest&start=${page - 1}00&limit=100", headers)
     }
 
-    override fun latestUpdatesParse(response: Response) = popularMangaParse(response)
-
     override fun latestUpdatesSelector() = popularMangaSelector()
 
     override fun latestUpdatesFromElement(element: Element): SManga = popularMangaFromElement(element)
@@ -96,7 +94,6 @@ open class DigitalComicMuseum : ParsedHttpSource() {
 
     // Chapters
 
-    override fun chapterListParse(response: Response) = throw UnsupportedOperationException("Not used")
 
     override fun chapterListSelector() = "div.tableborder:first-of-type > div#banner + table .tablefooter > td > table > tbody > tr > td:nth-of-type(3) div"
 
