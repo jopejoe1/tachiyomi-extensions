@@ -99,7 +99,7 @@ open class DigitalComicMuseum : ParsedHttpSource() {
 
     override fun chapterFromElement(element: Element): SChapter {
         val chapter = SChapter.create()
-        chapter.url = baseUrl + element.select("a").attr("abs:href")
+        chapter.setUrlWithoutDomain(element.select("a").attr("abs:href"))
         chapter.name = "N/A"
         chapter.date_upload = System.currentTimeMillis()
         return chapter
