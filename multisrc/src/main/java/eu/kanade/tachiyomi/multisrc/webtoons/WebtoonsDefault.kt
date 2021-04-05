@@ -10,7 +10,7 @@ import org.jsoup.nodes.Element
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-open class WebtoonsDefault(
+abstract class WebtoonsDefault(
     override val name: String,
     override val baseUrl: String,
     override val lang: String,

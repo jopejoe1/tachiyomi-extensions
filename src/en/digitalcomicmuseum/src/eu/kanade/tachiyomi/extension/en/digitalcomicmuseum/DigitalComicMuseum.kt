@@ -10,7 +10,6 @@ import eu.kanade.tachiyomi.source.online.ParsedHttpSource
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.Response
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.util.concurrent.TimeUnit
@@ -101,7 +100,6 @@ open class DigitalComicMuseum : ParsedHttpSource() {
         val chapter = SChapter.create()
         chapter.setUrlWithoutDomain(element.select("a").attr("abs:href"))
         chapter.name = "N/A"
-        chapter.date_upload = System.currentTimeMillis()
         return chapter
     }
 
