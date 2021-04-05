@@ -43,6 +43,8 @@ abstract class Webtoons(
                             .value("true")
                             .name("locale")
                             .value(localeForCookie)
+                            .name("needGDPR")
+                            .value("false")
                             .build()
                     )
                 }
