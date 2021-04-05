@@ -47,7 +47,7 @@ open class DigitalComicMuseum : ParsedHttpSource() {
     // Latest
 
     override fun latestUpdatesRequest(page: Int): Request {
-        return GET("$baseUrl//stats.php?ACT=latest&start=${page - 1}00&limit=100", headers)
+        return GET("$baseUrl/stats.php?ACT=latest&start=${page - 1}00&limit=100", headers)
     }
 
     override fun latestUpdatesParse(response: Response) = popularMangaParse(response)
@@ -102,7 +102,7 @@ open class DigitalComicMuseum : ParsedHttpSource() {
 
     override fun chapterFromElement(element: Element): SChapter {
         val chapter = SChapter.create()
-        chapter.setUrlWithoutDomain(element.select("a").attr("abs:href"))
+        chapter.url = baseUrl + element.select("a").attr("abs:href")
         chapter.name = "N/A"
         chapter.date_upload = System.currentTimeMillis()
         return chapter
