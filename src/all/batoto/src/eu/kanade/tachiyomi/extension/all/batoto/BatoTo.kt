@@ -128,12 +128,12 @@ open class BatoTo(
         }
     }
 
-    override fun searchMangaSelector()  {
+    override fun searchMangaSelector() : String {
         if (checkQueryInput == false) {
-            return latestUpdatesSelector()
+            return "div#series-list div.col"
         }
         return when (siteLang) {
-            "all" -> latestUpdatesSelector()
+            "all" -> "div#series-list div.col"
             "en" -> "div#series-list div.col.no-flag"
             else -> "div#series-list div.col[data-lang=\"$siteLang\"]"
         }
