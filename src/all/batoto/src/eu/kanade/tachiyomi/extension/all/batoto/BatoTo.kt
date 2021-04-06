@@ -134,7 +134,7 @@ open class BatoTo(
         return when (siteLang) {
             "" -> "div#series-list div.col"
             "en" -> "div#series-list div.col.no-flag"
-            else -> "div#series-list div.col [data-lang=\"$siteLang\"]:parent:parent"
+            else -> "div#series-list div.col:contains([data-lang=\"$siteLang\"])"
         }
     }
 
