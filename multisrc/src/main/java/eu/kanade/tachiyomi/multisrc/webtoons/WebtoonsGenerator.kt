@@ -4,11 +4,11 @@ import generator.ThemeSourceData.SingleLang
 import generator.ThemeSourceData.MultiLang
 import generator.ThemeSourceGenerator
 
-class WebtoonsDefaultGenerator : ThemeSourceGenerator {
+class WebtoonsGenerator : ThemeSourceGenerator {
 
     override val themePkg = "webtoons"
 
-    override val themeClass = "WebtoonsDefault"
+    override val themeClass = "Webtoons"
 
     override val baseVersionCode: Int = 1
 
@@ -20,7 +20,7 @@ class WebtoonsDefaultGenerator : ThemeSourceGenerator {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            WebtoonsDefaultGenerator().createAll()
+            WebtoonsGenerator().createAll()
         }
     }
 }

@@ -1,7 +1,7 @@
-package eu.kanade.tachiyomi.multisrc.webtoons
+package eu.kanade.tachiyomi.multisrc.dongmanhua
 
 import eu.kanade.tachiyomi.network.GET
-import eu.kanade.tachiyomi.multisrc.webtoons.WebtoonsDefault
+import eu.kanade.tachiyomi.multisrc.webtoons.Webtoons
 import eu.kanade.tachiyomi.source.model.FilterList
 import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.source.model.SManga
@@ -18,7 +18,7 @@ class DongmanManhua(
     override val name: String,
     override val baseUrl: String,
     override val lang: String,
-) : WebtoonsDefault(name, baseUrl, lang, "", dateFormat = SimpleDateFormat("yyyy-M-d", Locale.ENGLISH)) {
+) : Webtoons(name, baseUrl, lang, "", dateFormat = SimpleDateFormat("yyyy-M-d", Locale.ENGLISH)) {
 
     override fun headersBuilder(): Headers.Builder = super.headersBuilder()
         .removeAll("Referer")

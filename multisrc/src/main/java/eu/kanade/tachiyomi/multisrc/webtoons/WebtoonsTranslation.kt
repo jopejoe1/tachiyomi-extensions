@@ -21,8 +21,8 @@ abstract class WebtoonsTranslation (
     override val name: String,
     override val baseUrl: String,
     override val lang: String,
-    private val translateLangCode: String,
-    languageNameExtra: String = "") : Webtoons(name, baseUrl, lang) {
+    private val translateLangCode: String
+    ) : Webtoons(name, baseUrl, lang) {
     // popularMangaRequest already returns manga sorted by latest update
     override val supportsLatest = false
 

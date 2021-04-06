@@ -1,7 +1,6 @@
 package eu.kanade.tachiyomi.multisrc.webtoons
 
 import eu.kanade.tachiyomi.multisrc.webtoons.Webtoons
-import eu.kanade.tachiyomi.multisrc.webtoons.WebtoonsDefault
 import eu.kanade.tachiyomi.source.Source
 import eu.kanade.tachiyomi.source.SourceFactory
 import java.text.SimpleDateFormat
@@ -20,8 +19,8 @@ class WebtoonsFactory : SourceFactory {
     )
 
 }
-class WebtoonsEN : WebtoonsDefault("Webtoons", "https://www.webtoons.com", "en")
-class WebtoonsID : WebtoonsDefault("Webtoons", "https://www.webtoons.com", "id") {
+class WebtoonsEN : Webtoons("Webtoons", "https://www.webtoons.com", "en")
+class WebtoonsID : Webtoons("Webtoons", "https://www.webtoons.com", "id") {
     // Android seems to be unable to parse Indonesian dates; we'll use a short hard-coded table
     // instead.
     private val dateMap: Array<String> = arrayOf(
@@ -35,8 +34,8 @@ class WebtoonsID : WebtoonsDefault("Webtoons", "https://www.webtoons.com", "id")
         return GregorianCalendar(year.toInt(), monthIndex, day.toInt()).time.time
     }
 }
-class WebtoonsTH : WebtoonsDefault("Webtoons", "https://www.webtoons.com", "th", dateFormat = SimpleDateFormat("d MMM yyyy", Locale("th")))
-class WebtoonsES : WebtoonsDefault("Webtoons", "https://www.webtoons.com", "es") {
+class WebtoonsTH : Webtoons("Webtoons", "https://www.webtoons.com", "th", dateFormat = SimpleDateFormat("d MMM yyyy", Locale("th")))
+class WebtoonsES : Webtoons("Webtoons", "https://www.webtoons.com", "es") {
     // Android seems to be unable to parse es dates like Indonesian; we'll use a short hard-coded table
     // instead.
     private val dateMap: Array<String> = arrayOf(
@@ -50,5 +49,5 @@ class WebtoonsES : WebtoonsDefault("Webtoons", "https://www.webtoons.com", "es")
         return GregorianCalendar(year.toInt(), monthIndex, day.toInt()).time.time
     }
 }
-class WebtoonsFR : WebtoonsDefault("Webtoons", "https://www.webtoons.com", "fr", dateFormat = SimpleDateFormat("d MMM yyyy", Locale.FRENCH))
-class WebtoonsZH : WebtoonsDefault("Webtoons", "https://www.webtoons.com", "zh", "zh-hant", "zh_TW", SimpleDateFormat("yyyy/MM/dd", Locale.TRADITIONAL_CHINESE))
+class WebtoonsFR : Webtoons("Webtoons", "https://www.webtoons.com", "fr", dateFormat = SimpleDateFormat("d MMM yyyy", Locale.FRENCH))
+class WebtoonsZH : Webtoons("Webtoons", "https://www.webtoons.com", "zh", "zh-hant", "zh_TW", SimpleDateFormat("yyyy/MM/dd", Locale.TRADITIONAL_CHINESE))
