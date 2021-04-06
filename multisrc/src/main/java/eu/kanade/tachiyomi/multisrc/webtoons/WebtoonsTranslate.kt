@@ -17,7 +17,7 @@ import org.jsoup.nodes.Element
 import rx.Observable
 import java.util.ArrayList
 
-abstract class WebtoonsTranslation (
+abstract class WebtoonsTranslate (
     override val name: String,
     override val baseUrl: String,
     override val lang: String,
