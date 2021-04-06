@@ -134,7 +134,7 @@ open class BatoTo(
         return when (siteLang) {
             "" -> "div#series-list div.col"
             "en" -> "div#series-list div.col.no-flag"
-            else -> "div#series-list div.col:contains([data-lang=\"$siteLang\"])"
+            else -> "div#series-list div.col:has([data-lang=\"$siteLang\"])"
         }
     }
 
@@ -209,6 +209,9 @@ open class BatoTo(
         val value = date.split(' ')[0].toInt()
 
         return when {
+            "secs" in date -> Calendar.getInstance().apply {
+                add(Calendar.SECOND, value * -1)
+            }.timeInMillis
             "mins" in date -> Calendar.getInstance().apply {
                 add(Calendar.MINUTE, value * -1)
             }.timeInMillis
@@ -226,6 +229,9 @@ open class BatoTo(
             }.timeInMillis
             "years" in date -> Calendar.getInstance().apply {
                 add(Calendar.YEAR, value * -1)
+            }.timeInMillis
+            "sec" in date -> Calendar.getInstance().apply {
+                add(Calendar.SECOND, value * -1)
             }.timeInMillis
             "min" in date -> Calendar.getInstance().apply {
                 add(Calendar.MINUTE, value * -1)
