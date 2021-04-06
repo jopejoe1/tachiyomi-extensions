@@ -60,13 +60,12 @@ open class BatoTo(
     override fun popularMangaFromElement(element: Element) = latestUpdatesFromElement(element)
 
     override fun popularMangaNextPageSelector() = latestUpdatesNextPageSelector()
-    var checkQueryInput = false
+    var checkQueryInput: Boolean = false
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
         return if (query.isNotBlank()) {
-            GET("$baseUrl/search?word=$query&page=$page")
             checkQueryInput = true
+            GET("$baseUrl/search?word=$query&page=$page")
         } else {
-            var author: String? = null
             val url = HttpUrl.parse("$baseUrl/browse")!!.newBuilder()
             url.addQueryParameter("page", page.toString())
             url.addQueryParameter("langs", siteLang)
@@ -129,7 +128,7 @@ open class BatoTo(
     }
 
     override fun searchMangaSelector() : String {
-        if (checkQueryInput == false) {
+        if (!checkQueryInput) {
             return "div#series-list div.col"
         }
         return when (siteLang) {
