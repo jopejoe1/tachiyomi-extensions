@@ -25,7 +25,7 @@ import eu.kanade.tachiyomi.source.model.MangasPage
 import java.util.Locale
 import java.util.Calendar
 
-abstract class Webtoons(
+open class Webtoons(
     override val name: String,
     override val baseUrl: String,
     override val lang: String,
