@@ -1,4 +1,4 @@
-package eu.kanade.tachiyomi.multisrc.webtoonstranslate
+package eu.kanade.tachiyomi.extension.all.webtoonstranslate
 
 import eu.kanade.tachiyomi.multisrc.webtoons.WebtoonsTranslate
 import eu.kanade.tachiyomi.source.Source

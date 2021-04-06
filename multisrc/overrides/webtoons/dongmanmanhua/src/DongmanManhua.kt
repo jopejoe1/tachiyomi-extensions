@@ -1,4 +1,4 @@
-package eu.kanade.tachiyomi.multisrc.dongmanhua
+package eu.kanade.tachiyomi.extension.all.dongmanhua
 
 import eu.kanade.tachiyomi.network.GET
 import eu.kanade.tachiyomi.multisrc.webtoons.Webtoons

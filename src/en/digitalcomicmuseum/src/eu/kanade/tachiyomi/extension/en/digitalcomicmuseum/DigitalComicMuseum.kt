@@ -93,7 +93,6 @@ open class DigitalComicMuseum : ParsedHttpSource() {
 
     // Chapters
 
-
     override fun chapterListSelector() = "div.tableborder:first-of-type > div#banner + table .tablefooter > td > table > tbody > tr > td:nth-of-type(3) div"
 
     override fun chapterFromElement(element: Element): SChapter {
@@ -109,7 +108,7 @@ open class DigitalComicMuseum : ParsedHttpSource() {
         var npages = document.select("#container div[align=\"center\"]").text().substringAfter("of ").trim().split(" ")
         var pagen = npages.first().toInt()
         var i = 1
-        while (i <= pagen){
+        while (i <= pagen) {
             var url = document.select("body > .navbar:first-of-type a#showdiv").attr("abs:href").replace("#", "&page=$i")
             add(Page(i, url))
         }
