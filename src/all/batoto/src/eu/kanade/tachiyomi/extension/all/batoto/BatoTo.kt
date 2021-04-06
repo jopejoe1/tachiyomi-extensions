@@ -37,7 +37,13 @@ open class BatoTo(
         return GET("$baseUrl/browse?langs=$siteLang&sort=update&page=$page")
     }
 
-    override fun latestUpdatesSelector() = "div#series-list div.col"
+    override fun latestUpdatesSelector(): String {
+        return when (siteLang) {
+            "" -> "div#series-list div.col"
+            "en" -> "div#series-list div.col.no-flag"
+            else -> "div#series-list div.col:has([data-lang=\"$siteLang\"])"
+        }
+    }
 
     override fun latestUpdatesFromElement(element: Element): SManga {
         val manga = SManga.create()
@@ -60,10 +66,8 @@ open class BatoTo(
     override fun popularMangaFromElement(element: Element) = latestUpdatesFromElement(element)
 
     override fun popularMangaNextPageSelector() = latestUpdatesNextPageSelector()
-    var checkQueryInput: Boolean = false
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
         return if (query.isNotBlank()) {
-            checkQueryInput = true
             GET("$baseUrl/search?word=$query&page=$page")
         } else {
             val url = HttpUrl.parse("$baseUrl/browse")!!.newBuilder()
@@ -127,16 +131,7 @@ open class BatoTo(
         }
     }
 
-    override fun searchMangaSelector() : String {
-        if (!checkQueryInput) {
-            return "div#series-list div.col"
-        }
-        return when (siteLang) {
-            "" -> "div#series-list div.col"
-            "en" -> "div#series-list div.col.no-flag"
-            else -> "div#series-list div.col:has([data-lang=\"$siteLang\"])"
-        }
-    }
+    override fun searchMangaSelector() = latestUpdatesSelector()
 
     override fun searchMangaFromElement(element: Element) = latestUpdatesFromElement(element)
 
