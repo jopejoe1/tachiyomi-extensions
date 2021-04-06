@@ -9,7 +9,7 @@ class WebtoonsTranslationGenerator : ThemeSourceGenerator {
 
     override val themeClass = "WebtoonsTranslation"
 
-    override val baseVersionCode: Int = 1
+    override val baseVersionCode: Int = 2
 
     override val sources = listOf(
         MultiLang("Webtoons Translation", "https://www.webtoons.com", listOf("en", "zh", "zh-hant", "th", "id", "fr", "vi", "ru", "ar", "fil", "de", "hi", "it", "ja", "pt-br", "tr", "ms", "pl", "pt", "bg", "da", "nl", "ro", "mn", "el", "lt", "cs", "sv", "bn", "fa", "uk", "es"), className = "WebtoonsTranslationFactory"),
