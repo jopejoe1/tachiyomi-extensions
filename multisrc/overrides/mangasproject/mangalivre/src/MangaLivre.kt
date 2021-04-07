@@ -1,6 +1,6 @@
 package eu.kanade.tachiyomi.extension.pt.mangalivre
 
-import eu.kanade.tachiyomi.multisrc.mangasproject.Mangasproject
+import eu.kanade.tachiyomi.multisrc.mangasproject.MangasProject
 import eu.kanade.tachiyomi.network.GET
 import eu.kanade.tachiyomi.source.model.Filter
 import eu.kanade.tachiyomi.source.model.FilterList

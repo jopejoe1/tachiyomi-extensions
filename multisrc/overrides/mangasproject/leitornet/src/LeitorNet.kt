@@ -1,6 +1,6 @@
 package eu.kanade.tachiyomi.extension.pt.leitornet
 
-import eu.kanade.tachiyomi.multisrc.mangasproject.Mangasproject
+import eu.kanade.tachiyomi.multisrc.mangasproject.MangasProject
 import eu.kanade.tachiyomi.network.GET
 import eu.kanade.tachiyomi.source.model.MangasPage
 import eu.kanade.tachiyomi.source.model.SChapter
