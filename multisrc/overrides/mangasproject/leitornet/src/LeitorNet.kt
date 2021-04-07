@@ -4,6 +4,8 @@ import eu.kanade.tachiyomi.multisrc.mangasproject.MangasProject
 import eu.kanade.tachiyomi.network.GET
 import eu.kanade.tachiyomi.source.model.MangasPage
 import eu.kanade.tachiyomi.source.model.SChapter
+import okhttp3.Request
+import okhttp3.Response
 
 class LeitorNet : MangasProject("Leitor.net", "https://leitor.net", "pt-br") {
 

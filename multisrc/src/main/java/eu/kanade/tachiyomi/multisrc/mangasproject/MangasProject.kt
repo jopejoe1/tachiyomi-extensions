@@ -279,7 +279,7 @@ abstract class MangasProject(
             .mapIndexed { i, obj -> Page(i, chapterUrl, obj.string) }
     }
 
-    protected open fun getChapterUrl(response: Response): String {
+    open fun getChapterUrl(response: Response): String {
         return response.request().url().toString()
     }
 
