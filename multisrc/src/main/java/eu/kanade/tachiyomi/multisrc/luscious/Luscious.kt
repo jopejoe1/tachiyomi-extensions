@@ -214,7 +214,7 @@ abstract class Luscious(
             .let { it["data"]["picture"]["list"].asJsonObject }
 
         return data["items"].asJsonArray.mapIndexed { index, it ->
-            Page(index, imageUrl = it["thumbnails"]["0"]["url"].asString)
+            Page(index, imageUrl = it["thumbnails"]["url"].asString)
         } + if (data["info"]["total_pages"].asInt > 1) { // get 2nd page onwards
             (ITEMS_PER_PAGE until data["info"]["total_items"].asInt).chunked(ITEMS_PER_PAGE).mapIndexed { page, indices ->
                 indices.map { Page(it, url = buildAlbumPicturesPageUrl(id, page + 2, sortPagesByOption)) }
@@ -257,7 +257,7 @@ abstract class Luscious(
                 val data = gson.fromJson<JsonObject>(it.body()!!.string()).let { data ->
                     data["data"]["picture"]["list"].asJsonObject
                 }
-                data["items"].asJsonArray[page.index % 50].asJsonObject["thumbnails"]["0"]["url"].asString
+                data["items"].asJsonArray[page.index % 50].asJsonObject["thumbnails"]["url"].asString
             }
     }
 
@@ -597,9 +597,7 @@ abstract class Luscious(
                         }
                     items {
                         thumbnails {
-                            0 {
-                                url
-                            }
+                            url
                         }
                     }
                 }
