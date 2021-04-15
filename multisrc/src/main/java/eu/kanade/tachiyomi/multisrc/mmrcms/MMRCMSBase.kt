@@ -33,11 +33,11 @@ import com.google.gson.JsonObject
 import android.util.Base64
 import java.net.URLDecoder
 
-abstract class MMRCMS (
+abstract class MMRCMSBase (
     override val name: String,
     override val baseUrl: String,
     override val lang: String,
-    private val sourceInfo: String,
+    private var sourceInfo: String,
 ) : HttpSource() {
     /**
      * Parse a List of JSON sources into a list of `MyMangaReaderCMSSource`s
