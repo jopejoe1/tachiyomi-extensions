@@ -69,7 +69,7 @@ class MMRCMSGenerator : ThemeSourceGenerator {
 // SourceData("ru", "Japit Comics", "https://j-comics.ru"),
 // SourceData("es", "Universo Yuri", "https://universoyuri.com"),
 // SourceData("pl", "Dracaena", "https://dracaena.webd.pl/czytnik"),
-// SourceData("pt-BR", "Comic Space", "https://www.comicspace.com.br"), // "Comic Space" -> 1847392744200215680
+// SourceData("pt-BR", "Comic Space", "https://www.comicspace.com.br"), //ID "Comic Space" -> 1847392744200215680
 // SourceData("pl", "ToraScans", "http://torascans.pl"),
 // SourceData("en", "White Cloud Pavilion", "https://www.whitecloudpavilion.com/manga/free"),
 // SourceData("en", "Biamam Scans", "https://biamam.com"),
