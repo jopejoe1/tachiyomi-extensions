@@ -22,31 +22,6 @@ class MangasPw : MMRCMS("Mangas.pw", "https://mangas.in", "es", """{"language":"
         return GET(url.toString(), headers)
     }
 
-    override fun searchMangaParse(response: Response): MangasPage {
-        return if (listOf("query", "q").any { it in response.request().url().queryParameterNames() }) {
-            // If a search query was specified, use search instead!
-            val jsonArray = jsonParser.parse(response.body()!!.string()).let {
-                it.array
-            }
-            MangasPage(
-                jsonArray
-                    .map {
-                        SManga.create().apply {
-                            val segment = it["data"].string
-                            url = getUrlWithoutBaseUrl(itemUrl + segment)
-                            title = it["value"].string
-
-                            // Guess thumbnails
-                            // thumbnail_url = "$baseUrl/uploads/manga/$segment/cover/cover_250x350.jpg"
-                        }
-                    },
-                false
-            )
-        } else {
-            internalMangaParse(response)
-        }
-    }
-
     override fun pageListParse(response: Response) = response.asJsoup().select("#all > .img-responsive")
         .mapIndexed { i, e ->
             var url = (if (e.hasAttr("data-src")) e.attr("abs:data-src") else e.attr("abs:src")).trim()

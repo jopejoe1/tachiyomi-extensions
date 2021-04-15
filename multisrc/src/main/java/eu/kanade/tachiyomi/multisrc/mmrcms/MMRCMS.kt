@@ -158,7 +158,7 @@ abstract class MMRCMS (
         return if (listOf("query", "q").any { it in response.request().url().queryParameterNames() }) {
             // If a search query was specified, use search instead!
             val jsonArray = jsonParser.parse(response.body()!!.string()).let {
-                it["suggestions"].array
+                if (name == "Mangas.pw") it.array else it["suggestions"].array
             }
             MangasPage(
                 jsonArray
