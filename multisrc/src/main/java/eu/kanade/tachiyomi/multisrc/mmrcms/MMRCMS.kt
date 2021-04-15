@@ -1,6 +1,5 @@
 package eu.kanade.tachiyomi.multisrc.mmrcms
 
-import eu.kanade.tachiyomi.source.online.HttpSource
 
 abstract class MMRCMS (
     override val name: String,
