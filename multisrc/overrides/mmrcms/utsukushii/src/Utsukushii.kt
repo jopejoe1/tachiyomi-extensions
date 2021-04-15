@@ -14,7 +14,7 @@ class Utsukushii : MMRCMS("Utsukushii", "https://manga.utsukushii-bg.com", "bg",
     override fun popularMangaRequest(page: Int): Request {
         return GET("$baseUrl/manga-list", headers)
     }
-    private fun internalMangaParse(response: Response): MangasPage {
+    override fun internalMangaParse(response: Response): MangasPage {
         val document = response.asJsoup()
 
         val internalMangaSelector = "div.content div.col-sm-6"
