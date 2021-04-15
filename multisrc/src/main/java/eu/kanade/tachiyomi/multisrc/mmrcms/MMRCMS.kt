@@ -226,10 +226,13 @@ abstract class MMRCMS (
         thumbnail_url = element.select("img").attr("abs:src")
     }
 
-    public fun internalMangaParse(response: Response): MangasPage {
+    private fun internalMangaParse(response: Response): MangasPage {
         val document = response.asJsoup()
 
-        val internalMangaSelector = "div[class^=col-sm], div.col-xs-6"
+        val internalMangaSelector = when (name) {
+            "Utsukushii" -> "div.content div.col-sm-6"
+            else -> "div[class^=col-sm], div.col-xs-6"
+        }
         return MangasPage(
             document.select(internalMangaSelector).map {
                 SManga.create().apply {

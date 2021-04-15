@@ -14,33 +14,4 @@ class Utsukushii : MMRCMS("Utsukushii", "https://manga.utsukushii-bg.com", "bg",
     override fun popularMangaRequest(page: Int): Request {
         return GET("$baseUrl/manga-list", headers)
     }
-    override fun internalMangaParse(response: Response): MangasPage {
-        val document = response.asJsoup()
-
-        val internalMangaSelector = "div.content div.col-sm-6"
-        return MangasPage(
-            document.select(internalMangaSelector).map {
-                SManga.create().apply {
-                    val urlElement = it.getElementsByClass("chart-title")
-                    if (urlElement.size == 0) {
-                        url = getUrlWithoutBaseUrl(it.select("a").attr("href"))
-                        title = it.select("div.caption").text()
-                        it.select("div.caption div").text().let { if (it.isNotEmpty()) title = title.substringBefore(it) } // To clean submanga's titles without breaking hentaishark's
-                    } else {
-                        url = getUrlWithoutBaseUrl(urlElement.attr("href"))
-                        title = urlElement.text().trim()
-                    }
-
-                    it.select("img").let { img ->
-                        thumbnail_url = when {
-                            it.hasAttr("data-background-image") -> it.attr("data-background-image") // Utsukushii
-                            img.hasAttr("data-src") -> coverGuess(img.attr("abs:data-src"), url)
-                            else -> coverGuess(img.attr("abs:src"), url)
-                        }
-                    }
-                }
-            },
-            document.select(".pagination a[rel=next]").isNotEmpty()
-        )
-    }
 }
