@@ -31,7 +31,7 @@ import com.github.salomonbrys.kotson.string
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 
-class MMRCMS (
+abstract class MMRCMS (
     override val name: String,
     override val baseUrl: String,
     override val lang: String,
