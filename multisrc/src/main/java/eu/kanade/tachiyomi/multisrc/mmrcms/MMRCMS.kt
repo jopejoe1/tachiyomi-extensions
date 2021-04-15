@@ -226,7 +226,7 @@ abstract class MMRCMS (
         thumbnail_url = element.select("img").attr("abs:src")
     }
 
-    private fun internalMangaParse(response: Response): MangasPage {
+    public fun internalMangaParse(response: Response): MangasPage {
         val document = response.asJsoup()
 
         val internalMangaSelector = "div[class^=col-sm], div.col-xs-6"
@@ -257,7 +257,7 @@ abstract class MMRCMS (
     }
 
     // Guess thumbnails on broken websites
-    private fun coverGuess(url: String?, mangaUrl: String): String? {
+    public fun coverGuess(url: String?, mangaUrl: String): String? {
         return if (url?.endsWith("no-image.png") == true) {
             "$baseUrl/uploads/manga/${mangaUrl.substringAfterLast('/')}/cover/cover_250x350.jpg"
         } else {
@@ -265,7 +265,7 @@ abstract class MMRCMS (
         }
     }
 
-    private fun getUrlWithoutBaseUrl(newUrl: String): String {
+    public fun getUrlWithoutBaseUrl(newUrl: String): String {
         val parsedNewUrl = Uri.parse(newUrl)
         val newPathSegments = parsedNewUrl.pathSegments.toMutableList()
 
