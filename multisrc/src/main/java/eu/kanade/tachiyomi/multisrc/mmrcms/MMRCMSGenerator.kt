@@ -46,6 +46,7 @@ class MMRCMSGenerator : ThemeSourceGenerator {
         SingleLang("FR Scan", "https://www.frscan.me", "fr"),
         // NOTE: THIS SOURCE CONTAINS A CUSTOM LANGUAGE SYSTEM (which will be ignored)!
         SingleLang("HentaiShark", "https://www.hentaishark.com", "other", isNsfw = true),
+        SingleLang("Gekkou Scans", "https://leitor.gekkouscans.com.br", "pt-BR"),
     )
 
     companion object {
