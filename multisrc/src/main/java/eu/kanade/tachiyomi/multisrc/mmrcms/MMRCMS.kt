@@ -30,6 +30,8 @@ import com.github.salomonbrys.kotson.bool
 import com.github.salomonbrys.kotson.string
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import android.util.Base64
+import java.net.URLDecoder
 
 abstract class MMRCMS (
     override val name: String,
@@ -118,6 +120,10 @@ abstract class MMRCMS (
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
         val url: Uri.Builder
         when {
+            name == "Mangas.pw" -> {
+                url = Uri.parse("$baseUrl/search")!!.buildUpon()
+                url.appendQueryParameter("q", query)
+            }
             query.isNotBlank() -> {
                 url = Uri.parse("$baseUrl/search")!!.buildUpon()
                 url.appendQueryParameter("query", query)
@@ -418,8 +424,16 @@ abstract class MMRCMS (
     override fun pageListParse(response: Response) = response.asJsoup().select("#all > .img-responsive")
         .mapIndexed { i, e ->
             var url = (if (e.hasAttr("data-src")) e.attr("abs:data-src") else e.attr("abs:src")).trim()
+
+            // Mangas.pw encodes some of their urls, decode them
+            if (name.contains("Mangas.pw") && !url.contains(".")) {
+                url = Base64.decode(url.substringAfter("//"), Base64.DEFAULT).toString(Charsets.UTF_8).substringBefore("=")
+                url = URLDecoder.decode(url, "UTF-8")
+            }
+
             Page(i, "", url)
         }
+
 
     override fun imageUrlParse(response: Response) = throw UnsupportedOperationException("Unused method called!")
 
@@ -453,6 +467,7 @@ abstract class MMRCMS (
      */
     override fun getFilterList(): FilterList {
         return when {
+            name == "Mangas.pw" -> FilterList()
             tagMappings != null -> {
                 FilterList(
                     getInitialFilterList() + UriSelectFilter(
