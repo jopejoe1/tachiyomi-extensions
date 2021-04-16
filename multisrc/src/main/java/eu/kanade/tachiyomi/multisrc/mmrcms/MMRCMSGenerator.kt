@@ -1,6 +1,5 @@
 package eu.kanade.tachiyomi.multisrc.mmrcms
 
-import generator.ThemeSourceData
 import generator.ThemeSourceData.MultiLang
 import generator.ThemeSourceData.SingleLang
 import generator.ThemeSourceGenerator
@@ -47,7 +46,7 @@ class MMRCMSGenerator : ThemeSourceGenerator {
         SingleLang("Op-VF", "https://www.op-vf.com", "fr", className = "OpVF"),
         SingleLang("FR Scan", "https://www.frscan.me", "fr"),
         // NOTE: THIS SOURCE CONTAINS A CUSTOM LANGUAGE SYSTEM (which will be ignored)!
-        MultiLang("HentaiShark", "https://www.hentaishark.com", arrayListOf("en", "ja", "zh", "de", "nl", "ko", "cz", "eo", "mn", "ar", "sk", "la", "ua", "ceb", "tl", "fi", "bg", "tr"), isNsfw = true, className = "HentaiSharkFactory"),
+        MultiLang("HentaiShark", "https://www.hentaishark.com", listOf("en", "ja", "zh", "de", "nl", "ko", "cz", "eo", "mn", "ar", "sk", "la", "ua", "ceb", "tl", "fi", "bg", "tr"), isNsfw = true, className = "HentaiSharkFactory"),
     )
 
     companion object {
