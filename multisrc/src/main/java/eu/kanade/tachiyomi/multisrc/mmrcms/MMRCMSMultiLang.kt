@@ -31,11 +31,7 @@ import com.github.salomonbrys.kotson.string
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import android.util.Base64
-import eu.kanade.tachiyomi.multisrc.mmrcms.MMRCMSJsonGen
 import java.net.URLDecoder
-import com.github.salomonbrys.kotson.bool
-import com.github.salomonbrys.kotson.string
-import eu.kanade.tachiyomi.network.GET
 
 abstract class MMRCMSMultiLang(
     override val name: String,
