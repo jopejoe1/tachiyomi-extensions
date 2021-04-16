@@ -1,6 +1,5 @@
 package eu.kanade.tachiyomi.multisrc.mmrcms
 
-import MMRCMS
 import android.net.Uri
 import com.github.salomonbrys.kotson.bool
 import com.github.salomonbrys.kotson.string
