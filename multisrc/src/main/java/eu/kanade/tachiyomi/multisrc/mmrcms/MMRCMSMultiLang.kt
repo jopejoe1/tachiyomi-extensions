@@ -15,7 +15,7 @@ abstract class MMRCMSMultiLang(
     override val name: String,
     override val baseUrl: String,
     override val lang: String,
-    val jsonInfo: String = MMRCMSJsonGenHS(name, baseUrl, lang).generateJson(),
+    private val jsonInfo: String = MMRCMSJsonGenHS(name, baseUrl, lang).generateJson(),
     ) : MMRCMS(name, baseUrl, lang, jsonInfo){
     /**
      * Parse a List of JSON sources into a list of `MyMangaReaderCMSSource`s
