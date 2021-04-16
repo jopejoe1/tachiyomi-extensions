@@ -11,10 +11,10 @@
   {
     "name": "Tachiyomi: HentaiShark",
     "pkg": "eu.kanade.tachiyomi.extension.all.hentaishark",
-    "apk": "tachiyomi-all.hentaishark-v1.2.2.apk",
+    "apk": "tachiyomi-all.hentaishark-v1.2.3.apk",
     "lang": "all",
-    "code": 2,
-    "version": "1.2.2",
+    "code": 3,
+    "version": "1.2.3",
     "nsfw": 1
   },
   {
