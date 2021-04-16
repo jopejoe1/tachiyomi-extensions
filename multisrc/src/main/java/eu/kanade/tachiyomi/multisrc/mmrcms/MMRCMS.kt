@@ -1,4 +1,4 @@
-
+package eu.kanade.tachiyomi.multisrc.mmrcms
 
 import android.annotation.SuppressLint
 import android.net.Uri
