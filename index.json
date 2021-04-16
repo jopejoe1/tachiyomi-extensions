@@ -9,6 +9,15 @@
     "nsfw": 1
   },
   {
+    "name": "Tachiyomi: HentaiShark",
+    "pkg": "eu.kanade.tachiyomi.extension.all.hentaishark",
+    "apk": "tachiyomi-all.hentaishark-v1.2.2.apk",
+    "lang": "all",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 1
+  },
+  {
     "name": "Tachiyomi: Luscious",
     "pkg": "eu.kanade.tachiyomi.extension.all.luscious",
     "apk": "tachiyomi-all.luscious-v1.2.5.apk",
@@ -378,15 +387,6 @@
     "nsfw": 0
   },
   {
-    "name": "Tachiyomi: HentaiShark",
-    "pkg": "eu.kanade.tachiyomi.extension.other.hentaishark",
-    "apk": "tachiyomi-other.hentaishark-v1.2.2.apk",
-    "lang": "other",
-    "code": 2,
-    "version": "1.2.2",
-    "nsfw": 1
-  },
-  {
     "name": "Tachiyomi: Nikushima",
     "pkg": "eu.kanade.tachiyomi.extension.pl.nikushima",
     "apk": "tachiyomi-pl.nikushima-v1.2.2.apk",
@@ -408,15 +408,6 @@
     "name": "Tachiyomi: AnimaRegia",
     "pkg": "eu.kanade.tachiyomi.extension.pt.animaregia",
     "apk": "tachiyomi-pt.animaregia-v1.2.2.apk",
-    "lang": "pt",
-    "code": 2,
-    "version": "1.2.2",
-    "nsfw": 0
-  },
-  {
-    "name": "Tachiyomi: Gekkou Scans",
-    "pkg": "eu.kanade.tachiyomi.extension.pt.gekkouscans",
-    "apk": "tachiyomi-pt.gekkouscans-v1.2.2.apk",
     "lang": "pt",
     "code": 2,
     "version": "1.2.2",
