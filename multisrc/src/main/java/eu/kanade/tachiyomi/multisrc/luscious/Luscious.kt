@@ -174,7 +174,7 @@ abstract class Luscious(
     }
 
     override fun chapterListParse(response: Response): List<SChapter> {
-        val chapters = mutableListOf<SChapter>()
+        var chapters = mutableListOf<SChapter>()
         val data = gson.fromJson<JsonObject>(response.body()!!.string())
         with(data["data"]["album"]["get"]) {
             when (this["is_manga"].asBoolean) {
@@ -185,30 +185,33 @@ abstract class Luscious(
                     chapter.date_upload = this["modified"].asLong
                     chapter.chapter_number = 1f
                     chapters.add(chapter)
+                    return chapters
                 }
-                false -> {
-                    var page: Int = 1
-                    var nextPage = true
-                    while (nextPage){
-                        var url = buildAlbumPicturesPageUrl(this["id"].asString, page, "date_newest")
-                        val pageData = gson.fromJson<JsonObject>(client.newCall(GET(url, headers)).execute().body()!!.string())
-                        with(pageData["data"]["picture"]){
-                            this["items"].asJsonArray.map {
-                                val chapter = SChapter.create()
-                                //chapter.url = "$baseUrl${this["url"].asString}"
-                                chapter.url = "${this["thumbnails"][0]["url"].asString}"
-                                chapter.name = this["title"].asString
-                                chapter.date_upload = this["created"].asLong
-                                //chapter.chapter_number = 1f
-                                chapters.add(chapter)
-                            }
-                            nextPage = this["info"]["has_next_page"].asBoolean
-                        }
-                        page++
-                    }
-
-                }
+                false -> return pictureChapters(this["id"].asString)
             }
+        }
+    }
+
+    fun pictureChapters(id: String): List<SChapter>{
+        val chapters = mutableListOf<SChapter>()
+        var page: Int = 1
+        var nextPage = true
+        while (nextPage){
+            var url = buildAlbumPicturesPageUrl(id, page, "date_newest")
+            val data = gson.fromJson<JsonObject>(client.newCall(GET(url, headers)).execute().body()!!.string())
+            with(data["data"]["picture"]){
+                this["items"].asJsonArray.map {
+                    val chapter = SChapter.create()
+                    //chapter.url = "$baseUrl${this["url"].asString}"
+                    chapter.url = "${this["thumbnails"][0]["url"].asString}"
+                    chapter.name = this["title"].asString
+                    chapter.date_upload = this["created"].asLong
+                    //chapter.chapter_number = 1f
+                    chapters.add(chapter)
+                }
+                nextPage = this["info"]["has_next_page"].asBoolean
+            }
+            page++
         }
         return chapters
     }
