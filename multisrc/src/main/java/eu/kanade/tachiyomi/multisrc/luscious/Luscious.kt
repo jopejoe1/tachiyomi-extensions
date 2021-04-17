@@ -657,29 +657,35 @@ abstract class Luscious(
         """.replace("\n", " ").replace("\\s+".toRegex(), " ")
 
         private val ALBUM_INFO_REQUEST_GQL = """
-            query getAlbumInfo(${'$'}id: ID!) {
+            query getAlbumInfo(${"$"}id: ID!) {
                 album {
-                    get(id: ${'$'}id) {
-                        Album {
-                            id
-                            title
-                            tags
-                            is_manga
-                            content
-                            genres
-                            cover
-                            description
-                            audiences
-                            number_of_pictures
-                            number_of_animated_pictures
-                            url
-                            download_url
-                            created
-                            modified
+                    get(id: ${"$"}id) {
+                        ... on Album {
+                            ...AlbumStandard
+                        }... on MutationError {
+                            errors {
+                                code message
+                            }
                         }
                     }
                 }
             }
+            fragment AlbumStandard on Album{
+                id
+                title
+                tags
+                is_manga
+                content
+                genres
+                cover
+                description
+                audiences
+                number_of_pictures
+                number_of_animated_pictures
+                url
+                download_url
+                created modified
+             }
         """.replace("\n", " ").replace("\\s+".toRegex(), " ")
     }
 }
