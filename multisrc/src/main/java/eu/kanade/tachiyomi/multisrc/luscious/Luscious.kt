@@ -140,6 +140,22 @@ abstract class Luscious(
                         url = it["url"].asString
                         title = it["title"].asString
                         thumbnail_url = it["cover"]["url"].asString
+                        description = it["description"].asString
+                        var genreList: String = ""
+                        if (it["language"]["title"].asString != "") {
+                            genreList = "${it["language"]["title"].asString},"
+                        }
+                        for (jsonElement in it["tags"].asJsonArray) {
+                            genreList = "$genreList${jsonElement["text"].asString},"
+                        }
+                        for (jsonElement in it["genres"].asJsonArray) {
+                            genreList = "$genreList${jsonElement["title"].asString},"
+                        }
+                        for (jsonElement in it["labels"].asJsonArray) {
+                            genreList = "$genreList${jsonElement.asString},"
+                        }
+                        genreList = "$genreList${it["content"]["title"].asString}"
+                        genre = genreList
                     }
                 },
                 this["info"]["has_next_page"].asBoolean
@@ -155,18 +171,62 @@ abstract class Luscious(
 
     // Chapters
 
+    private fun buildAlbumInfoRequest(id: String): Request {
+        val url = HttpUrl.parse(apiBaseUrl)!!.newBuilder()
+            .addQueryParameter("operationName", "getAlbumInfo")
+            .addQueryParameter("query", ALBUM_INFO_REQUEST_GQL)
+            .addQueryParameter("variables", "{\"id\": \"$id\"}")
+            .toString()
+        return GET(url, headers)
+    }
+
+    fun getID(url: String): String{
+        return url.substringAfter("_").replace("/","").trim()
+    }
+
+    override fun chapterListRequest(manga: SManga): Request {
+        var id:String = getID(manga.url)
+        return buildAlbumInfoRequest(id)
+    }
+
     override fun chapterListParse(response: Response): List<SChapter> {
-        val document = response.asJsoup()
-        return listOf(
-            SChapter.create().apply {
-                url = response.request().url().toString()
-                name = "Chapter"
-                date_upload = document.select(".album-info-item:contains(Created:)")?.first()?.ownText()?.trim()?.let {
-                    DATE_FORMATS_WITH_ORDINAL_SUFFIXES.mapNotNull { format -> format.parseOrNull(it) }.firstOrNull()?.time
-                } ?: 0L
-                chapter_number = 1f
+        val chapters = mutableListOf<SChapter>()
+        val data = gson.fromJson<JsonObject>(response.body()!!.string())
+        with(data["data"]["album"]["get"]) {
+            when (this["is_manga"].asBoolean) {
+                true -> {
+                    val chapter = SChapter.create()
+                    chapter.url = "$baseUrl${this["url"].asString}"
+                    chapter.name = "Chapter"
+                    chapter.date_upload = this["modified"].asLong
+                    chapter.chapter_number = 1f
+                    chapters.add(chapter)
+                }
+                false -> {
+                    var page: Int = 1
+                    var nextPage = true
+                    while (nextPage){
+                        var url = buildAlbumPicturesPageUrl(this["id"].asString, page, "date_newest")
+                        val pageData = gson.fromJson<JsonObject>(client.newCall(GET(url, headers)).execute().body()!!.string())
+                        with(pageData["data"]["picture"]){
+                            this["items"].asJsonArray.map {
+                                val chapter = SChapter.create()
+                                //chapter.url = "$baseUrl${this["url"].asString}"
+                                chapter.url = "${this["thumbnails"][0]["url"].asString}"
+                                chapter.name = this["title"].asString
+                                chapter.date_upload = this["created"].asLong
+                                //chapter.chapter_number = 1f
+                                chapters.add(chapter)
+                            }
+                            nextPage = this["info"]["has_next_page"].asBoolean
+                        }
+                        page++
+                    }
+
+                }
             }
-        )
+        }
+        return chapters
     }
 
     // Pages
@@ -232,17 +292,26 @@ abstract class Luscious(
     }
 
     override fun fetchPageList(chapter: SChapter): Observable<List<Page>> {
-        val id = chapter.url.substringAfterLast("_").removeSuffix("/")
+        when {
+            chapter.url.contains("$baseUrl/albums/") -> {
+                val id = chapter.url.substringAfterLast("_").removeSuffix("/")
 
-        return getAlbumSortPagesOption(chapter)
-            .concatMap { sortPagesByOption ->
-                client.newCall(GET(buildAlbumPicturesPageUrl(id, 1, sortPagesByOption)))
-                    .asObservableSuccess()
-                    .map { parseAlbumPicturesResponse(it, sortPagesByOption) }
+                return getAlbumSortPagesOption(chapter)
+                    .concatMap { sortPagesByOption ->
+                        client.newCall(GET(buildAlbumPicturesPageUrl(id, 1, sortPagesByOption)))
+                            .asObservableSuccess()
+                            .map { parseAlbumPicturesResponse(it, sortPagesByOption) }
+                    }
             }
+            else -> {
+                throw Exception("Stub!")
+            }
+        }
+
     }
 
     override fun pageListParse(response: Response): List<Page> = throw UnsupportedOperationException("Not used")
+
 
     override fun imageUrlParse(response: Response): String = throw UnsupportedOperationException("Not used")
 
@@ -263,50 +332,39 @@ abstract class Luscious(
 
     // Details
 
-    private fun parseMangaGenre(document: Document): String {
-        return listOf(
-            document.select(".o-tag--secondary").map { it.text().substringBefore("(").trim() },
-            document.select(".o-tag:not([href *= /tags/artist])").map { it.text() },
-            document.select(".album-info-item:contains(Content:) .o-tag").map { it.text() }
-        ).flatten().joinToString()
-    }
-
-    private fun parseMangaDescription(document: Document): String {
-        val pageCount: String? = (
-            document.select(".album-info-item:contains(pictures)").firstOrNull()
-                ?: document.select(".album-info-item:contains(gifs)").firstOrNull()
-            )?.text()
-
-        return listOf(
-            Pair("Description", document.select(".album-description:last-of-type")?.text()),
-            Pair("Pages", pageCount)
-        ).let {
-            it + listOf("Parody", "Character", "Ethnicity")
-                .map { key -> key to document.select(".o-tag--category:contains($key) .o-tag").joinToString { t -> t.text() } }
-        }.filter { desc -> !desc.second.isNullOrBlank() }
-            .joinToString("\n\n") { "${it.first}:\n${it.second}" }
-    }
-
     override fun mangaDetailsParse(response: Response): SManga {
-        val document = response.asJsoup()
-        return SManga.create().apply {
-
-            artist = document.select(".o-tag--category:contains(Artist:) .o-tag")?.joinToString { it.text() }
-            author = artist
-
-            genre = parseMangaGenre(document)
-
-            title = document.select("a[title]").text()
-            status = when {
-                title.contains("ongoing", true) -> SManga.ONGOING
-                else -> SManga.COMPLETED
-            }
-
-            description = parseMangaDescription(document)
+        val data = gson.fromJson<JsonObject>(response.body()!!.string())
+        var baseJson = data["data"]["album"]["get"]
+        var manga = SManga.create()
+        manga.url = baseJson["url"].asString
+        manga.title = baseJson["title"].asString
+        manga.thumbnail_url = baseJson["cover"]["url"].asString
+        manga.description = "${baseJson["description"].asString}\n\nImages: ${baseJson["number_of_pictures"].asString}\n GIFs: ${baseJson["number_of_animated_pictures"].asString}"
+        var genreList: String = ""
+        if (baseJson["language"]["title"].asString != "") {
+            genreList = "${baseJson["language"]["title"].asString},"
         }
+        for (jsonElement in baseJson["tags"].asJsonArray) {
+            genreList = "$genreList${jsonElement["text"].asString},"
+        }
+        for (jsonElement in baseJson["genres"].asJsonArray) {
+            genreList = "$genreList${jsonElement["title"].asString},"
+        }
+        for (jsonElement in baseJson["audiences"].asJsonArray) {
+            genreList = "$genreList${jsonElement["title"].asString},"
+        }
+        for (jsonElement in baseJson["labels"].asJsonArray) {
+            genreList = "$genreList${jsonElement.asString},"
+        }
+        genreList = "$genreList${baseJson["content"]["title"].asString}"
+        manga.genre = genreList
+        return manga
     }
 
-    // Popular
+    override fun mangaDetailsRequest(manga: SManga): Request {
+        var id:String = getID(manga.url)
+        return buildAlbumInfoRequest(id)
+    }
 
     override fun popularMangaParse(response: Response): MangasPage = parseAlbumListResponse(response)
 
@@ -595,13 +653,39 @@ abstract class Luscious(
                             page
                             has_next_page
                         }
-                    items {
-                        thumbnails {
-                            url
+                        items {
+                            thumbnails {
+                                url
+                            }
                         }
                     }
                 }
-              }
+            }
+        """.replace("\n", " ").replace("\\s+".toRegex(), " ")
+
+        private val ALBUM_INFO_REQUEST_GQL = """
+            query getAlbumInfo(${'$'}id: ID!) {
+                album {
+                    get(id: ${'$'}id) {
+                        Album {
+                            id
+                            title
+                            tags
+                            is_manga
+                            content
+                            genres
+                            cover
+                            description
+                            audiences
+                            number_of_pictures
+                            number_of_animated_pictures
+                            url
+                            download_url
+                            created
+                            modified
+                        }
+                    }
+                }
             }
         """.replace("\n", " ").replace("\\s+".toRegex(), " ")
     }
