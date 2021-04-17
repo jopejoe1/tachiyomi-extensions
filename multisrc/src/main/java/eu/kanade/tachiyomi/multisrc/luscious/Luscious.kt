@@ -165,7 +165,11 @@ abstract class Luscious(
     }
 
     fun getID(url: String): String{
-        return url.substringAfter("_").replace("/","").trim()
+        var id = url
+        while (id.contains("_")){
+            id = id.substringAfter("_").replace("/","").trim()
+        }
+        return id
     }
 
     override fun chapterListRequest(manga: SManga): Request {
