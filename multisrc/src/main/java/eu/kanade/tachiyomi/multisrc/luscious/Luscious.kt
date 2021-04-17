@@ -318,7 +318,7 @@ abstract class Luscious(
 
     override fun mangaDetailsParse(response: Response): SManga {
         val data = gson.fromJson<JsonObject>(response.body()!!.string())
-        var baseJson = data["data"]["album"]["get"]
+        var baseJson = data["data"]["album"]["get"].asJsonArray
         var manga = SManga.create()
         manga.url = baseJson["url"].asString
         manga.title = baseJson["title"].asString
