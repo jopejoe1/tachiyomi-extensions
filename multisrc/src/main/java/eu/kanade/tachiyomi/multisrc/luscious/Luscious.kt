@@ -203,7 +203,7 @@ abstract class Luscious(
         while (nextPage){
             var url = buildAlbumPicturesPageUrl(id, page, "date_newest")
             val data = gson.fromJson<JsonObject>(client.newCall(GET(url, headers)).execute().body()!!.string())
-            with(data["data"]["picture"]){
+            with(data["data"]["picture"]["list"]){
                 this["items"].asJsonArray.map {
                     val chapter = SChapter.create()
                     //chapter.url = "$baseUrl${this["url"].asString}"
@@ -233,12 +233,12 @@ abstract class Luscious(
                             add(
                                 JsonObject().apply {
                                     addProperty("name", "album_id")
-                                    addProperty("value", id)
+                                    addProperty("value", "$id")
                                 }
                             )
                         }
                     )
-                    addProperty("display", sortPagesByOption)
+                    addProperty("display", "$sortPagesByOption")
                     addProperty("page", page)
                 }
             )
@@ -336,23 +336,23 @@ abstract class Luscious(
                 genreList = "${this["language"]["title"].asString}, "
             }
             if (this["tags"].asString != null) {
-                for (jsonElement in this["tags"].asJsonArray) {
-                    genreList = "$genreList${jsonElement["text"].asString}, "
+                for ((i, jsonElement) in this["tags"].asJsonArray.withIndex()) {
+                    genreList = "$genreList${this["tags"][i]["text"].asString}, "
                 }
             }
             if (this["genres"].asString != null) {
-                for (jsonElement in this["genres"].asJsonArray) {
-                    genreList = "$genreList${jsonElement["title"].asString}, "
+                for ((i, jsonElement) in this["genres"].asJsonArray.withIndex()) {
+                    genreList = "$genreList${this["genres"][i]["text"].asString}, "
                 }
             }
             if (this["audiences"].asString != null) {
-                for (jsonElement in this["audiences"].asJsonArray) {
-                    genreList = "$genreList${jsonElement["title"].asString}, "
+                for ((i, jsonElement) in this["audiences"].asJsonArray.withIndex()) {
+                    genreList = "$genreList${this["audiences"][i]["title"].asString}, "
                 }
             }
             if (this["labels"].asString != null) {
-                for (jsonElement in this["labels"].asJsonArray) {
-                    genreList = "$genreList${jsonElement.asString}, "
+                for ((i, jsonElement) in this["labels"].asJsonArray.withIndex()) {
+                    genreList = "$genreList${this["labels"][i].asString}, "
                 }
             }
             genreList = "$genreList${this["content"]["title"].asString}"
