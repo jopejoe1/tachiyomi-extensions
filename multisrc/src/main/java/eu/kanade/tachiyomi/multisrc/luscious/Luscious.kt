@@ -318,39 +318,40 @@ abstract class Luscious(
 
     override fun mangaDetailsParse(response: Response): SManga {
         val data = gson.fromJson<JsonObject>(response.body()!!.string())
-        var baseJson = data["data"]["album"]["get"].asJsonArray
-        var manga = SManga.create()
-        manga.url = baseJson["url"].asString
-        manga.title = baseJson["title"].asString
-        manga.thumbnail_url = baseJson["cover"]["url"].asString
-        manga.description = "${baseJson["description"].asString}\n\nImages: ${baseJson["number_of_pictures"].asString}\n GIFs: ${baseJson["number_of_animated_pictures"].asString}"
-        var genreList: String = ""
-        if (baseJson["language"]["title"].asString != "") {
-            genreList = "${baseJson["language"]["title"].asString},"
-        }
-        if (baseJson["tags"].asString != ""){
-            for (jsonElement in baseJson["tags"].asJsonArray) {
-                genreList = "$genreList${jsonElement["text"].asString},"
+        with(data["data"]["album"]["get"]) {
+            var manga = SManga.create()
+            manga.url = this["url"].asString
+            manga.title = this["title"].asString
+            manga.thumbnail_url = this["cover"]["url"].asString
+            manga.description = "${this["description"].asString}\n\nImages: ${this["number_of_pictures"].asString}\n GIFs: ${this["number_of_animated_pictures"].asString}"
+            var genreList: String = ""
+            if (this["language"]["title"].asString != "") {
+                genreList = "${this["language"]["title"].asString},"
             }
-        }
-        if (baseJson["tags"].asString != "") {
-            for (jsonElement in baseJson["genres"].asJsonArray) {
-                genreList = "$genreList${jsonElement["title"].asString},"
+            if (this["tags"].asString != null) {
+                for (jsonElement in this["tags"].asJsonArray) {
+                    genreList = "$genreList${jsonElement["text"].asString},"
+                }
             }
-        }
-        if (baseJson["tags"].asString != "") {
-            for (jsonElement in baseJson["audiences"].asJsonArray) {
-                genreList = "$genreList${jsonElement["title"].asString},"
+            if (this["genres"].asString != null) {
+                for (jsonElement in this["genres"].asJsonArray) {
+                    genreList = "$genreList${jsonElement["title"].asString},"
+                }
             }
-        }
-        if (baseJson["tags"].asString != "") {
-            for (jsonElement in baseJson["labels"].asJsonArray) {
-                genreList = "$genreList${jsonElement.asString},"
+            if (this["audiences"].asString != null) {
+                for (jsonElement in this["audiences"].asJsonArray) {
+                    genreList = "$genreList${jsonElement["title"].asString},"
+                }
             }
+            if (this["labels"].asString != null) {
+                for (jsonElement in this["labels"].asJsonArray) {
+                    genreList = "$genreList${jsonElement.asString},"
+                }
+            }
+            genreList = "$genreList${this["content"]["title"].asString}"
+            manga.genre = genreList
+            return manga
         }
-        genreList = "$genreList${baseJson["content"]["title"].asString}"
-        manga.genre = genreList
-        return manga
     }
 
     override fun mangaDetailsRequest(manga: SManga): Request {
