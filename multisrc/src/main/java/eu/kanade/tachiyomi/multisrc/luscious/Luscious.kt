@@ -326,26 +326,26 @@ abstract class Luscious(
             manga.description = "${this["description"].asString}\n\nImages: ${this["number_of_pictures"].asString}\n GIFs: ${this["number_of_animated_pictures"].asString}"
             var genreList: String = ""
             if (this["language"]["title"].asString != "") {
-                genreList = "${this["language"]["title"].asString},"
+                genreList = "${this["language"]["title"].asString}, "
             }
             if (this["tags"].asString != null) {
                 for (jsonElement in this["tags"].asJsonArray) {
-                    genreList = "$genreList${jsonElement["text"].asString},"
+                    genreList = "$genreList${jsonElement["text"].asString}, "
                 }
             }
             if (this["genres"].asString != null) {
                 for (jsonElement in this["genres"].asJsonArray) {
-                    genreList = "$genreList${jsonElement["title"].asString},"
+                    genreList = "$genreList${jsonElement["title"].asString}, "
                 }
             }
             if (this["audiences"].asString != null) {
                 for (jsonElement in this["audiences"].asJsonArray) {
-                    genreList = "$genreList${jsonElement["title"].asString},"
+                    genreList = "$genreList${jsonElement["title"].asString}, "
                 }
             }
             if (this["labels"].asString != null) {
                 for (jsonElement in this["labels"].asJsonArray) {
-                    genreList = "$genreList${jsonElement.asString},"
+                    genreList = "$genreList${jsonElement.asString}, "
                 }
             }
             genreList = "$genreList${this["content"]["title"].asString}"
@@ -646,11 +646,7 @@ abstract class Luscious(
                             page
                             has_next_page
                         }
-                        items {
-                            thumbnails {
-                                url
-                            }
-                        }
+                        items
                     }
                 }
             }
@@ -684,7 +680,10 @@ abstract class Luscious(
                 number_of_animated_pictures
                 url
                 download_url
-                created modified
+                created
+                modified
+                language
+                labels
              }
         """.replace("\n", " ").replace("\\s+".toRegex(), " ")
     }
