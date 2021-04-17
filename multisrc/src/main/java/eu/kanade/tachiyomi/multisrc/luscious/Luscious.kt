@@ -140,22 +140,6 @@ abstract class Luscious(
                         url = it["url"].asString
                         title = it["title"].asString
                         thumbnail_url = it["cover"]["url"].asString
-                        description = it["description"].asString
-                        var genreList: String = ""
-                        if (it["language"]["title"].asString != "") {
-                            genreList = "${it["language"]["title"].asString},"
-                        }
-                        for (jsonElement in it["tags"].asJsonArray) {
-                            genreList = "$genreList${jsonElement["text"].asString},"
-                        }
-                        for (jsonElement in it["genres"].asJsonArray) {
-                            genreList = "$genreList${jsonElement["title"].asString},"
-                        }
-                        for (jsonElement in it["labels"].asJsonArray) {
-                            genreList = "$genreList${jsonElement.asString},"
-                        }
-                        genreList = "$genreList${it["content"]["title"].asString}"
-                        genre = genreList
                     }
                 },
                 this["info"]["has_next_page"].asBoolean
@@ -344,17 +328,25 @@ abstract class Luscious(
         if (baseJson["language"]["title"].asString != "") {
             genreList = "${baseJson["language"]["title"].asString},"
         }
-        for (jsonElement in baseJson["tags"].asJsonArray) {
-            genreList = "$genreList${jsonElement["text"].asString},"
+        if (baseJson["tags"].asString != ""){
+            for (jsonElement in baseJson["tags"].asJsonArray) {
+                genreList = "$genreList${jsonElement["text"].asString},"
+            }
         }
-        for (jsonElement in baseJson["genres"].asJsonArray) {
-            genreList = "$genreList${jsonElement["title"].asString},"
+        if (baseJson["tags"].asString != "") {
+            for (jsonElement in baseJson["genres"].asJsonArray) {
+                genreList = "$genreList${jsonElement["title"].asString},"
+            }
         }
-        for (jsonElement in baseJson["audiences"].asJsonArray) {
-            genreList = "$genreList${jsonElement["title"].asString},"
+        if (baseJson["tags"].asString != "") {
+            for (jsonElement in baseJson["audiences"].asJsonArray) {
+                genreList = "$genreList${jsonElement["title"].asString},"
+            }
         }
-        for (jsonElement in baseJson["labels"].asJsonArray) {
-            genreList = "$genreList${jsonElement.asString},"
+        if (baseJson["tags"].asString != "") {
+            for (jsonElement in baseJson["labels"].asJsonArray) {
+                genreList = "$genreList${jsonElement.asString},"
+            }
         }
         genreList = "$genreList${baseJson["content"]["title"].asString}"
         manga.genre = genreList
