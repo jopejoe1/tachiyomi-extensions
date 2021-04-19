@@ -1,7 +1,6 @@
 package eu.kanade.tachiyomi.multisrc.luscious
 
 import generator.ThemeSourceData.MultiLang
-import generator.ThemeSourceData.SingleLang
 import generator.ThemeSourceGenerator
 
 class LusciousGenerator : ThemeSourceGenerator {
