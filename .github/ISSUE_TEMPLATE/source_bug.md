@@ -1,45 +1,51 @@
----
-name: "🐞 Bug report"
-title: "[Bug] <Source Name>: <short description>"
-about: "Report a bug"
-labels: "bug"
----
 
-**PLEASE READ THIS**
-
-I acknowledge that:
-
-- I have updated:
-  - To the latest version of the app (stable is v0.10.9)
-  - All extensions
-- I have tried the troubleshooting guide: https://tachiyomi.org/help/guides/troubleshooting-problems/
-- If this is an issue with the app itself, that I should be opening an issue in https://github.com/tachiyomiorg/tachiyomi
-- I have searched the existing issues and this is new ticket **NOT** a duplicate or related to another open issue
-- For source requests, I have checked the list of existing extensions including the multi-source spreadsheet: https://tachiyomi.org/extensions/
-- I will fill out the title and the information in this template
-
-Note that the issue will be automatically closed if you do not fill out the title or requested information.
-
-**DELETE THIS SECTION IF YOU HAVE READ AND ACKNOWLEDGED IT**
-
----
-
-## Device information
-- Tachiyomi version: ?
-- Android version: ?
-
-## Source information
-- Name: ?
-- Extension version: ?
-
-## Steps to reproduce
-1. First Step
-2. Second Step
-
-### Expected behavior
-Describe what should have happened
-
-### Actual behavior
-Describe what happens instead
-
-## Other details
+name: Bug Report
+description: File a bug report
+labels: [bug, needs-triage]
+issue_body: false
+body:
+- type: markdown
+  attributes:
+    value: |
+      If you need help with running Minecraft, please visit us [on our Discord](https://discord.gg/multimc) before making a bug report.
+      Before submitting a bug report, please make sure you have read this *entire* form, and that:
+      * You have read the [FAQ](https://github.com/MultiMC/MultiMC5/wiki/FAQ) and it has not answered your question
+      * Your bug is not caused by Minecraft or any mods you have installed.
+      * Your issue has not been reported before, [make sure to use the search function!](https://github.com/MultiMC/MultiMC5/issues)
+      **Do not forget to give your issue a descriptive title.** "Bug in the instance screen" makes it hard to distinguish issues at a glance.
+- type: dropdown
+  attributes:
+    label: Operating System
+    description: If you know this bug occurs on multiple operating systems, select all you have tested.
+    multiple: true
+    options:
+    - Windows
+    - macOS
+    - Linux
+    - Other
+- type: textarea
+  attributes:
+    label: Description of bug
+    description: What did you expect to happen, what happened, and why is it incorrect?
+    placeholder: The cat button should show a cat, but it showed a dog instead!
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Steps to reproduce
+    description: A bulleted list, or an exported instance if relevant.
+    placeholder: "* Press the cat button"
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Suspected cause
+    description: If you know what could be causing this bug, describe it here.
+  validations:
+    required: false
+- type: checkboxes
+  attributes:
+    label: This issue is unique
+    options:
+    - label: I have searched the issue tracker and did not find an issue describing my bug.
+      required: true     
