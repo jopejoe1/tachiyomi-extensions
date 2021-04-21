@@ -1,7 +1,7 @@
 name: Bug Report
 description: File a bug report
 labels: [bug, needs-triage]
-issue_body: false
+issue_body: true
 body:
 - type: markdown
   attributes:
