@@ -1,0 +1,15 @@
+name: "Bug"
+description: "Report a Bug"
+title: "[Bug]"
+labels: "bug"
+assignees: ""
+issue_body: false
+body:
+- type: input
+  attributes:
+    label: "version"
+    description: "Type in your TAchiyomi version"
+    placeholder: "r344"
+    value: "text"
+  validations:
+    required: true
