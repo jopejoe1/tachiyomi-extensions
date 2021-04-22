@@ -204,7 +204,7 @@ abstract class Luscious(
             manga.title = this["title"].asString
             manga.thumbnail_url = this["cover"]["url"].asString
             manga.status = 2
-            manga.description = "${this["description"].asString}\n\nPictures: ${this["number_of_pictures"].asString}\n Animated Pictures: ${this["number_of_animated_pictures"].asString}"
+            manga.description = "${this["description"].asString}\n\nPictures: ${this["number_of_pictures"].asString}\nAnimated Pictures: ${this["number_of_animated_pictures"].asString}"
             var genreList = ""
             genreList = "${this["language"]["title"].asString}, "
             //if (this["tags"].asString != null) {
