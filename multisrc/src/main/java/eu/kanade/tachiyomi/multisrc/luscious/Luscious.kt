@@ -215,6 +215,9 @@ abstract class Luscious(
             for ((i, _) in this["audiences"].asJsonArray.withIndex()) {
                 genreList = "$genreList, ${this["audiences"][i]["title"].asString}"
             }
+            for ((i, _) in this["tags"].asJsonArray.withIndex()) {
+                genreList = "$genreList${this["tags"][i]["text"].asString}, "
+            }
             genreList = "$genreList, ${this["content"]["title"].asString}"
             //if (this["tags"].asString != null) {
             //    for ((i, _) in this["tags"].asJsonArray.withIndex()) {
@@ -229,7 +232,7 @@ abstract class Luscious(
     private fun singlechapterParse(response: Response, id: String): List<SChapter> {
         val chapters = mutableListOf<SChapter>()
         val ducument = gson.fromJson<JsonObject>(response.body()!!.string())
-        with(ducument["data"]["album"]["list"]) {
+        with(ducument["data"]["album"]["get"]) {
             val chapter = SChapter.create()
             if (this["modified"].asLong != null) {
                 chapter.date_upload = this["modified"].asLong
@@ -647,19 +650,19 @@ abstract class Luscious(
     """.trimIndent()
 
     val imageListQuery = """
-        query AlbumListOwnPictures(${"$"}input: PictureListInput!) {
- 	        picture {
- 		        list(input: ${"$"}input) {
- 			        info { ...FacetCollectionInfo }
- 			        items { ...PictureStandardWithoutAlbum }
- 		        }
- 	        }
+        query AlbumListOwnPictures(%24input%3A PictureListInput!) {
+	        picture {
+		        list(input%3A %24input) {
+			        info { ...FacetCollectionInfo }
+			        items { ...PictureStandardWithoutAlbum }
+		        }
+	        }
         }
         fragment FacetCollectionInfo on FacetCollectionInfo {
- 	        page has_next_page has_previous_page total_items total_pages items_per_page url_complete
+	        page has_next_page has_previous_page total_items total_pages items_per_page url_complete
         }
         fragment PictureStandardWithoutAlbum on Picture {
- 	        __typename id title description created like_status number_of_comments number_of_favorites moderation_status width height resolution aspect_ratio url_to_original url_to_video is_animated position tags { category text url } permissions url thumbnails { width height size url }
+	        __typename id title description created like_status number_of_comments number_of_favorites moderation_status width height resolution aspect_ratio url_to_original url_to_video is_animated position tags { category text url } permissions url thumbnails { width height size url }
         }
     """.trimIndent()
 
