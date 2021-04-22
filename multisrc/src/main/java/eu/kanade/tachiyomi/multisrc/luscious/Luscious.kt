@@ -204,32 +204,32 @@ abstract class Luscious(
             manga.title = this["title"].asString
             manga.thumbnail_url = this["cover"]["url"].asString
             manga.description = "${this["description"].asString}\n\nPictures: ${this["number_of_pictures"].asString}\n Animated Pictures: ${this["number_of_animated_pictures"].asString}"
-            var genreList = ""
-            if (this["language"]["title"].asString != "") {
-                genreList = "${this["language"]["title"].asString}, "
-            }
-            if (this["tags"].asString != null) {
-                for ((i, _) in this["tags"].asJsonArray.withIndex()) {
-                    genreList = "$genreList${this["tags"][i]["text"].asString}, "
-                }
-            }
-            if (this["genres"].asString != null) {
-                for ((i, _) in this["genres"].asJsonArray.withIndex()) {
-                    genreList = "$genreList${this["genres"][i]["text"].asString}, "
-                }
-            }
-            if (this["audiences"].asString != null) {
-                for ((i, _) in this["audiences"].asJsonArray.withIndex()) {
-                    genreList = "$genreList${this["audiences"][i]["title"].asString}, "
-                }
-            }
-            if (this["labels"].asString != null) {
-                for ((i, _) in this["labels"].asJsonArray.withIndex()) {
-                    genreList = "$genreList${this["labels"][i].asString}, "
-                }
-            }
-            genreList = "$genreList${this["content"]["title"].asString}"
-            manga.genre = genreList
+          //  var genreList = ""
+            //if (this["language"]["title"].asString != "") {
+            //    genreList = "${this["language"]["title"].asString}, "
+            //}
+            //if (this["tags"].asString != null) {
+            //    for ((i, _) in this["tags"].asJsonArray.withIndex()) {
+             //       genreList = "$genreList${this["tags"][i]["text"].asString}, "
+             //   }
+           // }
+        //    if (this["genres"].asString != null) {
+        //        for ((i, _) in this["genres"].asJsonArray.withIndex()) {
+       //             genreList = "$genreList${this["genres"][i]["text"].asString}, "
+       //         }
+        //    }
+        //    if (this["audiences"].asString != null) {
+       //         for ((i, _) in this["audiences"].asJsonArray.withIndex()) {
+       //             genreList = "$genreList${this["audiences"][i]["title"].asString}, "
+       //         }
+       //     }
+        //    if (this["labels"].asString != null) {
+       //         for ((i, _) in this["labels"].asJsonArray.withIndex()) {
+        //            genreList = "$genreList${this["labels"][i].asString}, "
+         //       }
+       //     }
+        //    genreList = "$genreList${this["content"]["title"].asString}"
+      //      manga.genre = genreList
             return manga
         }
     }
