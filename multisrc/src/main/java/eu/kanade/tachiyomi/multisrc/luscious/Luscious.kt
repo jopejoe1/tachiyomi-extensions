@@ -312,6 +312,8 @@ abstract class Luscious(
     )
 
     override fun chapterListParse(response: Response): List<SChapter> = throw UnsupportedOperationException("Not used")
+    override fun pageListParse(response: Response): List<Page> = throw UnsupportedOperationException("Not used")
+    override fun imageUrlParse(response: Response): String = throw UnsupportedOperationException("Not used")
     //Requets
 
     override fun mangaDetailsRequest(manga: SManga): Request {
