@@ -156,7 +156,7 @@ abstract class Luscious(
     private fun buildAlbumInfoRequest(id: String): Request {
         val input = buildAlbumInfoRequestInput(id)
         val url = HttpUrl.parse(apiUrl)!!.newBuilder()
-            .addQueryParameter("operationName", "getAlbumInfo")
+            .addQueryParameter("operationName", "AlbumGet")
             .addQueryParameter("query", albumInfoQuery)
             .addQueryParameter("variables", input.toString())
             .toString()
