@@ -206,16 +206,20 @@ abstract class Luscious(
             manga.status = 2
             manga.description = "${this["description"].asString}\n\nPictures: ${this["number_of_pictures"].asString}\nAnimated Pictures: ${this["number_of_animated_pictures"].asString}"
             var genreList = ""
-            genreList = "${this["language"]["title"].asString}, "
+            genreList = "${this["language"]["title"].asString}"
+            for ((i, _) in this["labels"].asJsonArray.withIndex()) {
+                genreList = "$genreList, ${this["labels"][i].asString}"
+            }
+            for ((i, _) in this["genres"].asJsonArray.withIndex()) {
+                genreList = "$genreList, ${this["genres"][i]["text"].asString}"
+            }
             //if (this["tags"].asString != null) {
             //    for ((i, _) in this["tags"].asJsonArray.withIndex()) {
              //       genreList = "$genreList${this["tags"][i]["text"].asString}, "
              //   }
            // }
         //    if (this["genres"].asString != null) {
-        //        for ((i, _) in this["genres"].asJsonArray.withIndex()) {
-       //             genreList = "$genreList${this["genres"][i]["text"].asString}, "
-       //         }
+        //
         //    }
         //    if (this["audiences"].asString != null) {
        //         for ((i, _) in this["audiences"].asJsonArray.withIndex()) {
