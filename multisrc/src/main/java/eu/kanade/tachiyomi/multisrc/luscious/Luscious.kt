@@ -203,11 +203,10 @@ abstract class Luscious(
             manga.url = this["url"].asString
             manga.title = this["title"].asString
             manga.thumbnail_url = this["cover"]["url"].asString
+            manga.status = 2
             manga.description = "${this["description"].asString}\n\nPictures: ${this["number_of_pictures"].asString}\n Animated Pictures: ${this["number_of_animated_pictures"].asString}"
-          //  var genreList = ""
-            //if (this["language"]["title"].asString != "") {
-            //    genreList = "${this["language"]["title"].asString}, "
-            //}
+            var genreList = ""
+            genreList = "${this["language"]["title"].asString}, "
             //if (this["tags"].asString != null) {
             //    for ((i, _) in this["tags"].asJsonArray.withIndex()) {
              //       genreList = "$genreList${this["tags"][i]["text"].asString}, "
@@ -229,7 +228,7 @@ abstract class Luscious(
          //       }
        //     }
         //    genreList = "$genreList${this["content"]["title"].asString}"
-      //      manga.genre = genreList
+            manga.genre = genreList
             return manga
         }
     }
