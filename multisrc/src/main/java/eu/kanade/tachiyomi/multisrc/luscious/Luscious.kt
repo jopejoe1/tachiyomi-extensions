@@ -209,13 +209,13 @@ abstract class Luscious(
             for ((i, _) in this["labels"].asJsonArray.withIndex()) {
                 genreList = "$genreList, ${this["labels"][i].asString}"
             }
-           /* for ((i, _) in this["genres"].asJsonArray.withIndex()) {
-                genreList = "$genreList, ${this["genres"][i]["text"].asString}"
+            for ((i, _) in this["genres"].asJsonArray.withIndex()) {
+                genreList = "$genreList, ${this["genres"][i]["title"].asString}"
             }
             for ((i, _) in this["audiences"].asJsonArray.withIndex()) {
                 genreList = "$genreList, ${this["audiences"][i]["title"].asString}"
             }
-            genreList = "$genreList, ${this["content"]["title"].asString}"*/
+            genreList = "$genreList, ${this["content"]["title"].asString}"
             //if (this["tags"].asString != null) {
             //    for ((i, _) in this["tags"].asJsonArray.withIndex()) {
              //       genreList = "$genreList${this["tags"][i]["text"].asString}, "
