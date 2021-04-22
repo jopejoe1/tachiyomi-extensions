@@ -218,13 +218,6 @@ abstract class Luscious(
             }
             for ((i, _) in this["tags"].asJsonArray.withIndex()) {
                 genreList = "$genreList, ${this["tags"][i]["text"].asString}"
-                try {
-                    if (this["tags"][i]["category"].asString == "Artist") {
-                        manga.artist = this["tags"][i]["text"].asString.substringAfter(":").trim()
-                        manga.author = manga.artist
-                    }
-                }finally {
-                }
             }
             genreList = "$genreList, ${this["content"]["title"].asString}"
             manga.genre = genreList
