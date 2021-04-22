@@ -1,6 +1,5 @@
 package eu.kanade.tachiyomi.multisrc.luscious
 
-import com.github.salomonbrys.kotson.addProperty
 import com.github.salomonbrys.kotson.fromJson
 import com.github.salomonbrys.kotson.get
 import com.github.salomonbrys.kotson.set
@@ -9,62 +8,49 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import eu.kanade.tachiyomi.network.GET
 import eu.kanade.tachiyomi.network.asObservableSuccess
-import eu.kanade.tachiyomi.source.model.Filter
-import eu.kanade.tachiyomi.source.model.FilterList
-import eu.kanade.tachiyomi.source.model.MangasPage
-import eu.kanade.tachiyomi.source.model.Page
-import eu.kanade.tachiyomi.source.model.SChapter
-import eu.kanade.tachiyomi.source.model.SManga
+import eu.kanade.tachiyomi.source.model.*
 import eu.kanade.tachiyomi.source.online.HttpSource
-import eu.kanade.tachiyomi.util.asJsoup
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
-import org.jsoup.nodes.Document
 import rx.Observable
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 abstract class Luscious(
     override val name: String,
     final override val baseUrl: String,
     final override val lang: String ) : HttpSource() {
 
-  //Based on Luscios single source extension form https://github.com/tachiyomiorg/tachiyomi-extensions/commit/aacf56d0c0ddb173372aac69d798ae998f178377
-  //with modifiaction to make it support multisrc
+    //Define common values
 
     override val supportsLatest: Boolean = true
-    private val apiBaseUrl: String = "$baseUrl/graphql/nobatch/"
-    private val gson = Gson()
+    private val apiUrl = "$baseUrl/graphql/nobatch/"
     override val client: OkHttpClient = network.cloudflareClient
-    private val lusLang: String = lusLang(lang)
-    private fun lusLang(lang: String): String {
-        return when (lang) {
-            "en" -> "1"
-            "ja" -> "2"
-            "es" -> "3"
-            "it" -> "4"
-            "de" -> "5"
-            "fr" -> "6"
-            "zh" -> "8"
-            "ko" -> "9"
-            "pt" -> "100"
-            "th" -> "101"
-            else -> "99"
-        }
+    private inline fun <reified T> Iterable<*>.findInstance() = find { it is T } as? T
+    private val lusLang: String = when (lang) {
+        "en" -> "1"
+        "ja" -> "2"
+        "es" -> "3"
+        "it" -> "4"
+        "de" -> "5"
+        "fr" -> "6"
+        "zh" -> "8"
+        "ko" -> "9"
+        "pt" -> "100"
+        "th" -> "101"
+        else -> "99"
     }
+    private val gson = Gson()
 
-
-    // Common
+    // Build Request URLS
 
     private fun buildAlbumListRequestInput(page: Int, filters: FilterList, query: String = ""): JsonObject {
         val sortByFilter = filters.findInstance<SortBySelectFilter>()!!
         val albumTypeFilter = filters.findInstance<AlbumTypeSelectFilter>()!!
+        val albumSizeFilter = filters.findInstance<AlbumSizeSelectFilter>()!!
         val interestsFilter = filters.findInstance<InterestGroupFilter>()!!
         val languagesFilter = filters.findInstance<LanguageGroupFilter>()!!
+        val restrictGenresFilter = filters.findInstance<RestrictGenresSelectFilter>()!!
         val tagsFilter = filters.findInstance<TagGroupFilter>()!!
         val genreFilter = filters.findInstance<GenreGroupFilter>()!!
         val contentTypeFilter = filters.findInstance<ContentTypeSelectFilter>()!!
@@ -79,11 +65,17 @@ abstract class Luscious(
                         "filters",
                         JsonArray().apply {
 
-                            if (contentTypeFilter.selected != FILTER_VALUE_IGNORE)
+                            if (contentTypeFilter.selected != "<ignore>")
                                 add(contentTypeFilter.toJsonObject("content_id"))
 
-                            if (albumTypeFilter.selected != FILTER_VALUE_IGNORE)
+                            if (albumTypeFilter.selected != "<ignore>")
                                 add(albumTypeFilter.toJsonObject("album_type"))
+
+                            if (albumSizeFilter.selected != "<ignore>")
+                                add(albumSizeFilter.toJsonObject("picture_count_rank"))
+
+                            if (restrictGenresFilter.selected != "<ignore>")
+                                add(restrictGenresFilter.toJsonObject("restrict_genres"))
 
                             with(interestsFilter) {
                                 if (this.selected.isEmpty()) {
@@ -121,15 +113,62 @@ abstract class Luscious(
         }
     }
 
+    private fun buildAlbumInfoRequestInput(id: String): JsonObject {
+        return JsonObject().apply {
+            addProperty("id", id)
+        }
+    }
+
+    private fun buildImageListRequestInput(page: Int, id: String, display: String): JsonObject {
+        return JsonObject().apply {
+            add(
+                "input",
+                JsonObject().apply {
+                    addProperty("display", display)
+                    addProperty("page", page)
+                    add(
+                        "filters",
+                        JsonArray().apply {
+
+                            addProperty("album_id", id)
+                        }
+                    )
+                }
+            )
+        }
+    }
+
     private fun buildAlbumListRequest(page: Int, filters: FilterList, query: String = ""): Request {
         val input = buildAlbumListRequestInput(page, filters, query)
-        val url = HttpUrl.parse(apiBaseUrl)!!.newBuilder()
+        val url = HttpUrl.parse(apiUrl)!!.newBuilder()
             .addQueryParameter("operationName", "AlbumList")
-            .addQueryParameter("query", ALBUM_LIST_REQUEST_GQL)
+            .addQueryParameter("query", albumListQuery)
             .addQueryParameter("variables", input.toString())
             .toString()
         return GET(url, headers)
     }
+
+    private fun buildAlbumInfoRequest(id: String): Request {
+        val input = buildAlbumInfoRequestInput(id)
+        val url = HttpUrl.parse(apiUrl)!!.newBuilder()
+            .addQueryParameter("operationName", "getAlbumInfo")
+            .addQueryParameter("query", albumInfoQuery)
+            .addQueryParameter("variables", input.toString())
+            .toString()
+        return GET(url, headers)
+    }
+
+    private fun buildImageListRequest(id: String, display: String, page: Int): Request {
+        val input = buildImageListRequestInput(page, id, display)
+        val url = HttpUrl.parse(apiUrl)!!.newBuilder()
+            .addQueryParameter("operationName", "AlbumListOwnPictures")
+            .addQueryParameter("query", imageListQuery)
+            .addQueryParameter("variables", input.toString())
+            .toString()
+        return GET(url, headers)
+    }
+
+    // Parsing
 
     private fun parseAlbumListResponse(response: Response): MangasPage {
         val data = gson.fromJson<JsonObject>(response.body()!!.string())
@@ -139,6 +178,11 @@ abstract class Luscious(
                     SManga.create().apply {
                         url = it["url"].asString
                         title = it["title"].asString
+                        genre = if (it["is_manga"].asBoolean){
+                            "Manga"
+                        } else {
+                            "Picture Set"
+                        }
                         thumbnail_url = it["cover"]["url"].asString
                     }
                 },
@@ -147,183 +191,6 @@ abstract class Luscious(
         }
     }
 
-    // Latest
-
-    override fun latestUpdatesRequest(page: Int): Request = buildAlbumListRequest(page, getSortFilters(LATEST_DEFAULT_SORT_STATE))
-
-    override fun latestUpdatesParse(response: Response): MangasPage = parseAlbumListResponse(response)
-
-    // Chapters
-
-    private fun buildAlbumInfoRequest(id: String): Request {
-        val url = HttpUrl.parse(apiBaseUrl)!!.newBuilder()
-            .addQueryParameter("operationName", "getAlbumInfo")
-            .addQueryParameter("query", ALBUM_INFO_REQUEST_GQL)
-            .addQueryParameter("variables", "{\"id\": \"$id\"}")
-            .toString()
-        return GET(url, headers)
-    }
-
-    private fun getID(url: String): String{
-        var id = url
-        while (id.contains("_")){
-            id = id.substringAfter("_").replace("/","").trim()
-        }
-        return id
-    }
-
-    override fun chapterListRequest(manga: SManga): Request {
-        val id:String = getID(manga.url)
-        return buildAlbumInfoRequest(id)
-    }
-
-    override fun chapterListParse(response: Response): List<SChapter> {
-        val chapters = mutableListOf<SChapter>()
-        val data = gson.fromJson<JsonObject>(response.body()!!.string())
-        with(data["data"]["album"]["get"]) {
-            return when (this["is_manga"].asBoolean) {
-                true -> {
-                    val chapter = SChapter.create()
-                    chapter.url = "$baseUrl${this["url"].asString}"
-                    chapter.name = "Chapter"
-                    chapter.date_upload = this["modified"].asLong
-                    chapter.chapter_number = 1f
-                    chapters.add(chapter)
-                    chapters
-                }
-                false -> pictureChapters(this["id"].asString)
-            }
-        }
-    }
-
-    private fun pictureChapters(id: String): List<SChapter>{
-        val chapters = mutableListOf<SChapter>()
-        var page = 1
-        var nextPage = true
-        while (nextPage){
-            val url = buildAlbumPicturesPageUrl(id, page, "date_newest")
-            val response: Response = client.newCall(GET(url, headers)).execute()
-            val data = gson.fromJson<JsonObject>(response.body()!!.string())
-            with(data["data"]["picture"]["list"]){
-                this["items"].asJsonArray.map {
-                    val chapter = SChapter.create()
-                    //chapter.url = "$baseUrl${this["url"].asString}"
-                    chapter.url = this["thumbnails"][0]["url"].asString
-                    chapter.name = this["title"].asString
-                    chapter.date_upload = this["created"].asLong
-                    chapter.chapter_number = 1f
-                    chapters.add(chapter)
-                }
-                nextPage = this["info"]["has_next_page"].asBoolean
-            }
-            page++
-        }
-        return chapters
-    }
-
-    // Pages
-
-    private fun buildAlbumPicturesRequestInput(id: String, page: Int, sortPagesByOption: String): JsonObject {
-        return JsonObject().apply {
-            addProperty(
-                "input",
-                JsonObject().apply {
-                    addProperty(
-                        "filters",
-                        JsonArray().apply {
-                            add(
-                                JsonObject().apply {
-                                    addProperty("name", "album_id")
-                                    addProperty("value", id)
-                                }
-                            )
-                        }
-                    )
-                    addProperty("display", sortPagesByOption)
-                    addProperty("page", page)
-                }
-            )
-        }
-    }
-
-    private fun buildAlbumPicturesPageUrl(id: String, page: Int, sortPagesByOption: String): String {
-        val input = buildAlbumPicturesRequestInput(id, page, sortPagesByOption)
-        return HttpUrl.parse(apiBaseUrl)!!.newBuilder()
-            .addQueryParameter("operationName", "AlbumListOwnPictures")
-            .addQueryParameter("query", ALBUM_PICTURES_REQUEST_GQL)
-            .addQueryParameter("variables", input.toString())
-            .toString()
-    }
-
-    private fun parseAlbumPicturesResponse(response: Response, sortPagesByOption: String): List<Page> {
-
-        val id = response.request().url().queryParameter("variables").toString()
-            .let { gson.fromJson<JsonObject>(it)["input"]["filters"].asJsonArray }
-            .let { it.first { f -> f["name"].asString == "album_id" } }
-            .let { it["value"].asString }
-
-        val data = gson.fromJson<JsonObject>(response.body()!!.string())
-            .let { it["data"]["picture"]["list"].asJsonObject }
-
-        return data["items"].asJsonArray.mapIndexed { index, it ->
-            Page(index, imageUrl = it["thumbnails"][0]["url"].asString)
-        } + if (data["info"]["total_pages"].asInt > 1) { // get 2nd page onwards
-            (ITEMS_PER_PAGE until data["info"]["total_items"].asInt).chunked(ITEMS_PER_PAGE).mapIndexed { page, indices ->
-                indices.map { Page(it, url = buildAlbumPicturesPageUrl(id, page + 2, sortPagesByOption)) }
-            }.flatten()
-        } else emptyList()
-    }
-
-    private fun getAlbumSortPagesOption(chapter: SChapter): Observable<String> {
-        return client.newCall(GET(chapter.url))
-            .asObservableSuccess()
-            .map {
-                val sortByKey = it.asJsoup().select(".o-input-select:contains(Sorted By) .o-select-value")?.text() ?: ""
-                ALBUM_PICTURES_SORT_OPTIONS.getValue(sortByKey)
-            }
-    }
-
-    override fun fetchPageList(chapter: SChapter): Observable<List<Page>> {
-        when {
-            chapter.url.contains("$baseUrl/albums/") -> {
-                val id = chapter.url.substringAfterLast("_").removeSuffix("/")
-
-                return getAlbumSortPagesOption(chapter)
-                    .concatMap { sortPagesByOption ->
-                        client.newCall(GET(buildAlbumPicturesPageUrl(id, 1, sortPagesByOption)))
-                            .asObservableSuccess()
-                            .map { parseAlbumPicturesResponse(it, sortPagesByOption) }
-                    }
-            }
-            else -> {
-                throw Exception("Stub!")
-            }
-        }
-
-    }
-
-    override fun pageListParse(response: Response): List<Page> = throw UnsupportedOperationException("Not used")
-
-
-    override fun imageUrlParse(response: Response): String = throw UnsupportedOperationException("Not used")
-
-    override fun fetchImageUrl(page: Page): Observable<String> {
-        if (page.imageUrl != null) {
-            return Observable.just(page.imageUrl)
-        }
-
-        return client.newCall(GET(page.url, headers))
-            .asObservableSuccess()
-            .map {
-                val data = gson.fromJson<JsonObject>(it.body()!!.string()).let { data ->
-                    data["data"]["picture"]["list"].asJsonObject
-                }
-                data["items"].asJsonArray[page.index % 50].asJsonObject["thumbnails"][0]["url"].asString
-            }
-    }
-
-    // Details
-
     override fun mangaDetailsParse(response: Response): SManga {
         val data = gson.fromJson<JsonObject>(response.body()!!.string())
         with(data["data"]["album"]["get"]) {
@@ -331,7 +198,7 @@ abstract class Luscious(
             manga.url = this["url"].asString
             manga.title = this["title"].asString
             manga.thumbnail_url = this["cover"]["url"].asString
-            manga.description = "${this["description"].asString}\n\nImages: ${this["number_of_pictures"].asString}\n GIFs: ${this["number_of_animated_pictures"].asString}"
+            manga.description = "${this["description"].asString}\n\nPictures: ${this["number_of_pictures"].asString}\n Animated Pictures: ${this["number_of_animated_pictures"].asString}"
             var genreList = ""
             if (this["language"]["title"].asString != "") {
                 genreList = "${this["language"]["title"].asString}, "
@@ -362,27 +229,132 @@ abstract class Luscious(
         }
     }
 
-    override fun mangaDetailsRequest(manga: SManga): Request {
-        val id:String = getID(manga.url)
-        return buildAlbumInfoRequest(id)
+    private fun singlechapterParse(response: Response, id: String): List<SChapter> {
+        val chapters = mutableListOf<SChapter>()
+        val ducument = gson.fromJson<JsonObject>(response.body()!!.string())
+        with(ducument["data"]["album"]["list"]) {
+            val chapter = SChapter.create()
+            if (this["modified"].asLong != null) {
+                chapter.date_upload = this["modified"].asLong
+            } else {
+                chapter.date_upload = this["created"].asLong
+            }
+            chapter.name = "Chapter"
+            chapter.chapter_number = 1F
+            chapter.url = id
+            chapters.add(chapter)
+        }
+        return chapters
     }
 
+    private fun chapterListParse(response: Response, id: String): List<SChapter> {
+        val chapters = mutableListOf<SChapter>()
+        var document = gson.fromJson<JsonObject>(response.body()!!.string())
+        var moreChapters = true
+        var nextPage = 2
+
+        while (moreChapters) {
+            document["data"]["picture"]["list"]["items"].asJsonArray.map {
+                chapters.add(
+                    SChapter.create().apply {
+                        url = it["thumbnails"][0]["url"].asString
+                        name = it["title"].asString
+                        date_upload = it["created"].asLong
+                        chapter_number = it["position"].asFloat
+                    }
+                )
+            }
+            moreChapters = document["data"]["picture"]["list"]["info"]["has_next_page"].asBoolean
+            val nextPageUrl =  client.newCall(buildImageListRequest(id, "date_newest", nextPage)).execute()
+            document = gson.fromJson<JsonObject>(nextPageUrl.body()!!.string())
+            nextPage++
+        }
+        return chapters
+    }
+
+    private fun parsePage(response: Response, id: String): List<Page> {
+        val pages = mutableListOf<Page>()
+        var document = gson.fromJson<JsonObject>(response.body()!!.string())
+        var nextPage = 2
+        var moreChapters = true
+        while (moreChapters) {
+            document["data"]["picture"]["list"]["items"].asJsonArray.map {
+                var url = it["thumbnails"][0]["url"].asString
+                pages.add(Page(it["position"].asInt, url, url))
+            }
+            moreChapters = document["data"]["picture"]["list"]["info"]["has_next_page"].asBoolean
+            val nextPageUrl =  client.newCall(buildImageListRequest(id, "position", nextPage)).execute()
+            document = gson.fromJson<JsonObject>(nextPageUrl.body()!!.string())
+            nextPage++
+        }
+        return pages
+    }
+
+    // Latest, Popular & Search
+
+    override fun latestUpdatesRequest(page: Int): Request = buildAlbumListRequest(page, getSortFilters(7))
+    override fun latestUpdatesParse(response: Response): MangasPage = parseAlbumListResponse(response)
     override fun popularMangaParse(response: Response): MangasPage = parseAlbumListResponse(response)
-
-    override fun popularMangaRequest(page: Int): Request = buildAlbumListRequest(page, getSortFilters(POPULAR_DEFAULT_SORT_STATE))
-
-    // Search
-
+    override fun popularMangaRequest(page: Int): Request = buildAlbumListRequest(page, getSortFilters(0))
     override fun searchMangaParse(response: Response): MangasPage = parseAlbumListResponse(response)
-
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request = buildAlbumListRequest(
         page,
         filters.let {
-            if (it.isEmpty()) getSortFilters(SEARCH_DEFAULT_SORT_STATE)
+            if (it.isEmpty()) getSortFilters(0)
             else it
         },
         query
     )
+
+    //Requets
+
+    override fun mangaDetailsRequest(manga: SManga): Request {
+        val id = manga.url.substringAfterLast("_").removeSuffix("/")
+        return buildAlbumInfoRequest(id)
+    }
+
+    private fun checkManga(id:String):Boolean{
+        val mangaCheck = client.newCall(buildAlbumInfoRequest(id)).execute()
+        val mangaCheckJson = gson.fromJson<JsonObject>(mangaCheck.body()!!.string())
+        with(mangaCheckJson["data"]["album"]["list"]) {
+            return this["is_manga"].asBoolean
+        }
+    }
+    override fun fetchChapterList(manga: SManga): Observable<List<SChapter>> {
+        val id = manga.url.substringAfterLast("_").removeSuffix("/")
+        val isManga = checkManga(id)
+        if (isManga) {
+            return client.newCall(buildAlbumInfoRequest(id))
+                .asObservableSuccess()
+                .map { response ->
+                    singlechapterParse(response, id)
+                }
+        } else {
+            return client.newCall(buildImageListRequest(id, "date_newest", 1))
+                .asObservableSuccess()
+                .map { response ->
+                    chapterListParse(response, id)
+                }
+        }
+    }
+
+
+    override fun fetchPageList(chapter: SChapter): Observable<List<Page>> {
+        when {
+            chapter.url.contains("http") -> {
+                throw Exception("Stub!")
+            }
+            else -> {
+                return client.newCall(buildImageListRequest(chapter.url, "position", 1))
+                    .asObservableSuccess()
+                    .map { response ->
+                        parsePage(response, chapter.url)
+                    }
+            }
+        }
+    }
+
+    // Filters
 
     class TriStateFilterOption(name: String, val value: String) : Filter.TriState(name)
     abstract class TriStateGroupFilter(name: String, options: List<TriStateFilterOption>) : Filter.Group<TriStateFilterOption>(name, options) {
@@ -429,29 +401,33 @@ abstract class Luscious(
     }
     class SortBySelectFilter(options: List<SelectFilterOption>, default: Int) : SelectFilter("Sort By", options, default)
     class AlbumTypeSelectFilter(options: List<SelectFilterOption>) : SelectFilter("Album Type", options)
+    class RestrictGenresSelectFilter(options: List<SelectFilterOption>) : SelectFilter("Restrict Genres", options)
+    class AlbumSizeSelectFilter(options: List<SelectFilterOption>) : SelectFilter("Album Size", options)
     class ContentTypeSelectFilter(options: List<SelectFilterOption>) : SelectFilter("Content Type", options)
 
-    override fun getFilterList(): FilterList = getSortFilters(POPULAR_DEFAULT_SORT_STATE)
+    override fun getFilterList(): FilterList = getSortFilters(0)
 
     private fun getSortFilters(sortState: Int) = FilterList(
-        SortBySelectFilter(getSortFilters(), sortState),
+        SortBySelectFilter(getSortOptionsFilters(), sortState),
         AlbumTypeSelectFilter(getAlbumTypeFilters()),
         ContentTypeSelectFilter(getContentTypeFilters()),
+        AlbumSizeSelectFilter(getAlbumSizeFilters()),
         InterestGroupFilter(getInterestFilters()),
         LanguageGroupFilter(getLanguageFilters()),
         TagGroupFilter(getTagFilters()),
+        RestrictGenresSelectFilter(getRestrictGenresFilters()),
         GenreGroupFilter(getGenreFilters())
     )
 
-    private fun getSortFilters() = listOf(
+    private fun getSortOptionsFilters() = listOf(
         SelectFilterOption("Rating - All Time", "rating_all_time"),
         SelectFilterOption("Rating - Last 7 Days", "rating_7_days"),
         SelectFilterOption("Rating - Last 14 Days", "rating_14_days"),
         SelectFilterOption("Rating - Last 30 Days", "rating_30_days"),
         SelectFilterOption("Rating - Last 90 Days", "rating_90_days"),
         SelectFilterOption("Rating - Last Year", "rating_1_year"),
-        SelectFilterOption("Rating - Last Year", "rating_1_year"),
         SelectFilterOption("Date - Newest First", "date_newest"),
+        SelectFilterOption("Date - 2021", "date_2021"),
         SelectFilterOption("Date - 2020", "date_2020"),
         SelectFilterOption("Date - 2019", "date_2019"),
         SelectFilterOption("Date - 2018", "date_2018"),
@@ -464,20 +440,65 @@ abstract class Luscious(
         SelectFilterOption("Date - Upcoming", "date_upcoming"),
         SelectFilterOption("Date - Trending", "date_trending"),
         SelectFilterOption("Date - Featured", "date_featured"),
-        SelectFilterOption("Date - Last Viewed", "date_last_interaction")
+        SelectFilterOption("Date - Last Viewed", "date_last_interaction"),
+        SelectFilterOption("First Letter - Any", "alpha_any"),
+        SelectFilterOption("First Letter - A", "alpha_a"),
+        SelectFilterOption("First Letter - B", "alpha_b"),
+        SelectFilterOption("First Letter - C", "alpha_c"),
+        SelectFilterOption("First Letter - D", "alpha_d"),
+        SelectFilterOption("First Letter - E", "alpha_e"),
+        SelectFilterOption("First Letter - F", "alpha_f"),
+        SelectFilterOption("First Letter - G", "alpha_g"),
+        SelectFilterOption("First Letter - H", "alpha_h"),
+        SelectFilterOption("First Letter - I", "alpha_i"),
+        SelectFilterOption("First Letter - J", "alpha_j"),
+        SelectFilterOption("First Letter - K", "alpha_k"),
+        SelectFilterOption("First Letter - L", "alpha_l"),
+        SelectFilterOption("First Letter - M", "alpha_m"),
+        SelectFilterOption("First Letter - N", "alpha_n"),
+        SelectFilterOption("First Letter - O", "alpha_o"),
+        SelectFilterOption("First Letter - P", "alpha_p"),
+        SelectFilterOption("First Letter - Q", "alpha_q"),
+        SelectFilterOption("First Letter - R", "alpha_r"),
+        SelectFilterOption("First Letter - S", "alpha_s"),
+        SelectFilterOption("First Letter - T", "alpha_t"),
+        SelectFilterOption("First Letter - U", "alpha_u"),
+        SelectFilterOption("First Letter - V", "alpha_v"),
+        SelectFilterOption("First Letter - W", "alpha_w"),
+        SelectFilterOption("First Letter - X", "alpha_x"),
+        SelectFilterOption("First Letter - Y", "alpha_y"),
+        SelectFilterOption("First Letter - Z", "alpha_z"),
+
     )
 
     private fun getAlbumTypeFilters() = listOf(
+        SelectFilterOption("All", "<ignore>"),
         SelectFilterOption("Manga", "manga"),
-        SelectFilterOption("All", FILTER_VALUE_IGNORE),
         SelectFilterOption("Pictures", "pictures")
     )
 
+    private fun getRestrictGenresFilters() = listOf(
+        SelectFilterOption("None", "<ignore>"),
+        SelectFilterOption("Loose", "loose"),
+        SelectFilterOption("Strict", "strict")
+    )
+
     private fun getContentTypeFilters() = listOf(
-        SelectFilterOption("All", FILTER_VALUE_IGNORE),
+        SelectFilterOption("All", "<ignore>"),
         SelectFilterOption("Hentai", "0"),
         SelectFilterOption("Non-Erotic", "5"),
         SelectFilterOption("Real People", "6")
+    )
+
+    private fun getAlbumSizeFilters() = listOf(
+        SelectFilterOption("All", "<ignore>"),
+        SelectFilterOption("0-25", "0"),
+        SelectFilterOption("0-50", "1"),
+        SelectFilterOption("50-100", "2"),
+        SelectFilterOption("100-200", "3"),
+        SelectFilterOption("200-800", "4"),
+        SelectFilterOption("800-3200", "5"),
+        SelectFilterOption("3200-12800", "6"),
     )
 
     private fun getInterestFilters() = listOf(
@@ -492,19 +513,20 @@ abstract class Luscious(
     )
 
     private fun getLanguageFilters() = listOf(
-        CheckboxFilterOption("English", ENGLISH_LUS_LANG_VAL, false),
-        CheckboxFilterOption("Japanese", JAPANESE_LUS_LANG_VAL, false),
-        CheckboxFilterOption("Spanish", SPANISH_LUS_LANG_VAL, false),
-        CheckboxFilterOption("Italian", ITALIAN_LUS_LANG_VAL, false),
-        CheckboxFilterOption("German", GERMAN_LUS_LANG_VAL, false),
-        CheckboxFilterOption("French", FRENCH_LUS_LANG_VAL, false),
-        CheckboxFilterOption("Chinese", CHINESE_LUS_LANG_VAL, false),
-        CheckboxFilterOption("Korean", KOREAN_LUS_LANG_VAL, false),
-        CheckboxFilterOption("Others", OTHERS_LUS_LANG_VAL, false),
-        CheckboxFilterOption("Portugese", PORTUGESE_LUS_LANG_VAL, false),
-        CheckboxFilterOption("Thai", THAI_LUS_LANG_VAL, false)
+        CheckboxFilterOption("English", "1", false),
+        CheckboxFilterOption("Japanese", "2", false),
+        CheckboxFilterOption("Spanish", "3", false),
+        CheckboxFilterOption("Italian", "4", false),
+        CheckboxFilterOption("German", "5", false),
+        CheckboxFilterOption("French", "6", false),
+        CheckboxFilterOption("Chinese", "8", false),
+        CheckboxFilterOption("Korean", "9", false),
+        CheckboxFilterOption("Others", "99", false),
+        CheckboxFilterOption("Portugese", "100", false),
+        CheckboxFilterOption("Thai", "101", false)
     ).filterNot { it.value == lusLang }
 
+    // This is not a full list of Tags
     private fun getTagFilters() = listOf(
         TriStateFilterOption("Big Breasts", "big_breasts"),
         TriStateFilterOption("Blowjob", "blowjob"),
@@ -588,99 +610,57 @@ abstract class Luscious(
         TriStateFilterOption("Workplace Sex", "50")
     )
 
-    private inline fun <reified T> Iterable<*>.findInstance() = find { it is T } as? T
-
-    private fun SimpleDateFormat.parseOrNull(string: String): Date? {
-        return try {
-            parse(string)
-        } catch (e: ParseException) {
-            null
+    // Query Strings
+    private val albumListQuery = """
+        query AlbumList(${"$"}input: AlbumListInput!) {
+            album {
+                list(input: ${"$"}input) {
+                    info {...FacetCollectionInfo}
+                    items {...AlbumMinimal}
+                }
+            }
         }
-    }
-
-    companion object {
-
-        private val ALBUM_PICTURES_SORT_OPTIONS = hashMapOf(
-            Pair("Sort By Newest", "date_newest"),
-            Pair("Sort By Rating", "rating_all_time")
-        ).withDefault { "position" }
-
-        private const val ITEMS_PER_PAGE = 50
-
-        private val ORDINAL_SUFFIXES = listOf("st", "nd", "rd", "th")
-        private val DATE_FORMATS_WITH_ORDINAL_SUFFIXES = ORDINAL_SUFFIXES.map {
-            SimpleDateFormat("MMMM dd'$it', yyyy", Locale.US)
+        fragment FacetCollectionInfo on FacetCollectionInfo {
+            page has_next_page has_previous_page total_items total_pages items_per_page url_complete
         }
+        fragment AlbumMinimal on Album {
+            __typename id title labels description created modified like_status moderation_status number_of_favorites number_of_dislikes number_of_pictures number_of_animated_pictures number_of_duplicates slug is_manga url download_url permissions created_by { id url name display_name user_title avatar { url size } } cover { width height size url } language { id title url } tags { category text url count } genres { id title slug url }
+        }
+    """.trimIndent()
 
-        const val ENGLISH_LUS_LANG_VAL = "1"
-        const val JAPANESE_LUS_LANG_VAL = "2"
-        const val SPANISH_LUS_LANG_VAL = "3"
-        const val ITALIAN_LUS_LANG_VAL = "4"
-        const val GERMAN_LUS_LANG_VAL = "5"
-        const val FRENCH_LUS_LANG_VAL = "6"
-        const val CHINESE_LUS_LANG_VAL = "8"
-        const val KOREAN_LUS_LANG_VAL = "9"
-        const val OTHERS_LUS_LANG_VAL = "99"
-        const val PORTUGESE_LUS_LANG_VAL = "100"
-        const val THAI_LUS_LANG_VAL = "101"
-
-        private const val POPULAR_DEFAULT_SORT_STATE = 0
-        private const val LATEST_DEFAULT_SORT_STATE = 7
-        private const val SEARCH_DEFAULT_SORT_STATE = 0
-
-        private const val FILTER_VALUE_IGNORE = "<ignore>"
-
-        private val ALBUM_LIST_REQUEST_GQL = """
-            query AlbumList(${'$'}input: AlbumListInput!) {
-                album {
-                    list(input: ${'$'}input) {
-                        info {
-                            page
-                            has_next_page
-                        }
-                        items
+    val albumInfoQuery = """
+        query AlbumGet(${"$"}id: ID!) {
+            album {
+                get(id: ${"$"}id) {
+                    ... on Album { ...AlbumStandard }
+                    ... on MutationError {
+                        errors {
+                            code message
+                         }
                     }
                 }
             }
-        """.replace("\n", " ").replace("\\s+".toRegex(), " ")
+        }
+        fragment AlbumStandard on Album {
+            __typename id title labels description created modified like_status number_of_favorites number_of_dislikes rating moderation_status marked_for_deletion marked_for_processing number_of_pictures number_of_animated_pictures number_of_duplicates slug is_manga url download_url permissions cover { width height size url } created_by { id url name display_name user_title avatar { url size } } content { id title url } language { id title url } tags { category text url count } genres { id title slug url } audiences { id title url url } last_viewed_picture { id position url } is_featured featured_date featured_by { id url name display_name user_title avatar { url size } }
+        }
+    """.trimIndent()
 
-        private val ALBUM_PICTURES_REQUEST_GQL = """
-            +query+AlbumListOwnPictures(%24input%3A+PictureListInput!)+{+picture+{+list(input%3A+%24input)+{+info+{+...FacetCollectionInfo+}+items+{+...PictureStandardWithoutAlbum+}+}+}+}+fragment+FacetCollectionInfo+on+FacetCollectionInfo+{+page+has_next_page+has_previous_page+total_items+total_pages+items_per_page+url_complete+}+fragment+PictureStandardWithoutAlbum+on+Picture+{+__typename+id+title+description+created+like_status+number_of_comments+number_of_favorites+moderation_status+width+height+resolution+aspect_ratio+url_to_original+url_to_video+is_animated+position+tags+{+category+text+url+}+permissions+url+thumbnails+{+width+height+size+url+}+}+
-        """.replace("\n", " ").replace("\\s+".toRegex(), " ")
+    val imageListQuery = """
+        query AlbumListOwnPictures(${"$"}input: PictureListInput!) {
+ 	        picture {
+ 		        list(input: ${"$"}input) {
+ 			        info { ...FacetCollectionInfo }
+ 			        items { ...PictureStandardWithoutAlbum }
+ 		        }
+ 	        }
+        }
+        fragment FacetCollectionInfo on FacetCollectionInfo {
+ 	        page has_next_page has_previous_page total_items total_pages items_per_page url_complete
+        }
+        fragment PictureStandardWithoutAlbum on Picture {
+ 	        __typename id title description created like_status number_of_comments number_of_favorites moderation_status width height resolution aspect_ratio url_to_original url_to_video is_animated position tags { category text url } permissions url thumbnails { width height size url }
+        }
+    """.trimIndent()
 
-        private val ALBUM_INFO_REQUEST_GQL = """
-            query getAlbumInfo(${"$"}id: ID!) {
-                album {
-                    get(id: ${"$"}id) {
-                        ... on Album {
-                            ...AlbumStandard
-                        }... on MutationError {
-                            errors {
-                                code message
-                            }
-                        }
-                    }
-                }
-            }
-            fragment AlbumStandard on Album{
-                id
-                title
-                tags
-                is_manga
-                content
-                genres
-                cover
-                description
-                audiences
-                number_of_pictures
-                number_of_animated_pictures
-                url
-                download_url
-                created
-                modified
-                language
-                labels
-             }
-        """.replace("\n", " ").replace("\\s+".toRegex(), " ")
-    }
 }
