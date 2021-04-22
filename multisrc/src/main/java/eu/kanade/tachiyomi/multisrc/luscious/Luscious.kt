@@ -134,8 +134,9 @@ abstract class Luscious(
                     add(
                         "filters",
                         JsonArray().apply {
-
-                            addProperty("album_id", id)
+                            JsonObject().apply {
+                                addProperty("album_id", id)
+                            }
                         }
                     )
                 }
