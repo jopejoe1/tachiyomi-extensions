@@ -234,11 +234,7 @@ abstract class Luscious(
         val ducument = gson.fromJson<JsonObject>(response.body()!!.string())
         with(ducument["data"]["album"]["get"]) {
             val chapter = SChapter.create()
-            if (this["modified"].asLong != null) {
-                chapter.date_upload = this["modified"].asLong
-            } else {
-                chapter.date_upload = this["created"].asLong
-            }
+            chapter.date_upload = this["modified"].asLong
             chapter.name = "Chapter"
             chapter.chapter_number = 1F
             chapter.url = id
