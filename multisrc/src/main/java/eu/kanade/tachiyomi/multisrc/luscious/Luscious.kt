@@ -480,8 +480,8 @@ abstract class Luscious(
     )
 
     private fun getAlbumTypeFilters() = listOf(
-        SelectFilterOption("All", "<ignore>"),
         SelectFilterOption("Manga", "manga"),
+        SelectFilterOption("All", "<ignore>"),
         SelectFilterOption("Pictures", "pictures")
     )
 
