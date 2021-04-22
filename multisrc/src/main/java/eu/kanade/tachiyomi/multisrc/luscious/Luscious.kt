@@ -216,15 +216,15 @@ abstract class Luscious(
                 genreList = "$genreList, ${this["audiences"][i]["title"].asString}"
             }
             for ((i, _) in this["tags"].asJsonArray.withIndex()) {
-                genreList = "$genreList${this["tags"][i]["text"].asString}, "
+                genreList = "$genreList, ${this["tags"][i]["text"].asString}"
+                if (this["tags"][i]["category"].asString == "Artist") {
+                    manga.artist = this["tags"][i]["text"].asString.substringAfter(":").trim()
+                    manga.author = manga.artist
+                }
             }
             genreList = "$genreList, ${this["content"]["title"].asString}"
-            //if (this["tags"].asString != null) {
-            //    for ((i, _) in this["tags"].asJsonArray.withIndex()) {
-             //       genreList = "$genreList${this["tags"][i]["text"].asString}, "
-             //   }
-           // }
             manga.genre = genreList
+
             return manga
         }
     }
