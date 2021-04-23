@@ -124,26 +124,8 @@ abstract class Luscious(
         }
     }
 
-    private fun buildImageListRequestInput(page: Int, id: String, display: String): JsonObject {
-        return JsonObject().apply {
-            add(
-                "input",
-                JsonObject().apply {
-                    addProperty("display", display)
-                    addProperty("page", page)
-                    add(
-                        "filters",
-                        JsonArray().apply {
-                            add(
-                                JsonObject().apply {
-                                    addProperty("album_id", id)
-                                }
-                            )
-                        }
-                    )
-                }
-            )
-        }
+    private fun buildImageListRequestInput(page: Int, id: String, display: String): String {
+        return "{\"input\":{\"filters\":[{\"name\":\"album_id\",\"value\":\"${id}\"}],\"display\":\"${display}\",\"page\":${page}}}"
     }
 
     private fun buildAlbumListRequest(page: Int, filters: FilterList, query: String = ""): Request {
@@ -171,7 +153,7 @@ abstract class Luscious(
         val url = HttpUrl.parse(apiUrl)!!.newBuilder()
             .addQueryParameter("operationName", "AlbumListOwnPictures")
             .addQueryParameter("query", imageListQuery)
-            .addQueryParameter("variables", input.toString())
+            .addQueryParameter("variables", input)
             .toString()
         return GET(url, headers)
     }
