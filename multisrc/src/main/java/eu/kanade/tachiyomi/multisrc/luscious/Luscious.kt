@@ -187,72 +187,63 @@ abstract class Luscious(
     // Chapters
 
     override fun fetchChapterList(manga: SManga): Observable<List<SChapter>> {
-        when (getMergeChapterPref()){
-            true -> {
-                throw Exception("Stub!")
-            }
-            false -> {
-                val id = manga.url.substringAfterLast("_").removeSuffix("/")
+        val id = manga.url.substringAfterLast("_").removeSuffix("/")
 
-                return client.newCall(GET(buildAlbumPicturesPageUrl(id, 1, "position")))
-                    .asObservableSuccess()
-                    .map { parseAlbumPicturesResponse(it, "position") }
-            }
-        }
-
+        return client.newCall(GET(buildAlbumPicturesPageUrl(id, 1, "position")))
+            .asObservableSuccess()
+            .map { parseAlbumPicturesResponse(it, "position", manga.url) }
     }
 
-    private fun parseAlbumPicturesResponse(response: Response, sortPagesByOption: String): List<SChapter> {
+    private fun parseAlbumPicturesResponse(response: Response, sortPagesByOption: String, mangaUrl: String): List<SChapter> {
         val chapters = mutableListOf<SChapter>()
-        var nextPage = true
-        var page = 2
-        val id = response.request().url().queryParameter("variables").toString()
-            .let { gson.fromJson<JsonObject>(it)["input"]["filters"].asJsonArray }
-            .let { it.first { f -> f["name"].asString == "album_id" } }
-            .let { it["value"].asString }
-
-        var data = gson.fromJson<JsonObject>(response.body()!!.string())
-            .let { it["data"]["picture"]["list"].asJsonObject }
-
-        while (nextPage) {
-            nextPage = data["info"]["has_next_page"].asBoolean
-            data["items"].asJsonArray.map {
+        when (getMergeChapterPref()){
+            true -> {
                 val chapter = SChapter.create()
-                chapter.url = when (getResolutionPref()){
-                    "-1" -> it["url_to_original"].asString
-                    else -> it["thumbnails"][getResolutionPref()?.toInt()!!]["url"].asString
-                }
-                chapter.name = it["title"].asString
+                chapter.url = mangaUrl
+                chapter.name = "Merged Chapter"
                 //chapter.date_upload = it["created"].asLong // not parsing correctly for some reason
-                chapter.chapter_number = it["position"].asInt.toFloat()
+                chapter.chapter_number = 1F
                 chapters.add(chapter)
             }
-            if (nextPage) {
-                val newPage = client.newCall(GET(buildAlbumPicturesPageUrl(id, page, sortPagesByOption))).execute()
-                data = gson.fromJson<JsonObject>(newPage.body()!!.string())
+            false -> {
+                var nextPage = true
+                var page = 2
+                val id = response.request().url().queryParameter("variables").toString()
+                    .let { gson.fromJson<JsonObject>(it)["input"]["filters"].asJsonArray }
+                    .let { it.first { f -> f["name"].asString == "album_id" } }
+                    .let { it["value"].asString }
+
+                var data = gson.fromJson<JsonObject>(response.body()!!.string())
                     .let { it["data"]["picture"]["list"].asJsonObject }
+
+                while (nextPage) {
+                    nextPage = data["info"]["has_next_page"].asBoolean
+                    data["items"].asJsonArray.map {
+                        val chapter = SChapter.create()
+                        chapter.url = when (getResolutionPref()){
+                            "-1" -> it["url_to_original"].asString
+                            else -> it["thumbnails"][getResolutionPref()?.toInt()!!]["url"].asString
+                        }
+                        chapter.name = it["title"].asString
+                        //chapter.date_upload = it["created"].asLong // not parsing correctly for some reason
+                        chapter.chapter_number = it["position"].asInt.toFloat()
+                        chapters.add(chapter)
+                    }
+                    if (nextPage) {
+                        val newPage = client.newCall(GET(buildAlbumPicturesPageUrl(id, page, sortPagesByOption))).execute()
+                        data = gson.fromJson<JsonObject>(newPage.body()!!.string())
+                            .let { it["data"]["picture"]["list"].asJsonObject }
+                    }
+                    page++
+                }
             }
-            page++
+
         }
+
         return chapters.reversed()
     }
 
-    override fun chapterListParse(response: Response): List<SChapter> {
-        when (getMergeChapterPref()){
-            true -> {
-                return listOf(
-                    SChapter.create().apply {
-                        url = response.request().url().toString()
-                        name = "Merged Chapter"
-                        chapter_number = 1f
-                    }
-                )
-            }
-            false -> {
-                throw UnsupportedOperationException("Not used")
-            }
-        }
-    }
+    override fun chapterListParse(response: Response): List<SChapter> = throw UnsupportedOperationException("Not used")
 
     // Pages
 
