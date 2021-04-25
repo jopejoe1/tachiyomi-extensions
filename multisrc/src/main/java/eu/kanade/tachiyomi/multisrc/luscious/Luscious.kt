@@ -21,10 +21,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import rx.Observable
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 abstract class Luscious(
     override val name: String,
@@ -38,23 +34,19 @@ abstract class Luscious(
     private val apiBaseUrl: String = "$baseUrl/graphql/nobatch/"
     private val gson = Gson()
     override val client: OkHttpClient = network.cloudflareClient
-    private val lusLang: String = lusLang(lang)
-    private fun lusLang(lang: String): String {
-        return when (lang) {
-            "en" -> "1"
-            "ja" -> "2"
-            "es" -> "3"
-            "it" -> "4"
-            "de" -> "5"
-            "fr" -> "6"
-            "zh" -> "8"
-            "ko" -> "9"
-            "pt" -> "100"
-            "th" -> "101"
-            else -> "99"
-        }
+    private val lusLang: String = when (lang) {
+        "en" -> "1"
+        "ja" -> "2"
+        "es" -> "3"
+        "it" -> "4"
+        "de" -> "5"
+        "fr" -> "6"
+        "zh" -> "8"
+        "ko" -> "9"
+        "pt" -> "100"
+        "th" -> "101"
+        else -> "99"
     }
-
 
     // Common
 
@@ -186,7 +178,7 @@ abstract class Luscious(
     }
 
     private fun parseAlbumPicturesResponse(response: Response, sortPagesByOption: String): List<SChapter> {
-        var chapters = mutableListOf<SChapter>()
+        val chapters = mutableListOf<SChapter>()
         var nextPage = true
         var page = 2
         val id = response.request().url().queryParameter("variables").toString()
@@ -203,12 +195,12 @@ abstract class Luscious(
                 val chapter = SChapter.create()
                 chapter.url = it["url_to_original"].asString
                 chapter.name = it["title"].asString
-                chapter.date_upload = it["created"].asBigInteger.toLong()
+                //chapter.date_upload = it["created"].asLong // not parsing correctly for some reason
                 chapter.chapter_number = it["position"].asInt.toFloat()
                 chapters.add(chapter)
             }
             if (nextPage) {
-                var newPage = client.newCall(GET(buildAlbumPicturesPageUrl(id, page, sortPagesByOption))).execute()
+                val newPage = client.newCall(GET(buildAlbumPicturesPageUrl(id, page, sortPagesByOption))).execute()
                 data = gson.fromJson<JsonObject>(newPage.body()!!.string())
                     .let { it["data"]["picture"]["list"].asJsonObject }
             }
@@ -593,27 +585,7 @@ abstract class Luscious(
 
     private inline fun <reified T> Iterable<*>.findInstance() = find { it is T } as? T
 
-    private fun SimpleDateFormat.parseOrNull(string: String): Date? {
-        return try {
-            parse(string)
-        } catch (e: ParseException) {
-            null
-        }
-    }
-
     companion object {
-
-        private val ALBUM_PICTURES_SORT_OPTIONS = hashMapOf(
-            Pair("Sort By Newest", "date_newest"),
-            Pair("Sort By Rating", "rating_all_time")
-        ).withDefault { "position" }
-
-        private const val ITEMS_PER_PAGE = 50
-
-        private val ORDINAL_SUFFIXES = listOf("st", "nd", "rd", "th")
-        private val DATE_FORMATS_WITH_ORDINAL_SUFFIXES = ORDINAL_SUFFIXES.map {
-            SimpleDateFormat("MMMM dd'$it', yyyy", Locale.US)
-        }
 
         const val ENGLISH_LUS_LANG_VAL = "1"
         const val JAPANESE_LUS_LANG_VAL = "2"
