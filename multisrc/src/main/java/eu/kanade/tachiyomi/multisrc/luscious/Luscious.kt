@@ -714,8 +714,13 @@ abstract class Luscious(
                             total_pages
                             page
                             has_next_page
+                            items_per_page
                         }
                     items {
+                        created
+                        title
+                        url_to_original
+                        position
                         thumbnails {
                             url
                         }
