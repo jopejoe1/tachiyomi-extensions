@@ -16,12 +16,10 @@ import eu.kanade.tachiyomi.source.model.Page
 import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.source.model.SManga
 import eu.kanade.tachiyomi.source.online.HttpSource
-import eu.kanade.tachiyomi.util.asJsoup
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
-import org.jsoup.nodes.Document
 import rx.Observable
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -205,7 +203,7 @@ abstract class Luscious(
                 val chapter = SChapter.create()
                 chapter.url = it["url_to_original"].asString
                 chapter.name = it["title"].asString
-                chapter.date_upload = it["created"].asString.toLong()
+                chapter.date_upload = it["created"].asBigInteger.toLong()
                 chapter.chapter_number = it["position"].asInt.toFloat()
                 chapters.add(chapter)
             }
@@ -273,7 +271,7 @@ abstract class Luscious(
                 val data = gson.fromJson<JsonObject>(it.body()!!.string()).let { data ->
                     data["data"]["picture"]["list"].asJsonObject
                 }
-                data["items"].asJsonArray[page.index % 50].asJsonObject["thumbnails"][0]["url"].asString
+                data["items"].asJsonArray[page.index % 50].asJsonObject["url_to_original"].asString
             }
     }
 
