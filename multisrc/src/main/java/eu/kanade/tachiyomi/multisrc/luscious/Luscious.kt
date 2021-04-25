@@ -26,11 +26,13 @@ import android.content.SharedPreferences
 import android.net.Uri
 import androidx.preference.CheckBoxPreference
 import androidx.preference.PreferenceScreen
+import androidx.preference.ListPreference
 import eu.kanade.tachiyomi.source.ConfigurableSource
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import android.support.v7.preference.CheckBoxPreference as LegacyCheckBoxPreference
 import android.support.v7.preference.PreferenceScreen as LegacyPreferenceScreen
+import android.support.v7.preference.ListPreference as LegacyListPreference
 
 abstract class Luscious(
     override val name: String,
@@ -216,7 +218,10 @@ abstract class Luscious(
             nextPage = data["info"]["has_next_page"].asBoolean
             data["items"].asJsonArray.map {
                 val chapter = SChapter.create()
-                chapter.url = it["url_to_original"].asString
+                chapter.url = when (getResolutionPref()){
+                    "-1" -> it["url_to_original"].asString
+                    else -> it["thumbnails"][getResolutionPref()?.toInt()!!]["url"].asString
+                }
                 chapter.name = it["title"].asString
                 //chapter.date_upload = it["created"].asLong // not parsing correctly for some reason
                 chapter.chapter_number = it["position"].asInt.toFloat()
@@ -299,7 +304,12 @@ abstract class Luscious(
             nextPage = data["info"]["has_next_page"].asBoolean
             data["items"].asJsonArray.map {
                 val index = it["position"].asInt
-                val url = it["url_to_original"].asString
+                val url = when (getResolutionPref()){
+                    "-1" -> it["url_to_original"].asString
+                    else -> it["thumbnails"][getResolutionPref()?.toInt()!!]["url"].asString
+                }
+
+
                 pages.add(Page(index, url, url))
             }
             if (nextPage) {
@@ -343,7 +353,11 @@ abstract class Luscious(
                 val data = gson.fromJson<JsonObject>(it.body()!!.string()).let { data ->
                     data["data"]["picture"]["list"].asJsonObject
                 }
-                data["items"].asJsonArray[page.index % 50].asJsonObject["url_to_original"].asString
+                when (getResolutionPref()){
+                    "-1" -> data["items"].asJsonArray[page.index % 50].asJsonObject["url_to_original"].asString
+                    else -> data["items"].asJsonArray[page.index % 50].asJsonObject["thumbnails"][getResolutionPref()?.toInt()!!]["url"].asString
+                }
+
             }
     }
 
@@ -746,9 +760,30 @@ abstract class Luscious(
         private const val MERGE_CHAPTER_PREF_TITLE = "Merge Chapter"
         private const val MERGE_CHAPTER_PREF_SUMMARY = "If checked, merges all content of one Album into one Chapter"
         private const val MERGE_CHAPTER_PREF_DEFAULT_VALUE = false
+
+        private const val RESOLUTION_PREF_KEY = "RESOLUTION"
+        private const val RESOLUTION_PREF_TITLE = "Image resolution"
+        private val RESOLUTION_PREF_ENTRIES = arrayOf("Low", "Medium", "High", "Original")
+        private val RESOLUTION_PREF_ENTRY_VALUES = arrayOf("2", "1", "0", "-1")
+        private val RESOLUTION_PREF_DEFAULT_VALUE = RESOLUTION_PREF_ENTRY_VALUES[3]
     }
 
     override fun setupPreferenceScreen(screen: PreferenceScreen) {
+        val resolutionPref = ListPreference(screen.context).apply {
+            key = "${RESOLUTION_PREF_KEY}_$lang"
+            title = RESOLUTION_PREF_TITLE
+            entries = RESOLUTION_PREF_ENTRIES
+            entryValues = RESOLUTION_PREF_ENTRY_VALUES
+            setDefaultValue(RESOLUTION_PREF_DEFAULT_VALUE)
+            summary = "%s"
+
+            setOnPreferenceChangeListener { _, newValue ->
+                val selected = newValue as String
+                val index = findIndexOfValue(selected)
+                val entry = entryValues[index] as String
+                preferences.edit().putString("${RESOLUTION_PREF_KEY}_$lang", entry).commit()
+            }
+        }
         val mergeChapterPref = CheckBoxPreference(screen.context).apply {
             key = "${MERGE_CHAPTER_PREF_KEY}_$lang"
             title = MERGE_CHAPTER_PREF_TITLE
@@ -760,10 +795,26 @@ abstract class Luscious(
                 preferences.edit().putBoolean("${MERGE_CHAPTER_PREF_KEY}_$lang", checkValue).commit()
             }
         }
+        screen.addPreference(resolutionPref)
         screen.addPreference(mergeChapterPref)
     }
 
     override fun setupPreferenceScreen(screen: LegacyPreferenceScreen) {
+        val resolutionPref = LegacyListPreference(screen.context).apply {
+            key = "${RESOLUTION_PREF_KEY}_$lang"
+            title = RESOLUTION_PREF_TITLE
+            entries = RESOLUTION_PREF_ENTRIES
+            entryValues = RESOLUTION_PREF_ENTRY_VALUES
+            setDefaultValue(RESOLUTION_PREF_DEFAULT_VALUE)
+            summary = "%s"
+
+            setOnPreferenceChangeListener { _, newValue ->
+                val selected = newValue as String
+                val index = findIndexOfValue(selected)
+                val entry = entryValues[index] as String
+                preferences.edit().putString("${RESOLUTION_PREF_KEY}_$lang", entry).commit()
+            }
+        }
         val mergeChapterPref = LegacyCheckBoxPreference(screen.context).apply {
             key = "${MERGE_CHAPTER_PREF_KEY}_$lang"
             title = MERGE_CHAPTER_PREF_TITLE
@@ -775,8 +826,10 @@ abstract class Luscious(
                 preferences.edit().putBoolean("${MERGE_CHAPTER_PREF_KEY}_$lang", checkValue).commit()
             }
         }
+        screen.addPreference(resolutionPref)
         screen.addPreference(mergeChapterPref)
     }
 
     private fun getMergeChapterPref(): Boolean = preferences.getBoolean("${MERGE_CHAPTER_PREF_KEY}_$lang", MERGE_CHAPTER_PREF_DEFAULT_VALUE)
+    private fun getResolutionPref(): String? = preferences.getString("${RESOLUTION_PREF_KEY}_$lang", RESOLUTION_PREF_DEFAULT_VALUE)
 }
