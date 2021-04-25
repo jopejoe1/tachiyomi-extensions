@@ -179,7 +179,25 @@ abstract class Luscious(
 
     // Chapters
 
-    override fun chapterListParse(response: Response): List<SChapter> {
+    override fun fetchChapterList(manga: SManga): Observable<List<SChapter>> {
+        val id = manga.url.substringAfterLast("_").removeSuffix("/")
+
+        return client.newCall(GET(buildAlbumPicturesPageUrl(id, 1, "position")))
+            .asObservableSuccess()
+            .map { parseAlbumPicturesResponse2(it, "position") }
+    }
+
+    private fun getAlbumSortPagesOption2(manga: SManga): Observable<String> {
+        return client.newCall(GET(manga.url))
+            .asObservableSuccess()
+            .map {
+                val sortByKey = it.asJsoup().select(".o-input-select:contains(Sorted By) .o-select-value")?.text() ?: ""
+                ALBUM_PICTURES_SORT_OPTIONS.getValue(sortByKey)
+            }
+    }
+
+
+    /*override fun chapterListParse(response: Response): List<SChapter> {
         val document = response.asJsoup()
         return listOf(
             SChapter.create().apply {
@@ -191,8 +209,35 @@ abstract class Luscious(
                 chapter_number = 1f
             }
         )
+    }*/
+
+    private fun parseAlbumPicturesResponse2(response: Response, sortPagesByOption: String): List<SChapter> {
+        var nextPage = true
+        var chapters = mutableListOf<SChapter>()
+
+        while (nextPage) {
+            val id = response.request().url().queryParameter("variables").toString()
+                .let { gson.fromJson<JsonObject>(it)["input"]["filters"].asJsonArray }
+                .let { it.first { f -> f["name"].asString == "album_id" } }
+                .let { it["value"].asString }
+
+            val data = gson.fromJson<JsonObject>(response.body()!!.string())
+                .let { it["data"]["picture"]["list"].asJsonObject }
+
+            data["items"].asJsonArray.map {
+                val chapter = SChapter.create()
+                chapter.url = it["url_to_original"].asString
+                chapter.name = it["title"].asString
+                chapter.date_upload = it["created"].asLong
+                chapter.chapter_number = it["position"].asFloat
+                chapters.add(chapter)
+            }
+            nextPage = false
+        }
+        return chapters
     }
 
+    override fun chapterListParse(response: Response): List<SChapter> = throw UnsupportedOperationException("Not used")
     // Pages
 
     private fun buildAlbumPicturesRequestInput(id: String, page: Int, sortPagesByOption: String): JsonObject {
@@ -255,7 +300,7 @@ abstract class Luscious(
             }
     }
 
-    override fun fetchPageList(chapter: SChapter): Observable<List<Page>> {
+    /*override fun fetchPageList(chapter: SChapter): Observable<List<Page>> {
         val id = chapter.url.substringAfterLast("_").removeSuffix("/")
 
         return getAlbumSortPagesOption(chapter)
@@ -264,6 +309,9 @@ abstract class Luscious(
                     .asObservableSuccess()
                     .map { parseAlbumPicturesResponse(it, sortPagesByOption) }
             }
+    }*/
+    override fun fetchPageList(chapter: SChapter): Observable<List<Page>> {
+        return Observable.just(listOf(Page(0, chapter.url, chapter.url)))
     }
 
     override fun pageListParse(response: Response): List<Page> = throw UnsupportedOperationException("Not used")
@@ -299,7 +347,7 @@ abstract class Luscious(
             manga.url = this["url"].asString
             manga.title = this["title"].asString
             manga.thumbnail_url = this["cover"]["url"].asString
-            manga.status = 2
+            manga.status = 0
             manga.description = "${this["description"].asString}\n\nPictures: ${this["number_of_pictures"].asString}\nAnimated Pictures: ${this["number_of_animated_pictures"].asString}"
             var genreList = this["language"]["title"].asString
             for ((i, _) in this["labels"].asJsonArray.withIndex()) {
