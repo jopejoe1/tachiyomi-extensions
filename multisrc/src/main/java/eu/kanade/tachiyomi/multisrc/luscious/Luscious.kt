@@ -184,34 +184,10 @@ abstract class Luscious(
 
         return client.newCall(GET(buildAlbumPicturesPageUrl(id, 1, "position")))
             .asObservableSuccess()
-            .map { parseAlbumPicturesResponse2(it, "position") }
+            .map { parseAlbumPicturesResponse(it, "position") }
     }
 
-    private fun getAlbumSortPagesOption2(manga: SManga): Observable<String> {
-        return client.newCall(GET(manga.url))
-            .asObservableSuccess()
-            .map {
-                val sortByKey = it.asJsoup().select(".o-input-select:contains(Sorted By) .o-select-value")?.text() ?: ""
-                ALBUM_PICTURES_SORT_OPTIONS.getValue(sortByKey)
-            }
-    }
-
-
-    /*override fun chapterListParse(response: Response): List<SChapter> {
-        val document = response.asJsoup()
-        return listOf(
-            SChapter.create().apply {
-                url = response.request().url().toString()
-                name = "Chapter"
-                date_upload = document.select(".album-info-item:contains(Created:)")?.first()?.ownText()?.trim()?.let {
-                    DATE_FORMATS_WITH_ORDINAL_SUFFIXES.mapNotNull { format -> format.parseOrNull(it) }.firstOrNull()?.time
-                } ?: 0L
-                chapter_number = 1f
-            }
-        )
-    }*/
-
-    private fun parseAlbumPicturesResponse2(response: Response, sortPagesByOption: String): List<SChapter> {
+    private fun parseAlbumPicturesResponse(response: Response, sortPagesByOption: String): List<SChapter> {
         var chapters = mutableListOf<SChapter>()
         var nextPage = true
         var page = 2
@@ -229,7 +205,7 @@ abstract class Luscious(
                 val chapter = SChapter.create()
                 chapter.url = it["url_to_original"].asString
                 chapter.name = it["title"].asString
-                chapter.date_upload = it["created"].asInt.toLong()
+                chapter.date_upload = it["created"].asString.toLong()
                 chapter.chapter_number = it["position"].asInt.toFloat()
                 chapters.add(chapter)
             }
@@ -240,7 +216,7 @@ abstract class Luscious(
             }
             page++
         }
-        return chapters
+        return chapters.reversed()
     }
 
     override fun chapterListParse(response: Response): List<SChapter> = throw UnsupportedOperationException("Not used")
@@ -278,44 +254,6 @@ abstract class Luscious(
             .toString()
     }
 
-    private fun parseAlbumPicturesResponse(response: Response, sortPagesByOption: String): List<Page> {
-
-        val id = response.request().url().queryParameter("variables").toString()
-            .let { gson.fromJson<JsonObject>(it)["input"]["filters"].asJsonArray }
-            .let { it.first { f -> f["name"].asString == "album_id" } }
-            .let { it["value"].asString }
-
-        val data = gson.fromJson<JsonObject>(response.body()!!.string())
-            .let { it["data"]["picture"]["list"].asJsonObject }
-
-        return data["items"].asJsonArray.mapIndexed { index, it ->
-            Page(index, imageUrl = it["thumbnails"][0]["url"].asString)
-        } + if (data["info"]["total_pages"].asInt > 1) { // get 2nd page onwards
-            (ITEMS_PER_PAGE until data["info"]["total_items"].asInt).chunked(ITEMS_PER_PAGE).mapIndexed { page, indices ->
-                indices.map { Page(it, url = buildAlbumPicturesPageUrl(id, page + 2, sortPagesByOption)) }
-            }.flatten()
-        } else emptyList()
-    }
-
-    private fun getAlbumSortPagesOption(chapter: SChapter): Observable<String> {
-        return client.newCall(GET(chapter.url))
-            .asObservableSuccess()
-            .map {
-                val sortByKey = it.asJsoup().select(".o-input-select:contains(Sorted By) .o-select-value")?.text() ?: ""
-                ALBUM_PICTURES_SORT_OPTIONS.getValue(sortByKey)
-            }
-    }
-
-    /*override fun fetchPageList(chapter: SChapter): Observable<List<Page>> {
-        val id = chapter.url.substringAfterLast("_").removeSuffix("/")
-
-        return getAlbumSortPagesOption(chapter)
-            .concatMap { sortPagesByOption ->
-                client.newCall(GET(buildAlbumPicturesPageUrl(id, 1, sortPagesByOption)))
-                    .asObservableSuccess()
-                    .map { parseAlbumPicturesResponse(it, sortPagesByOption) }
-            }
-    }*/
     override fun fetchPageList(chapter: SChapter): Observable<List<Page>> {
         return Observable.just(listOf(Page(0, chapter.url, chapter.url)))
     }
