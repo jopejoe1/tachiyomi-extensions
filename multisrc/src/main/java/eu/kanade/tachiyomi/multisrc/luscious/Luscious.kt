@@ -184,7 +184,7 @@ abstract class Luscious(
 
         return client.newCall(GET(buildAlbumPicturesPageUrl(id, 1, "position")))
             .asObservableSuccess()
-            .map { parseAlbumPicturesResponse2(it, "position") }
+            .map { parseAlbumPicturesResponse2(it, "position", id) }
     }
 
     private fun getAlbumSortPagesOption2(manga: SManga): Observable<String> {
@@ -212,27 +212,33 @@ abstract class Luscious(
     }*/
 
     private fun parseAlbumPicturesResponse2(response: Response, sortPagesByOption: String): List<SChapter> {
-        var nextPage = true
         var chapters = mutableListOf<SChapter>()
+        var nextPage = true
+        var page = 2
+        val id = response.request().url().queryParameter("variables").toString()
+            .let { gson.fromJson<JsonObject>(it)["input"]["filters"].asJsonArray }
+            .let { it.first { f -> f["name"].asString == "album_id" } }
+            .let { it["value"].asString }
+
+        var data = gson.fromJson<JsonObject>(response.body()!!.string())
+            .let { it["data"]["picture"]["list"].asJsonObject }
 
         while (nextPage) {
-            val id = response.request().url().queryParameter("variables").toString()
-                .let { gson.fromJson<JsonObject>(it)["input"]["filters"].asJsonArray }
-                .let { it.first { f -> f["name"].asString == "album_id" } }
-                .let { it["value"].asString }
-
-            val data = gson.fromJson<JsonObject>(response.body()!!.string())
-                .let { it["data"]["picture"]["list"].asJsonObject }
-
+            nextPage = data["info"]["has_next_page"].asBoolean
             data["items"].asJsonArray.map {
                 val chapter = SChapter.create()
                 chapter.url = it["url_to_original"].asString
                 chapter.name = it["title"].asString
-                chapter.date_upload = it["created"].asLong
-                chapter.chapter_number = it["position"].asFloat
+                chapter.date_upload = it["created"].asInt.toLong()
+                chapter.chapter_number = it["position"].asInt.toFloat()
                 chapters.add(chapter)
             }
-            nextPage = false
+            if (nextPage) {
+                var newPage = client.newCall(GET(buildAlbumPicturesPageUrl(id, page, sortPagesByOption))).execute()
+                data = gson.fromJson<JsonObject>(newPage.body()!!.string())
+                    .let { it["data"]["picture"]["list"].asJsonObject }
+            }
+            page++
         }
         return chapters
     }
