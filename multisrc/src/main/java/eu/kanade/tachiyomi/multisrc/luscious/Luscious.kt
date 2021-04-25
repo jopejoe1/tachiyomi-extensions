@@ -21,11 +21,21 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import rx.Observable
+import android.app.Application
+import android.content.SharedPreferences
+import android.net.Uri
+import androidx.preference.CheckBoxPreference
+import androidx.preference.PreferenceScreen
+import eu.kanade.tachiyomi.source.ConfigurableSource
+import uy.kohesive.injekt.Injekt
+import uy.kohesive.injekt.api.get
+import android.support.v7.preference.CheckBoxPreference as LegacyCheckBoxPreference
+import android.support.v7.preference.PreferenceScreen as LegacyPreferenceScreen
 
 abstract class Luscious(
     override val name: String,
     override val baseUrl: String,
-    override val lang: String ) : HttpSource() {
+    override val lang: String ) : ConfigurableSource, HttpSource() {
 
     //Based on Luscios single source extension form https://github.com/tachiyomiorg/tachiyomi-extensions/commit/aacf56d0c0ddb173372aac69d798ae998f178377
     //with modifiaction to make it support multisrc
@@ -47,6 +57,11 @@ abstract class Luscious(
         "th" -> "101"
         else -> "99"
     }
+
+    private val preferences: SharedPreferences by lazy {
+        Injekt.get<Application>().getSharedPreferences("source_$id", 0x0000)
+    }
+
 
     // Common
 
@@ -170,11 +185,19 @@ abstract class Luscious(
     // Chapters
 
     override fun fetchChapterList(manga: SManga): Observable<List<SChapter>> {
-        val id = manga.url.substringAfterLast("_").removeSuffix("/")
+        when (getMergeChapterPref()){
+            true -> {
+                throw Exception("Stub!")
+            }
+            false -> {
+                val id = manga.url.substringAfterLast("_").removeSuffix("/")
 
-        return client.newCall(GET(buildAlbumPicturesPageUrl(id, 1, "position")))
-            .asObservableSuccess()
-            .map { parseAlbumPicturesResponse(it, "position") }
+                return client.newCall(GET(buildAlbumPicturesPageUrl(id, 1, "position")))
+                    .asObservableSuccess()
+                    .map { parseAlbumPicturesResponse(it, "position") }
+            }
+        }
+
     }
 
     private fun parseAlbumPicturesResponse(response: Response, sortPagesByOption: String): List<SChapter> {
@@ -209,7 +232,23 @@ abstract class Luscious(
         return chapters.reversed()
     }
 
-    override fun chapterListParse(response: Response): List<SChapter> = throw UnsupportedOperationException("Not used")
+    override fun chapterListParse(response: Response): List<SChapter> {
+        when (getMergeChapterPref()){
+            true -> {
+                return listOf(
+                    SChapter.create().apply {
+                        url = response.request().url().toString()
+                        name = "Merged Chapter"
+                        chapter_number = 1f
+                    }
+                )
+            }
+            false -> {
+                throw UnsupportedOperationException("Not used")
+            }
+        }
+    }
+
     // Pages
 
     private fun buildAlbumPicturesRequestInput(id: String, page: Int, sortPagesByOption: String): JsonObject {
@@ -244,8 +283,49 @@ abstract class Luscious(
             .toString()
     }
 
+    private fun parseAlbumPicturesResponseMergeChapter(response: Response, sortPagesByOption: String): List<Page> {
+        val pages = mutableListOf<Page>()
+        var nextPage = true
+        var page = 2
+        val id = response.request().url().queryParameter("variables").toString()
+            .let { gson.fromJson<JsonObject>(it)["input"]["filters"].asJsonArray }
+            .let { it.first { f -> f["name"].asString == "album_id" } }
+            .let { it["value"].asString }
+
+        var data = gson.fromJson<JsonObject>(response.body()!!.string())
+            .let { it["data"]["picture"]["list"].asJsonObject }
+
+        while (nextPage) {
+            nextPage = data["info"]["has_next_page"].asBoolean
+            data["items"].asJsonArray.map {
+                val index = it["position"].asInt
+                val url = it["url_to_original"].asString
+                pages.add(Page(index, url, url))
+            }
+            if (nextPage) {
+                val newPage = client.newCall(GET(buildAlbumPicturesPageUrl(id, page, sortPagesByOption))).execute()
+                data = gson.fromJson<JsonObject>(newPage.body()!!.string())
+                    .let { it["data"]["picture"]["list"].asJsonObject }
+            }
+            page++
+        }
+        return pages
+    }
+
     override fun fetchPageList(chapter: SChapter): Observable<List<Page>> {
-        return Observable.just(listOf(Page(0, chapter.url, chapter.url)))
+        return when (getMergeChapterPref()) {
+            true -> {
+                val id = chapter.url.substringAfterLast("_").removeSuffix("/")
+
+                client.newCall(GET(buildAlbumPicturesPageUrl(id, 1, "position")))
+                    .asObservableSuccess()
+                    .map { parseAlbumPicturesResponseMergeChapter(it, "position") }
+            }
+            false -> {
+                Observable.just(listOf(Page(0, chapter.url, chapter.url)))
+            }
+        }
+
     }
 
     override fun pageListParse(response: Response): List<Page> = throw UnsupportedOperationException("Not used")
@@ -661,5 +741,42 @@ abstract class Luscious(
             __typename id title labels description created modified like_status number_of_favorites number_of_dislikes rating moderation_status marked_for_deletion marked_for_processing number_of_pictures number_of_animated_pictures number_of_duplicates slug is_manga url download_url permissions cover { width height size url } created_by { id url name display_name user_title avatar { url size } } content { id title url } language { id title url } tags { category text url count } genres { id title slug url } audiences { id title url url } last_viewed_picture { id position url } is_featured featured_date featured_by { id url name display_name user_title avatar { url size } }
         }
         """.trimIndent()
+
+        private const val MERGE_CHAPTER_PREF_KEY = "MERGE_CHAPTER"
+        private const val MERGE_CHAPTER_PREF_TITLE = "Merge Chapter"
+        private const val MERGE_CHAPTER_PREF_SUMMARY = "If checked, merges all content of one Album into one Chapter"
+        private const val MERGE_CHAPTER_PREF_DEFAULT_VALUE = false
     }
+
+    override fun setupPreferenceScreen(screen: PreferenceScreen) {
+        val mergeChapterPref = CheckBoxPreference(screen.context).apply {
+            key = "${MERGE_CHAPTER_PREF_KEY}_$lang"
+            title = MERGE_CHAPTER_PREF_TITLE
+            summary = MERGE_CHAPTER_PREF_SUMMARY
+            setDefaultValue(MERGE_CHAPTER_PREF_DEFAULT_VALUE)
+
+            setOnPreferenceChangeListener { _, newValue ->
+                val checkValue = newValue as Boolean
+                preferences.edit().putBoolean("${MERGE_CHAPTER_PREF_KEY}_$lang", checkValue).commit()
+            }
+        }
+        screen.addPreference(mergeChapterPref)
+    }
+
+    override fun setupPreferenceScreen(screen: LegacyPreferenceScreen) {
+        val mergeChapterPref = LegacyCheckBoxPreference(screen.context).apply {
+            key = "${MERGE_CHAPTER_PREF_KEY}_$lang"
+            title = MERGE_CHAPTER_PREF_TITLE
+            summary = MERGE_CHAPTER_PREF_SUMMARY
+            setDefaultValue(MERGE_CHAPTER_PREF_DEFAULT_VALUE)
+
+            setOnPreferenceChangeListener { _, newValue ->
+                val checkValue = newValue as Boolean
+                preferences.edit().putBoolean("${MERGE_CHAPTER_PREF_KEY}_$lang", checkValue).commit()
+            }
+        }
+        screen.addPreference(mergeChapterPref)
+    }
+
+    private fun getMergeChapterPref(): Boolean = preferences.getBoolean("${MERGE_CHAPTER_PREF_KEY}_$lang", MERGE_CHAPTER_PREF_DEFAULT_VALUE)
 }
