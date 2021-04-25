@@ -184,7 +184,7 @@ abstract class Luscious(
 
         return client.newCall(GET(buildAlbumPicturesPageUrl(id, 1, "position")))
             .asObservableSuccess()
-            .map { parseAlbumPicturesResponse2(it, "position", id) }
+            .map { parseAlbumPicturesResponse2(it, "position") }
     }
 
     private fun getAlbumSortPagesOption2(manga: SManga): Observable<String> {
