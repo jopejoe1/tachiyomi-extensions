@@ -172,7 +172,7 @@ abstract class NyaHentai (
                 when (filter) {
                     is Tag -> {
                         url = if (page == 1) {
-                            "$baseUrl/tag/${filter.state}&type[]=3" // "Contents" tag
+                            "$baseUrl/tag/${filter.state}/$nyaLang" // "Contents" tag
                         } else {
                             "$tagUrl/page/$page"
                         }
