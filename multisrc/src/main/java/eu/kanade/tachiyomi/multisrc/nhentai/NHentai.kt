@@ -32,8 +32,8 @@ import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 
 open class NHentai(
-    override val baseUrl: String,
     override val name: String,
+    override val baseUrl: String,
     override val lang: String,
 
 ) : ConfigurableSource, ParsedHttpSource() {
