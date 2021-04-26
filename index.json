@@ -9,6 +9,15 @@
     "nsfw": 1
   },
   {
+    "name": "Tachiyomi: FoxHentai",
+    "pkg": "eu.kanade.tachiyomi.extension.all.foxhentai",
+    "apk": "tachiyomi-all.foxhentai-v1.2.1.apk",
+    "lang": "all",
+    "code": 1,
+    "version": "1.2.1",
+    "nsfw": 1
+  },
+  {
     "name": "Tachiyomi: HentaiShark",
     "pkg": "eu.kanade.tachiyomi.extension.all.hentaishark",
     "apk": "tachiyomi-all.hentaishark-v1.2.3.apk",
@@ -42,6 +51,51 @@
     "lang": "all",
     "code": 5,
     "version": "1.2.5",
+    "nsfw": 1
+  },
+  {
+    "name": "Tachiyomi: NHentai",
+    "pkg": "eu.kanade.tachiyomi.extension.all.nhentai",
+    "apk": "tachiyomi-all.nhentai-v1.2.29.apk",
+    "lang": "all",
+    "code": 29,
+    "version": "1.2.29",
+    "nsfw": 1
+  },
+  {
+    "name": "Tachiyomi: NyaHentai",
+    "pkg": "eu.kanade.tachiyomi.extension.all.nyahentai",
+    "apk": "tachiyomi-all.nyahentai-v1.2.4.apk",
+    "lang": "all",
+    "code": 4,
+    "version": "1.2.4",
+    "nsfw": 1
+  },
+  {
+    "name": "Tachiyomi: NyaHentai.me",
+    "pkg": "eu.kanade.tachiyomi.extension.all.nyahentaime",
+    "apk": "tachiyomi-all.nyahentaime-v1.2.1.apk",
+    "lang": "all",
+    "code": 1,
+    "version": "1.2.1",
+    "nsfw": 1
+  },
+  {
+    "name": "Tachiyomi: NyaHentai.site",
+    "pkg": "eu.kanade.tachiyomi.extension.all.nyahentaisite",
+    "apk": "tachiyomi-all.nyahentaisite-v1.2.1.apk",
+    "lang": "all",
+    "code": 1,
+    "version": "1.2.1",
+    "nsfw": 1
+  },
+  {
+    "name": "Tachiyomi: QQHentai",
+    "pkg": "eu.kanade.tachiyomi.extension.all.qqhentai",
+    "apk": "tachiyomi-all.qqhentai-v1.2.1.apk",
+    "lang": "all",
+    "code": 1,
+    "version": "1.2.1",
     "nsfw": 1
   },
   {
