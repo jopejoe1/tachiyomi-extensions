@@ -10,7 +10,7 @@ class MMRCMSGenerator : ThemeSourceGenerator {
 
     override val themeClass = "MMRCMS"
 
-    override val baseVersionCode: Int = 2
+    override val baseVersionCode: Int = 3
 
     override val sources = listOf(
         SingleLang("مانجا اون لاين", "https://onma.me", "ar", className = "onma"),
@@ -22,7 +22,6 @@ class MMRCMSGenerator : ThemeSourceGenerator {
         SingleLang("Scan VF", "https://www.scan-vf.net", "fr"),
         SingleLang("Scan OP", "https://scan-op.cc", "fr"),
         SingleLang("Komikid", "https://www.komikid.com", "id"),
-        SingleLang("Mangás Yuri", "https://mangasyuri.net", "pt-BR", className = "MangasYuri"),
         SingleLang("Nikushima", "http://azbivo.webd.pro", "pl"),
         SingleLang("MangaHanta", "http://mangahanta.com", "tr"),
         SingleLang("Fallen Angels Scans", "https://truyen.fascans.com", "vi"),
@@ -37,15 +36,16 @@ class MMRCMSGenerator : ThemeSourceGenerator {
         SingleLang("Lelscan-VF", "https://lelscan-vf.co", "fr", className = "LelscanVF"),
         SingleLang("Komik Manga", "https://adm.komikmanga.com", "id"),
         SingleLang("Mangazuki Raws", "https://raws.mangazuki.co", "ko"),
-        SingleLang("Mangazuki", "https://mangazuki.co/", "en"),
+        SingleLang("Mangazuki", "https://mangazuki.co", "en"),
         SingleLang("Remangas", "https://remangas.top", "pt-BR"),
         SingleLang("AnimaRegia", "https://animaregia.net", "pt-BR"),
         SingleLang("MangaVadisi", "http://manga-v2.mangavadisi.org", "tr"),
         SingleLang("MangaID", "https://mangaid.click", "id"),
         SingleLang("Jpmangas", "https://jpmangas.co", "fr"),
         SingleLang("Op-VF", "https://www.op-vf.com", "fr", className = "OpVF"),
-        SingleLang("FR Scan", "https://www.frscan.me", "fr"),
+        SingleLang("FR Scan", "https://frscan.cc", "fr"),
         // NOTE: THIS SOURCE CONTAINS A CUSTOM LANGUAGE SYSTEM (which will be ignored)!
+        SingleLang("HentaiShark", "https://www.hentaishark.com", "all"),
         //MultiLang("HentaiShark", "https://www.hentaishark.com", listOf("en", "ja", "zh", "de", "nl", "ko", "cz", "eo", "mn", "ar", "sk", "la", "ua", "ceb", "tl", "fi", "bg", "tr"), isNsfw = true, className = "HentaiSharkFactory"),
     )
 
@@ -57,7 +57,8 @@ class MMRCMSGenerator : ThemeSourceGenerator {
     }
 }
 
-
+//SingleLang("Mangás Yuri", "https://mangasyuri.net", "pt-BR", className = "MangasYuri"), override val id: Long = 6456162511058446409
+//SingleLang("FR Scan", "https://www.frscan.me", "fr"),
 // Reference from old Factory Source
 // Changed CMS
 // SourceData("es", "Tumangaonline.co", "http://tumangaonline.com"),

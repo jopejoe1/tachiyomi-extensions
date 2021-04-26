@@ -32,7 +32,7 @@ class MMRCMSJsonGen (
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    public fun generateJson(): String {
+    fun generateJson(): String {
         val map = mutableMapOf<String, Any>()
         map["language"] = lang
         map["name"] = name
@@ -66,10 +66,12 @@ class MMRCMSJsonGen (
         map["item_url"] = "$itemUrl/"
         map["categories"] = parseCategories
         val tags = parseTags(mangaListDocument)
-        map["tags"] = "null"
+        map["tags"] = tags
+        /*
         if (tags.size in 1..49) {
             map["tags"] = tags
         }
+        */
 
         if (!itemUrl.startsWith(baseUrl)) println("**Note: $name} URL does not match! Check for changes: \n $baseUrl vs $itemUrl")
 
