@@ -10,6 +10,9 @@ import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import eu.kanade.tachiyomi.source.model.Page
+import org.jsoup.nodes.Document
+
 
 class MangakakalotCity : MangaBox("Mangakakalot.city (unoriginal)", "http://mangakakalot.city/", "en") {
     override val simpleQueryPath = "search?q="
