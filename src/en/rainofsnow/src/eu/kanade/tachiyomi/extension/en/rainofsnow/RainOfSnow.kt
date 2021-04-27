@@ -1,17 +1,18 @@
 package eu.kanade.tachiyomi.extension.en.rainofsnow
 
+import com.github.salomonbrys.kotson.fromJson
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import eu.kanade.tachiyomi.network.GET
-import eu.kanade.tachiyomi.source.model.FilterList
-import eu.kanade.tachiyomi.source.model.Page
-import eu.kanade.tachiyomi.source.model.SChapter
-import eu.kanade.tachiyomi.source.model.SManga
+import eu.kanade.tachiyomi.network.POST
+import eu.kanade.tachiyomi.network.asObservableSuccess
+import eu.kanade.tachiyomi.source.model.*
 import eu.kanade.tachiyomi.source.online.ParsedHttpSource
-import okhttp3.HttpUrl
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
+import eu.kanade.tachiyomi.util.asJsoup
+import okhttp3.*
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import rx.Observable
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -25,7 +26,7 @@ open class RainOfSnow() : ParsedHttpSource() {
 
     override val lang = "en"
 
-    override val supportsLatest = false
+    override val supportsLatest = true
 
     override val client: OkHttpClient = network.cloudflareClient.newBuilder()
         .connectTimeout(10, TimeUnit.SECONDS)
@@ -49,10 +50,18 @@ open class RainOfSnow() : ParsedHttpSource() {
     override fun popularMangaNextPageSelector() = ".page-numbers .next"
 
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
-        val url = HttpUrl.parse("$baseUrl/")!!.newBuilder()
-        url.addQueryParameter("serchfor", "comics")
-        url.addQueryParameter("s", query)
-        return GET(url.build().toString(), headers)
+        val albumTypeFilter = filters.findInstance<AlbumTypeSelectFilter>()!!
+        return GET(when{
+            query != "" -> {
+                HttpUrl.parse("$baseUrl/")!!.newBuilder()
+                    .addQueryParameter("s", query)
+            }
+            else -> {
+                HttpUrl.parse("$baseUrl/comics/page/$page")!!.newBuilder()
+                    .addQueryParameter("n_orderby", albumTypeFilter.toString())
+            }
+
+        }.build().toString(), headers)
     }
 
     override fun searchMangaSelector() = popularMangaSelector()
@@ -108,22 +117,103 @@ open class RainOfSnow() : ParsedHttpSource() {
         return parsedDate
     }
 
-    override fun pageListRequest(chapter: SChapter): Request {
-        if (chapter.url.startsWith("http")) {
-            return GET(chapter.url, headers)
-        }
-        return super.pageListRequest(chapter)
-    }
+    override fun fetchPageList(chapter: SChapter): Observable<List<Page>> {
+        val id = chapter.url.substringAfterLast("_").removeSuffix("/")
 
-    override fun pageListParse(document: Document): List<Page> = mutableListOf<Page>().apply {
+        return client.newCall(GET(chapter.url))
+            .asObservableSuccess()
+            .map { parsePages(it, chapter.url) }
+    }
+    private fun parsePages(response: Response, refUrl: String): List<Page>{
+        val pages = mutableListOf<Page>()
+        val document = response.asJsoup()
+        var postUrl = "$baseUrl/wp-admin/admin-ajax.php"
+        var morePages = false
+        var postNonce = ""
+        var postOffset =""
+        var postId = ""
+        var pageNum = 0
+
         document.select("[style=display: block;] img").forEachIndexed { index, element ->
-            add(Page(index, "", element.attr("abs:src")))
+            pages.add(Page(pageNum, "", element.attr("abs:src")))
+            pageNum++
         }
+        val js = document.select(".zoomdesc-cont .chap-img-smlink + script").text()
+        for (s in js.split(";")) {
+            when{
+                s.contains("var my_repeater_field_post_id =") -> {
+                    postId = s.substringAfter("=").substringBefore(";").trim()
+                }
+                s.contains("var my_repeater_field_offset =") -> {
+                    postOffset = s.substringAfter("=").substringBefore(";").trim()
+                }
+                s.contains("var my_repeater_field_nonce =") -> {
+                    postNonce = s.substringAfter("=").substringBefore(";").trim()
+                }
+                s.contains("var my_repeater_more =") -> {
+                    morePages = s.substringAfter("=").substringBefore(";").trim().toBoolean()
+                }
+            }
+        }
+
+        while (morePages){
+            var content = ""
+            val postBody = RequestBody.create(null, "action=my_repeater_show_more&post_id=$postId&offset=$postOffset&nonce=$postNonce")
+            val request = POST("$postUrl", headers, postBody)
+            val document = client.newCall(request).execute()
+            val data = document.body()!!.string()
+            for (s in data.split(",")) {
+                when{
+                    s.contains("\"content\":") -> {
+                        content = s.substringAfter("\":\"").substringBeforeLast("\"").replace("\\t","").replace("\\n","").replace("\\","")
+                        content = content.replace("\" /><img class=\"img-responsive comicimgcls\" src=\"",",").replace("<img class=\"img-responsive comicimgcls\" src=\"","").replace("\" />","").trim()
+                    }
+                    s.contains("\"more\":") -> {
+                        morePages = s.substringAfter("\":").trim().toBoolean()
+                    }
+                    s.contains("\"offset\":") -> {
+                        postOffset = s.substringAfter("\":").trim()
+                    }
+                }
+            }
+            for (s in content.split(",")){
+                pages.add(Page(pageNum, "", s))
+                pageNum++
+            }
+        }
+        return pages
+
     }
 
-    override fun latestUpdatesFromElement(element: Element) = throw Exception("Not used")
-    override fun latestUpdatesNextPageSelector() = throw Exception("Not used")
-    override fun latestUpdatesRequest(page: Int) = throw Exception("Not used")
-    override fun latestUpdatesSelector() = throw Exception("Not used")
+    override fun pageListParse(document: Document): List<Page> = throw Exception("Not used")
+    override fun latestUpdatesFromElement(element: Element) = popularMangaFromElement(element)
+    override fun latestUpdatesNextPageSelector() = popularMangaNextPageSelector()
+    override fun latestUpdatesRequest(page: Int) = popularMangaRequest(page)
+    override fun latestUpdatesSelector() = popularMangaSelector()
     override fun imageUrlParse(document: Document) = throw Exception("Not used")
+
+    // Filters
+    abstract class SelectFilter(name: String, private val options: List<SelectFilterOption>, default: Int = 0) : Filter.Select<String>(name, options.map { it.name }.toTypedArray(), default) {
+        val selected: String
+            get() = options[state].value
+
+        override fun toString(): String = selected
+    }
+
+    class SelectFilterOption(val name: String, val value: String)
+
+    class AlbumTypeSelectFilter(options: List<SelectFilterOption>) : SelectFilter("Album Type", options)
+
+    fun getAlbumTypeFilters() = listOf(
+        SelectFilterOption("", "All"),
+        SelectFilterOption("95", "Manga"),
+        SelectFilterOption("115", "Manhua"),
+        SelectFilterOption("105", "Manhwa"),
+        SelectFilterOption("306", "Vietnamese Comic"),
+    )
+    override fun getFilterList(): FilterList = FilterList(
+        AlbumTypeSelectFilter(getAlbumTypeFilters()),
+    )
+
+    private inline fun <reified T> Iterable<*>.findInstance() = find { it is T } as? T
 }
