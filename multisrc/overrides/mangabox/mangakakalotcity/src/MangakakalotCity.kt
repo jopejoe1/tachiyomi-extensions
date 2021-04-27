@@ -15,8 +15,19 @@ class MangakakalotCity : MangaBox("Mangakakalot.city (unoriginal)", "http://mang
     override val simpleQueryPath = "search?q="
     override val popularUrlPath = "popular-manga?page="
     override val latestUrlPath = "latest-manga?page="
+    override fun popularMangaNextPageSelector() = "div.phan-trang > ul.pagination > li > a[rel=\"next\"]"
+    override fun searchMangaNextPageSelector() = popularMangaNextPageSelector()
+    override fun searchMangaSelector() = "div.truyen-list > div.list-truyen-item-wrap"
     override val client: OkHttpClient = network.cloudflareClient.newBuilder()
         .connectTimeout(120, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
         .build()
+    override val pageListSelector = "div.page > select#page_select > option"
+    override fun pageListParse(document: Document): List<Page> {
+        return document.select(pageListSelector)
+            .mapIndexed { i, element ->
+                val url = element.attr("abs:value")
+                Page(i, document.location(), url)
+            }
+    }
 }
