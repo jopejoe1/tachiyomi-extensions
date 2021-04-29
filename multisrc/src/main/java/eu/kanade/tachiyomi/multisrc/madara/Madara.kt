@@ -522,9 +522,19 @@ abstract class Madara(
             else -> 0
         }
     }
+    open var imageHosts = emptyArray<String>()
 
     override fun pageListRequest(chapter: SChapter): Request {
         if (chapter.url.startsWith("http")) {
+            if (imageHosts.isNotEmpty()){
+                imageHosts.forEach {
+                    val document = client.newCall(GET("${chapter.url}?host=$it")).execute().asJsoup()
+                    val element = document.select(pageListParseSelector)
+                    if (element.isNotEmpty()) {
+                        return GET("${chapter.url}?host=$it", headers)
+                    }
+                }
+            }
             return GET(chapter.url, headers)
         }
         return super.pageListRequest(chapter)
@@ -549,6 +559,8 @@ abstract class Madara(
     }
 
     override fun imageUrlParse(document: Document) = throw UnsupportedOperationException("Not used")
+
+
 }
 
 class WordSet(private vararg val words: String) { fun anyWordIn(dateString: String): Boolean = words.any { dateString.contains(it, ignoreCase = true) } }
