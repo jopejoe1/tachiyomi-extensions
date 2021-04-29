@@ -37,8 +37,13 @@ abstract class MMRCMS (
     override val name: String,
     override val baseUrl: String,
     override val lang: String,
-    sourceInfo: String = MMRCMSJsonGen(name, baseUrl, lang).generateJson(),
+    private val sourceInfo: String = "",
 ) : HttpSource() {
+    open val jsonData = if(sourceInfo == "") {
+        SourceData.giveMetaData(baseUrl)
+    } else{
+        sourceInfo
+    }
     /**
      * Parse a List of JSON sources into a list of `MyMangaReaderCMSSource`s
      *
@@ -72,7 +77,7 @@ abstract class MMRCMS (
      *
      */
     open val parser = JsonParser()
-    open val jsonObject = parser.parse(sourceInfo) as JsonObject
+    open val jsonObject = parser.parse(jsonData) as JsonObject
     override val supportsLatest = jsonObject["supports_latest"].bool
     open val itemUrl = jsonObject["item_url"].string
     open val categoryMappings = mapToPairs(jsonObject["categories"].array)
