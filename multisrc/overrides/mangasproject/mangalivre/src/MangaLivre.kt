@@ -1,21 +1,27 @@
 package eu.kanade.tachiyomi.extension.pt.mangalivre
 
+import eu.kanade.tachiyomi.lib.ratelimit.RateLimitInterceptor
 import eu.kanade.tachiyomi.multisrc.mangasproject.MangasProject
 import eu.kanade.tachiyomi.network.GET
 import eu.kanade.tachiyomi.source.model.Filter
 import eu.kanade.tachiyomi.source.model.FilterList
 import eu.kanade.tachiyomi.source.model.MangasPage
-import eu.kanade.tachiyomi.source.model.SChapter
 import okhttp3.Request
 import okhttp3.Response
+import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit
 
-class MangaLivre : MangasProject("Mangá Livre", "https://mangalivre.net", "pt-br") {
+class MangaLivre : MangasProject("Mangá Livre", "https://mangalivre.net", "pt-BR") {
 
     // Hardcode the id because the language wasn't specific.
     override val id: Long = 4762777556012432014
 
+    override val client: OkHttpClient = super.client.newBuilder()
+        .addInterceptor(RateLimitInterceptor(5, 1, TimeUnit.SECONDS))
+        .build()
+
     override fun popularMangaRequest(page: Int): Request {
-        val originalRequestUrl = super.popularMangaRequest(page).url().toString()
+        val originalRequestUrl = super.popularMangaRequest(page).url.toString()
         return GET(originalRequestUrl + DEFAULT_TYPE, sourceHeaders)
     }
 
@@ -24,7 +30,7 @@ class MangaLivre : MangasProject("Mangá Livre", "https://mangalivre.net", "pt-b
             return super.searchMangaRequest(page, query, filters)
         }
 
-        val popularRequestUrl = super.popularMangaRequest(page).url().toString()
+        val popularRequestUrl = super.popularMangaRequest(page).url.toString()
         val type = filters.filterIsInstance<TypeFilter>()
             .firstOrNull()?.selected?.value ?: DEFAULT_TYPE
 
@@ -32,7 +38,7 @@ class MangaLivre : MangasProject("Mangá Livre", "https://mangalivre.net", "pt-b
     }
 
     override fun searchMangaParse(response: Response): MangasPage {
-        if (response.request().url().pathSegments().contains("search")) {
+        if (response.request.url.pathSegments.contains("search")) {
             return super.searchMangaParse(response)
         }
 

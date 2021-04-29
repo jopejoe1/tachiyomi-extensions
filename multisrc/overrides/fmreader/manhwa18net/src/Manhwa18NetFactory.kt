@@ -1,5 +1,6 @@
 package eu.kanade.tachiyomi.extension.all.manhwa18net
 
+import eu.kanade.tachiyomi.annotations.Nsfw
 import eu.kanade.tachiyomi.multisrc.fmreader.FMReader
 import eu.kanade.tachiyomi.network.GET
 import eu.kanade.tachiyomi.source.Source
@@ -14,6 +15,7 @@ class Manhwa18NetFactory : SourceFactory {
     )
 }
 
+@Nsfw
 class Manhwa18Net : FMReader("Manhwa18.net", "https://manhwa18.net", "en") {
     override fun popularMangaRequest(page: Int): Request =
             GET("$baseUrl/$requestPath?listType=pagination&page=$page&sort=views&sort_type=DESC&ungenre=raw", headers)
@@ -22,17 +24,18 @@ class Manhwa18Net : FMReader("Manhwa18.net", "https://manhwa18.net", "en") {
             GET("$baseUrl/$requestPath?listType=pagination&page=$page&sort=last_update&sort_type=DESC&ungenre=raw", headers)
 
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
-        val noRawsUrl = super.searchMangaRequest(page, query, filters).url().newBuilder().addQueryParameter("ungenre", "raw").toString()
+        val noRawsUrl = super.searchMangaRequest(page, query, filters).url.newBuilder().addQueryParameter("ungenre", "raw").toString()
         return GET(noRawsUrl, headers)
     }
 
     override fun getGenreList() = getAdultGenreList()
 }
 
+@Nsfw
 class Manhwa18NetRaw : FMReader("Manhwa18.net", "https://manhwa18.net", "ko") {
     override val requestPath = "manga-list-genre-raw.html"
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
-        val onlyRawsUrl = super.searchMangaRequest(page, query, filters).url().newBuilder().addQueryParameter("genre", "raw").toString()
+        val onlyRawsUrl = super.searchMangaRequest(page, query, filters).url.newBuilder().addQueryParameter("genre", "raw").toString()
         return GET(onlyRawsUrl, headers)
     }
 

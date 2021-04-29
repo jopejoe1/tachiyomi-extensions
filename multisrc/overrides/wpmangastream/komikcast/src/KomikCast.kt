@@ -8,7 +8,7 @@ import eu.kanade.tachiyomi.source.model.FilterList
 import eu.kanade.tachiyomi.source.model.Page
 import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.source.model.SManga
-import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jsoup.nodes.Document
@@ -39,7 +39,7 @@ class KomikCast : WPMangaStream("Komik Cast", "https://komikcast.com", "id") {
 
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
         val url = if (query.isNotBlank()) {
-            val url = HttpUrl.parse("$baseUrl/page/$page")!!.newBuilder()
+            val url = "$baseUrl/page/$page".toHttpUrlOrNull()!!.newBuilder()
             val pattern = "\\s+".toRegex()
             val q = query.replace(pattern, "+")
             if (query.isNotEmpty()) {
@@ -49,7 +49,7 @@ class KomikCast : WPMangaStream("Komik Cast", "https://komikcast.com", "id") {
             }
             url.toString()
         } else {
-            val url = HttpUrl.parse("$baseUrl/daftar-komik/page/$page")!!.newBuilder()
+            val url = "$baseUrl/daftar-komik/page/$page".toHttpUrlOrNull()!!.newBuilder()
             var orderBy: String
             (if (filters.isEmpty()) getFilterList() else filters).forEach { filter ->
                 when (filter) {
@@ -97,9 +97,29 @@ class KomikCast : WPMangaStream("Komik Cast", "https://komikcast.com", "id") {
                 artist = infoElement.select("span:contains(Author:)").firstOrNull()?.ownText()
                 description = infoElement.select("div.komik_info-description-sinopsis p").joinToString("\n") { it.text() }
                 thumbnail_url = infoElement.select("div.komik_info-content-thumbnail img").imgAttr()
+
+                // add series type(manga/manhwa/manhua/other) thinggy to genre
+                document.select(seriesTypeSelector).firstOrNull()?.ownText()?.let {
+                    if (it.isEmpty().not() && genre!!.contains(it, true).not()) {
+                        genre += if (genre!!.isEmpty()) it else ", $it"
+                    }
+                }
+
+                // add alternative name to manga description
+                document.select(altNameSelector).firstOrNull()?.ownText()?.let {
+                    if (it.isEmpty().not() && it !="N/A" && it != "-") {
+                        description += when {
+                            description!!.isEmpty() -> altName + it
+                            else -> "\n\n$altName" + it
+                        }
+                    }
+                }
             }
         }
     }
+
+    override val seriesTypeSelector = "span:contains(Type) a"
+    override val altNameSelector = ".komik_info-content-native"
 
     override fun chapterListSelector() = "div.komik_info-chapters li"
 

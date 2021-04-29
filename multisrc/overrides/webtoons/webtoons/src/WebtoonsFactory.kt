@@ -21,13 +21,15 @@ class WebtoonsFactory : SourceFactory {
 }
 class WebtoonsEN : Webtoons("Webtoons.com", "https://www.webtoons.com", "en")
 class WebtoonsID : Webtoons("Webtoons.com", "https://www.webtoons.com", "id") {
-    // Ovveride ID as part of the name was removed to be more consiten with other enteries
+    // Override ID as part of the name was removed to be more consiten with other enteries
     override val id: Long = 8749627068478740298
+    
     // Android seems to be unable to parse Indonesian dates; we'll use a short hard-coded table
     // instead.
     private val dateMap: Array<String> = arrayOf(
         "Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"
     )
+
     override fun chapterParseDate(date: String): Long {
         val expr = Regex("""(\d{4}) ([A-Z][a-z]{2}) (\d+)""").find(date) ?: return 0
         val (_, year, monthString, day) = expr.groupValues
