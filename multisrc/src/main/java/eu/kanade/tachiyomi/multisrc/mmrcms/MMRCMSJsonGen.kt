@@ -26,8 +26,6 @@ class MMRCMSJsonGen {
         preRunTotal = Regex("""MMRSOURCE_(\d+)""").findAll(File(relativePath).readText(Charsets.UTF_8)).last().groupValues[1]
     }
 
-    data class SourceData(val lang: String, val name: String, val baseUrl: String, val isNsfw: Boolean = false)
-
     @TargetApi(Build.VERSION_CODES.O)
     fun generate() {
         val buffer = StringBuffer()
@@ -83,7 +81,7 @@ class MMRCMSJsonGen {
 
                 val toJson = Gson().toJson(map)
 
-                buffer.append("                ${it.baseUrl} -> \"\"\"$toJson\"\"\"\n")
+                buffer.append("                \"${it.baseUrl}\" -> \"\"\"$toJson\"\"\"\n")
                 number++
             } catch (e: Exception) {
                 println("error generating source ${it.name} ${e.printStackTrace()}")
