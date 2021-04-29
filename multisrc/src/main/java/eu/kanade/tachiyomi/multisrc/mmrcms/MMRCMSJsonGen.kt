@@ -18,12 +18,19 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
+/**
+ * This class generates the sources for MMRCMS.
+ * Credit to nulldev for writing the original shell script
+ *
+ * CMS: https://getcyberworks.com/product/manga-reader-cms/
+ */
+
 class MMRCMSJsonGen {
-    private var preRunTotal: String
+    //private var preRunTotal: String
 
     init {
         System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2,TLSv1.3")
-        preRunTotal = Regex("""MMRSOURCE_(\d+)""").findAll(File(relativePath).readText(Charsets.UTF_8)).last().groupValues[1]
+        //preRunTotal = Regex("""-> (\d+)""").findAll(File(relativePath).readText(Charsets.UTF_8)).last().groupValues[1]
     }
 
     @TargetApi(Build.VERSION_CODES.O)
@@ -33,10 +40,10 @@ class MMRCMSJsonGen {
         val formattedDate = dateTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
         buffer.append("package eu.kanade.tachiyomi.multisrc.mmrcms")
         buffer.append("\n\n// GENERATED FILE, DO NOT MODIFY!\n// Generated $formattedDate\n\n")
-        buffer.append("class SourceData() {")
-        buffer.append("    companion object {")
-        buffer.append("        fun giveMetaData(url:String): String{")
-        buffer.append("            return when (url) {")
+        buffer.append("class SourceData() {\n")
+        buffer.append("    companion object {\n")
+        buffer.append("        fun giveMetaData(url:String): String{\n")
+        buffer.append("            return when (url) {\n")
         var number = 1
         sources.forEach {
             try {
@@ -72,10 +79,10 @@ class MMRCMSJsonGen {
                 map["item_url"] = "$itemUrl/"
                 map["categories"] = parseCategories
                 val tags = parseTags(mangaListDocument)
-                map["tags"] = "null"
-                if (tags.size in 1..49) {
+                map["tags"] = tags
+                /*if (tags.size in 1..49) {
                     map["tags"] = tags
-                }
+                }*/
 
                 if (!itemUrl.startsWith(it.baseUrl)) println("**Note: ${it.name} URL does not match! Check for changes: \n ${it.baseUrl} vs $itemUrl")
 
@@ -88,12 +95,12 @@ class MMRCMSJsonGen {
             }
         }
 
-        buffer.append("                else -> \"\"")
-        buffer.append("            }")
-        buffer.append("        }")
-        buffer.append("    }")
-        buffer.append("}")
-        println("Pre-run sources: $preRunTotal")
+        buffer.append("                else -> \"\"\n")
+        buffer.append("            }\n")
+        buffer.append("        }\n")
+        buffer.append("    }\n")
+        buffer.append("}\n")
+        //println("Pre-run sources: $preRunTotal")
         println("Post-run sources: ${number - 1}")
         val writer = PrintWriter(relativePath)
         writer.write(buffer.toString())
@@ -217,9 +224,9 @@ class MMRCMSJsonGen {
     }
 
     companion object {
-        val sources = MMRCMSSources.sourceList
+        val sources = MMRCMSGenerator.sourceList
 
-        val relativePath = System.getProperty("user.dir") + "/src/main/java/eu/kanade/tachiyomi/multisrc/mmrcms/SourceData.kt"
+        val relativePath = System.getProperty("user.dir") + "/multisrc/src/main/java/eu/kanade/tachiyomi/multisrc/mmrcms/SourceData.kt"
 
         @JvmStatic
         fun main(args: Array<String>) {
