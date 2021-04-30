@@ -85,7 +85,8 @@ class PatchFriday : HttpSource() {
             element.forEach {
                 val chapter = SChapter.create()
                 chapter.url = it.attr("abs:href")
-                chapter.name = "${chapter.url.replace("/", "").trim()} - ${it.text()}"
+                chapter.chapter_number = chapter.url.replace("/", "").trim().toFloat()
+                chapter.name = "#${chapter.chapter_number} - ${it.text()}"
                 chapter.date_upload = System.currentTimeMillis()
                 chapters.add(chapter)
             }
