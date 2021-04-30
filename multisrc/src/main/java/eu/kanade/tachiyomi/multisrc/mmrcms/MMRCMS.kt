@@ -76,8 +76,7 @@ abstract class MMRCMS (
      *
      *
      */
-    open val parser = JsonParser()
-    open val jsonObject = parser.parse(jsonData) as JsonObject
+    open val jsonObject = JsonParser.parseString(jsonData) as JsonObject
     override val supportsLatest = jsonObject["supports_latest"].bool
     open val itemUrl = jsonObject["item_url"].string
     open val categoryMappings = mapToPairs(jsonObject["categories"].array)
@@ -105,9 +104,6 @@ abstract class MMRCMS (
 
 
 
-
-
-    private val jsonParser = JsonParser()
     private val itemUrlPath = Uri.parse(itemUrl).pathSegments.firstOrNull()
     private val parsedBaseUrl = Uri.parse(baseUrl)
 
@@ -168,7 +164,7 @@ abstract class MMRCMS (
     override fun searchMangaParse(response: Response): MangasPage {
         return if (listOf("query", "q").any { it in response.request.url.queryParameterNames }) {
             // If a search query was specified, use search instead!
-            val jsonArray = jsonParser.parse(response.body!!.string()).let {
+            val jsonArray = JsonParser.parseString(response.body!!.string()).let {
                 if (name == "Mangas.pw") it.array else it["suggestions"].array
             }
             MangasPage(
