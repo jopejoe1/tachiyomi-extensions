@@ -74,7 +74,7 @@ class PatchFriday : HttpSource() {
     // Chapters
 
     override fun fetchChapterList(manga: SManga): Observable<List<SChapter>> {
-        return client.newCall(GET("$baseUrl/search/", headers))
+        return client.newCall(GET("$baseUrl/search/?search=;", headers))
             .asObservableSuccess()
             .map { parseChapters(it) }
     }
