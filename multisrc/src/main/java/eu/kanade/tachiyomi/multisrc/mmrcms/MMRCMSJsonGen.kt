@@ -1,9 +1,10 @@
-package eu.kanade.tachiyomi.multisrc.mmrcms
+package eu.kanade.tachiyomi.multisrc.mmrcmsjson
 
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.os.Build
 import com.google.gson.Gson
+import eu.kanade.tachiyomi.multisrc.mmrcms.MMRCMSGenerator
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jsoup.Jsoup
