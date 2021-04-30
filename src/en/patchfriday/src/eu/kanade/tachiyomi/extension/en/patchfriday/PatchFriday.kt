@@ -30,7 +30,10 @@ class PatchFriday : HttpSource() {
         return SManga.create().apply {
             initialized = true
             title = "Patch Friday"
+            status = SManga.ONGOING
             url = ""
+            author = "Patch Friday"
+            artist = author
             thumbnail_url = "https://patchfriday.com/patches/68.png"
             description = "The IT security webcomic"
         }
