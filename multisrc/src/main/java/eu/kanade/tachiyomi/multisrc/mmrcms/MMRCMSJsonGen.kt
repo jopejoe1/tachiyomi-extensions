@@ -79,10 +79,10 @@ class MMRCMSJsonGen {
                 map["item_url"] = "$itemUrl/"
                 map["categories"] = parseCategories
                 val tags = parseTags(mangaListDocument)
-                map["tags"] = tags
-                /*if (tags.size in 1..49) {
+                map["tags"] = "null"
+                if (tags.size in 1..49) {
                     map["tags"] = tags
-                }*/
+                }
 
                 if (!itemUrl.startsWith(it.baseUrl)) println("**Note: ${it.name} URL does not match! Check for changes: \n ${it.baseUrl} vs $itemUrl")
 
