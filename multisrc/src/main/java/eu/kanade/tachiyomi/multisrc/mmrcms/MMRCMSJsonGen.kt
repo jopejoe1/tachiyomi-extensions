@@ -1,10 +1,10 @@
-package eu.kanade.tachiyomi.multisrc.mmrcmsjson
+package eu.kanade.tachiyomi.multisrc.mmrcms
 
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.os.Build
 import com.google.gson.Gson
-import eu.kanade.tachiyomi.multisrc.mmrcms.MMRCMSGenerator
+import eu.kanade.tachiyomi.multisrc.mmrcms.MMRCMSSources.Companion.sourceList
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jsoup.Jsoup
@@ -225,7 +225,7 @@ class MMRCMSJsonGen {
     }
 
     companion object {
-        val sources = MMRCMSGenerator.sourceList
+        val sources = sourceList
 
         val relativePath = System.getProperty("user.dir") + "/multisrc/src/main/java/eu/kanade/tachiyomi/multisrc/mmrcms/SourceData.kt"
 
