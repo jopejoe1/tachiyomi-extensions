@@ -18,6 +18,5 @@ class ReadFairyTailEdensZeroMangaOnline : MangaCatalog("Read Fairy Tail & Eden's
         Pair("Parasyte x FT", "$baseUrl/manga/parasyte-x-fairy-tail/"),
         Pair("Monster Hunter", "$baseUrl/manga/monster-hunter-orage/"),
         Pair("Rave Master", "$baseUrl/manga/rave-master/"),
-
     ).sortedBy { it.first }.distinctBy { it.second }
 }

@@ -22,7 +22,9 @@ class MangaCatalogGenerator : ThemeSourceGenerator {
         SingleLang("Read Hunter x Hunter Manga Online", "https://ww2.readhxh.com", "en"),
         SingleLang("Read Solo Leveling Manga/Manhwa Online", "https://readsololeveling.org", "en", className = "ReadSoloLevelingMangaManhwaOnline"),
         SingleLang("Read The Promised Neverland Manga Online", "https://ww3.readneverland.com", "en"),
-        SingleLang("Read Attack on Titan/Shingeki no Kyojin Manga", "https://ww7.readsnk.com", "en", className = "ReadAttackOnTitanShingekiNoKyojinManga")
+        SingleLang("Read Attack on Titan/Shingeki no Kyojin Manga", "https://ww7.readsnk.com", "en", className = "ReadAttackOnTitanShingekiNoKyojinManga"),
+        SingleLang("Read Berserk Manga Online", "https://readberserk.com", "en"),
+        SingleLang("Read Fairy Tail & Eden's Zero Manga Online", "https://ww4.readfairytail.com", "en", className = "ReadFairyTailEdensZeroMangaOnline"),
     )
 
     companion object {
