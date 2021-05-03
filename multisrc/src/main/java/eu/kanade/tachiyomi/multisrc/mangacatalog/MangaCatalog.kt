@@ -32,7 +32,7 @@ abstract class MangaCatalog(
     override val supportsLatest: Boolean = false
 
     // Popular
-    public val mangaSelector = "nav > div > div > ul > li:has(a[href~=/manga/]) a"
+    public val mangaSelector = "nav > div > div > ul > li:has(a[href*=manga]) a"
 
     override fun fetchPopularManga(page: Int): Observable<MangasPage> {
         val mangaList = mutableListOf<Pair<String, String>>()
@@ -44,7 +44,9 @@ abstract class MangaCatalog(
         mangas.forEach {
             val name = it.text()
             val url = it.attr("abs:href")
-            mangaList.add(Pair(name, url))
+            if (url.contains("/mannga/")){
+                mangaList.add(Pair(name, url))
+            }
         }
         return Observable.just(MangasPage(mangaList.map { popularMangaFromPair(it.first, it.second) }, false))
     }
