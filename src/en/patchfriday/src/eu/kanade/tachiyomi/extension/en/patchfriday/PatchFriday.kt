@@ -82,12 +82,12 @@ class PatchFriday : HttpSource() {
     private fun parseChapters (response: Response): List<SChapter>{
         val chapters = mutableListOf<SChapter>()
         var document = response.asJsoup()
-        var page = document.select("div > div:first-of-type > div:first-of-type > a").attr("abs:href").replace("/","").trim().toInt()
+        var page = document.select("div > div:first-of-type > div:first-of-type > a").attr("abs:href").replace("https://patchfriday.com","").replace("/","").trim().toInt()
         while (page > 0) {
             val element = document.select("div > div > div:first-of-type > a")
             element.forEach {
                 val chapter = SChapter.create()
-                chapter.url = it.attr("abs:href")
+                chapter.url = it.attr("abs:href").replace("https://patchfriday.com","").trim()
                 chapter.chapter_number = chapter.url.replace("/", "").trim().toFloat()
                 chapter.name = "#${chapter.chapter_number} - ${it.text()}"
                 chapter.date_upload = System.currentTimeMillis()
