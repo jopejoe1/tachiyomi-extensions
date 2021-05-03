@@ -7,7 +7,6 @@ import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.source.model.SManga
 import eu.kanade.tachiyomi.source.model.Page
 import eu.kanade.tachiyomi.source.online.ParsedHttpSource
-import eu.kanade.tachiyomi.util.asJsoup
 import okhttp3.Request
 import rx.Observable
 import org.jsoup.nodes.Document
@@ -22,7 +21,6 @@ abstract class MangaCatalog(
     override val baseUrl: String,
     override val lang: String
 ) : ParsedHttpSource() {
-    //Override this with manga that are not found in the navigation bar in most cases that is the main manga of the site
     open val sourceList = listOf(
         Pair("$name", "$baseUrl")
     ).sortedBy { it.first }.distinctBy { it.second }
@@ -32,23 +30,8 @@ abstract class MangaCatalog(
     override val supportsLatest: Boolean = false
 
     // Popular
-    public val mangaSelector = "nav > div > div > ul > li:has(a[href*=manga]) a"
-
     override fun fetchPopularManga(page: Int): Observable<MangasPage> {
-        val mangaList = mutableListOf<Pair<String, String>>()
-        sourceList.forEach() {
-            mangaList.add(it)
-        }
-        val document = client.newCall(GET(baseUrl, headers)).execute().asJsoup()
-        val mangas = document.select(mangaSelector)
-        mangas.forEach {
-            val name = it.text()
-            val url = it.attr("abs:href")
-            if (url.contains("/mannga/")){
-                mangaList.add(Pair(name, url))
-            }
-        }
-        return Observable.just(MangasPage(mangaList.map { popularMangaFromPair(it.first, it.second) }, false))
+        return Observable.just(MangasPage(sourceList.map { popularMangaFromPair(it.first, it.second) }, false))
     }
     private fun popularMangaFromPair(name: String, sourceurl: String): SManga = SManga.create().apply {
         title = name
