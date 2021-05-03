@@ -4,7 +4,7 @@ import eu.kanade.tachiyomi.multisrc.mangacatalog.MangaCatalog
 import eu.kanade.tachiyomi.source.model.MangasPage
 import eu.kanade.tachiyomi.util.asJsoup
 
-class ReadFairyTailEdensZeroMangaOnline : MangaCatalog("Read Fairy Tail & Eden's Zero Manga Online", "https://ww4.readfairytail.com", "en") {
+class ReadFairyTailEdensZeroMangaOnline : MangaCatalog("Read Fairy Tail & Edens Zero Manga Online", "https://ww4.readfairytail.com", "en") {
     override val sourceList = listOf(
         Pair("Eden's Zero", "$baseUrl/manga/edens-zero/"),
         Pair("Fairy Tail", "$baseUrl/manga/fairy-tail/"),
