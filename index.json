@@ -135,9 +135,72 @@
     "nsfw": 0
   },
   {
+    "name": "Tachiyomi: Read Berserk Manga",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readberserkmanga",
+    "apk": "tachiyomi-en.readberserkmanga-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
     "name": "Tachiyomi: Read Boku no Hero Academia/My Hero Academia Manga",
     "pkg": "eu.kanade.tachiyomi.extension.en.readbokunoheroacademiamyheroacademiamanga",
     "apk": "tachiyomi-en.readbokunoheroacademiamyheroacademiamanga-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Chainsaw Man Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readchainsawmanmangaonline",
+    "apk": "tachiyomi-en.readchainsawmanmangaonline-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Dragon Ball Super/Chou Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readdragonballsuperchoumangaonline",
+    "apk": "tachiyomi-en.readdragonballsuperchoumangaonline-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Dr. Stone Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readdrstonemangaonline",
+    "apk": "tachiyomi-en.readdrstonemangaonline-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Fairy Tail & Edens Zero Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readfairytailedenszeromangaonline",
+    "apk": "tachiyomi-en.readfairytailedenszeromangaonline-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Goblin Slayer Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readgoblinslayermangaonline",
+    "apk": "tachiyomi-en.readgoblinslayermangaonline-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Haikyuu!! Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readhaikyuumangaonline",
+    "apk": "tachiyomi-en.readhaikyuumangaonline-v1.2.2.apk",
     "lang": "en",
     "code": 2,
     "version": "1.2.2",
@@ -171,9 +234,45 @@
     "nsfw": 0
   },
   {
+    "name": "Tachiyomi: Read Kingdom Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readkingdommangaonline",
+    "apk": "tachiyomi-en.readkingdommangaonline-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
     "name": "Tachiyomi: Read Nanatsu no Taizai/7 Deadly Sins Manga Online",
     "pkg": "eu.kanade.tachiyomi.extension.en.readnanatsunotaizai7deadlysinsmangaonline",
     "apk": "tachiyomi-en.readnanatsunotaizai7deadlysinsmangaonline-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Naruto/Boruto/Samurai 8 Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readnarutoborutosamurai8mangaonline",
+    "apk": "tachiyomi-en.readnarutoborutosamurai8mangaonline-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Noblesse Manhwa Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readnoblessemanhwaonline",
+    "apk": "tachiyomi-en.readnoblessemanhwaonline-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read One Piece Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readonepiecemangaonline",
+    "apk": "tachiyomi-en.readonepiecemangaonline-v1.2.2.apk",
     "lang": "en",
     "code": 2,
     "version": "1.2.2",
@@ -192,6 +291,15 @@
     "name": "Tachiyomi: Read Solo Leveling Manga/Manhwa Online",
     "pkg": "eu.kanade.tachiyomi.extension.en.readsololevelingmangamanhwaonline",
     "apk": "tachiyomi-en.readsololevelingmangamanhwaonline-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Sword Art Online Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readswordartonlinemangaonline",
+    "apk": "tachiyomi-en.readswordartonlinemangaonline-v1.2.2.apk",
     "lang": "en",
     "code": 2,
     "version": "1.2.2",
@@ -219,6 +327,15 @@
     "name": "Tachiyomi: Read Tower of God Manhwa/Manga Online",
     "pkg": "eu.kanade.tachiyomi.extension.en.readtowerofgodmanhwamangaonline",
     "apk": "tachiyomi-en.readtowerofgodmanhwamangaonline-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Vinland Saga Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readvinlandsagamangaonline",
+    "apk": "tachiyomi-en.readvinlandsagamangaonline-v1.2.2.apk",
     "lang": "en",
     "code": 2,
     "version": "1.2.2",
