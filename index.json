@@ -124,5 +124,104 @@
     "code": 2,
     "version": "1.2.2",
     "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Attack on Titan/Shingeki no Kyojin Manga",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readattackontitanshingekinokyojinmanga",
+    "apk": "tachiyomi-en.readattackontitanshingekinokyojinmanga-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Boku no Hero Academia/My Hero Academia Manga",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readbokunoheroacademiamyheroacademiamanga",
+    "apk": "tachiyomi-en.readbokunoheroacademiamyheroacademiamanga-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Hunter x Hunter Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readhunterxhuntermangaonline",
+    "apk": "tachiyomi-en.readhunterxhuntermangaonline-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Jujutsu Kaisen Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readjujutsukaisenmangaonline",
+    "apk": "tachiyomi-en.readjujutsukaisenmangaonline-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Kaguya-sama Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readkaguyasamamangaonline",
+    "apk": "tachiyomi-en.readkaguyasamamangaonline-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Nanatsu no Taizai/7 Deadly Sins Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readnanatsunotaizai7deadlysinsmangaonline",
+    "apk": "tachiyomi-en.readnanatsunotaizai7deadlysinsmangaonline-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read One-Punch Man Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readonepunchmanmangaonlinetwo",
+    "apk": "tachiyomi-en.readonepunchmanmangaonlinetwo-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Solo Leveling Manga/Manhwa Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readsololevelingmangamanhwaonline",
+    "apk": "tachiyomi-en.readsololevelingmangamanhwaonline-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read The Promised Neverland Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readthepromisedneverlandmangaonline",
+    "apk": "tachiyomi-en.readthepromisedneverlandmangaonline-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Tokyo Ghoul Re & Tokyo Ghoul Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readtokyoghoulretokyoghoulmangaonline",
+    "apk": "tachiyomi-en.readtokyoghoulretokyoghoulmangaonline-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Tower of God Manhwa/Manga Online",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readtowerofgodmanhwamangaonline",
+    "apk": "tachiyomi-en.readtowerofgodmanhwamangaonline-v1.2.2.apk",
+    "lang": "en",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 0
   }
 ]
