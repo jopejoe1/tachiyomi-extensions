@@ -1,18 +1,15 @@
-package eu.kanade.tachiyomi.extension.en.readberserkmangaonline
+package eu.kanade.tachiyomi.extension.en.readgoblinslayermangaonline
 
 import eu.kanade.tachiyomi.multisrc.mangacatalog.MangaCatalog
 import eu.kanade.tachiyomi.source.model.MangasPage
 import eu.kanade.tachiyomi.util.asJsoup
 
-class ReadHunterxHunterMangaOnline : MangaCatalog("Read Berserk Manga Online", "https://readberserk.com", "en") {
+class ReadGoblinSlayerMangaOnline : MangaCatalog("Read Goblin Slayer Manga Online", "https://manga.watchgoblinslayer.com", "en") {
     override val sourceList = listOf(
-        Pair("Berserk", "$baseUrl/manga/berserk/"),
-        Pair("Guidebook", "$baseUrl/manga/berserk-official-guidebook/"),
-        Pair("Colored", "$baseUrl/manga/berserk-colored/"),
-        Pair("Motion Comic", "$baseUrl/manga/berserk-the-motion-comic/"),
-        Pair("Duranki", "$baseUrl/manga/duranki/"),
-        Pair("Gigantomakhia", "$baseUrl/manga/gigantomakhia/"),
-        Pair("Berserk Spoilers & RAW", "$baseUrl/manga/berserk-spoilers-raw/"),
+        Pair("Goblin Slayer", "$baseUrl/manga/goblin-slayer/"),
+        Pair("Side Story: Brand New Day", "$baseUrl/manga/goblin-slayer-side-story-brand-new-day/"),
+        Pair("Side Story: Year One", "$baseUrl/manga/goblin-slayer-side-story-year-one/"),
+        Pair("Side Story: Gaiden 2", "$baseUrl/manga/goblin-slayer-gaiden-2-tsubanari-no-daikatana/"),
     ).sortedBy { it.first }.distinctBy { it.second }
 
     override fun mangaDetailsParse(document: Document): SManga = SManga.create().apply {

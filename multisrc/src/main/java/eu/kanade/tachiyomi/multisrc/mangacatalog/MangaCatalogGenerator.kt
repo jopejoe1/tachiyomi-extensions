@@ -23,8 +23,19 @@ class MangaCatalogGenerator : ThemeSourceGenerator {
         SingleLang("Read Solo Leveling Manga/Manhwa Online", "https://readsololeveling.org", "en", className = "ReadSoloLevelingMangaManhwaOnline"),
         SingleLang("Read The Promised Neverland Manga Online", "https://ww3.readneverland.com", "en"),
         SingleLang("Read Attack on Titan/Shingeki no Kyojin Manga", "https://ww7.readsnk.com", "en", className = "ReadAttackOnTitanShingekiNoKyojinManga"),
-        SingleLang("Read Berserk Manga Online", "https://readberserk.com", "en"),
+        SingleLang("Read Berserk Manga", "https://readberserk.com", "en"),
         SingleLang("Read Fairy Tail & Eden's Zero Manga Online", "https://ww4.readfairytail.com", "en", className = "ReadFairyTailEdensZeroMangaOnline"),
+        SingleLang("Read One Piece Manga Online", "https://ww8.readonepiece.com", "en"),
+        SingleLang("Read Dr. Stone Manga Online", "https://ww3.readdrstone.com", "en", className = "ReadDrStoneMangaOnline"),
+        SingleLang("Read Chainsaw Man Manga Online", "https://ww1.readchainsawman.com", "en"),
+        SingleLang("Read Dragon Ball Super/Chou Manga Online", "https://ww6.dbsmanga.com", "en", className = "ReadDragonBallSuperChouMangaOnline"),
+        SingleLang("Read Kingdom Manga Online", "https://ww2.readkingdom.com", "en"),
+        SingleLang("Read Naruto/Boruto/Samurai 8 Manga Online", "https://ww7.readnaruto.com", "en", className = "ReadNarutoBorutoSamurai8MangaOnline"),
+        SingleLang("Read Vinland Saga Manga Online", "https://ww1.readvinlandsaga.com", "en"),
+        SingleLang("Read Haikyuu!! Manga Online", "https://ww6.readhaikyuu.com", "en", className = "ReadHaikyuuMangaOnline"),
+        SingleLang("Read Goblin Slayer Manga Online", "https://manga.watchgoblinslayer.com", "en"),
+        SingleLang("Read Sword Art Online Manga Online", "https://manga.watchsao.tv", "en"),
+        SingleLang("Read Noblesse Manhwa Online", "https://ww2.readnoblesse.com", "en"),
     )
 
     companion object {
