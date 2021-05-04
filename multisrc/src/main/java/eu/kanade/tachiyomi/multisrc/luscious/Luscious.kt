@@ -108,8 +108,8 @@ abstract class Luscious(
                                     set("value", "+$lusLang${get("value").asString}")
                                 }
                             )
-                            if (tagsFilter.toString().isNotEmpty()) {
-                                val tags = tagsFilter.toString().replace(" ", "_").replace("_,", "+").replace(",", "+").replace("+-", "-").trim()
+                            if (tagsFilter.state.isNotEmpty()) {
+                                val tags = tagsFilter.state.replace(" ", "_").replace("_,", "+").replace(",", "+").replace("+-", "-").trim()
                                 add(
                                     JsonObject().apply {
                                         addProperty("name", "tagged")
