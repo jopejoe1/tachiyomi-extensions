@@ -531,8 +531,8 @@ abstract class Luscious(
     )
 
     fun getAlbumTypeFilters() = listOf(
-        SelectFilterOption("Manga", "manga"),
         SelectFilterOption("All", FILTER_VALUE_IGNORE),
+        SelectFilterOption("Manga", "manga"),
         SelectFilterOption("Pictures", "pictures")
     )
 
@@ -562,7 +562,7 @@ abstract class Luscious(
 
     fun getInterestFilters() = listOf(
         CheckboxFilterOption("Straight Sex", "1"),
-        CheckboxFilterOption("Trans x Girl", "10", false),
+        CheckboxFilterOption("Trans x Girl", "10"),
         CheckboxFilterOption("Gay / Yaoi", "2"),
         CheckboxFilterOption("Lesbian / Yuri", "3"),
         CheckboxFilterOption("Trans", "5"),
@@ -572,55 +572,19 @@ abstract class Luscious(
     )
 
     fun getLanguageFilters() = listOf(
-        CheckboxFilterOption("English", ENGLISH_LUS_LANG_VAL, false),
-        CheckboxFilterOption("Japanese", JAPANESE_LUS_LANG_VAL, false),
-        CheckboxFilterOption("Spanish", SPANISH_LUS_LANG_VAL, false),
-        CheckboxFilterOption("Italian", ITALIAN_LUS_LANG_VAL, false),
-        CheckboxFilterOption("German", GERMAN_LUS_LANG_VAL, false),
-        CheckboxFilterOption("French", FRENCH_LUS_LANG_VAL, false),
-        CheckboxFilterOption("Chinese", CHINESE_LUS_LANG_VAL, false),
-        CheckboxFilterOption("Korean", KOREAN_LUS_LANG_VAL, false),
-        CheckboxFilterOption("Others", OTHERS_LUS_LANG_VAL, false),
-        CheckboxFilterOption("Portugese", PORTUGESE_LUS_LANG_VAL, false),
-        CheckboxFilterOption("Thai", THAI_LUS_LANG_VAL, false)
+        CheckboxFilterOption("English", "1", false),
+        CheckboxFilterOption("Japanese", "2", false),
+        CheckboxFilterOption("Spanish", "3", false),
+        CheckboxFilterOption("Italian", "4", false),
+        CheckboxFilterOption("German", "5", false),
+        CheckboxFilterOption("French", "6", false),
+        CheckboxFilterOption("Chinese", "8", false),
+        CheckboxFilterOption("Korean", "9", false),
+        CheckboxFilterOption("Others", "99", false),
+        CheckboxFilterOption("Portugese", "100", false),
+        CheckboxFilterOption("Thai", "101", false)
     ).filterNot { it.value == lusLang }
 
-    fun getTagFilters() = listOf(
-        TriStateFilterOption("Big Breasts", "big_breasts"),
-        TriStateFilterOption("Blowjob", "blowjob"),
-        TriStateFilterOption("Anal", "anal"),
-        TriStateFilterOption("Group", "group"),
-        TriStateFilterOption("Big Ass", "big_ass"),
-        TriStateFilterOption("Full Color", "full_color"),
-        TriStateFilterOption("Schoolgirl", "schoolgirl"),
-        TriStateFilterOption("Rape", "rape"),
-        TriStateFilterOption("Glasses", "glasses"),
-        TriStateFilterOption("Nakadashi", "nakadashi"),
-        TriStateFilterOption("Yuri", "yuri"),
-        TriStateFilterOption("Paizuri", "paizuri"),
-        TriStateFilterOption("Ahegao", "ahegao"),
-        TriStateFilterOption("Group: metart", "group%3A_metart"),
-        TriStateFilterOption("Brunette", "brunette"),
-        TriStateFilterOption("Solo", "solo"),
-        TriStateFilterOption("Blonde", "blonde"),
-        TriStateFilterOption("Shaved Pussy", "shaved_pussy"),
-        TriStateFilterOption("Small Breasts", "small_breasts"),
-        TriStateFilterOption("Cum", "cum"),
-        TriStateFilterOption("Stockings", "stockings"),
-        TriStateFilterOption("Yuri", "yuri"),
-        TriStateFilterOption("Ass", "ass"),
-        TriStateFilterOption("Creampie", "creampie"),
-        TriStateFilterOption("Rape", "rape"),
-        TriStateFilterOption("Oral Sex", "oral_sex"),
-        TriStateFilterOption("Bondage", "bondage"),
-        TriStateFilterOption("Futanari", "futanari"),
-        TriStateFilterOption("Double Penetration", "double_penetration"),
-        TriStateFilterOption("Threesome", "threesome"),
-        TriStateFilterOption("Anal Sex", "anal_sex"),
-        TriStateFilterOption("Big Cock", "big_cock"),
-        TriStateFilterOption("Straight Sex", "straight_sex"),
-        TriStateFilterOption("Yaoi", "yaoi")
-    )
 
     fun getGenreFilters() = listOf(
         TriStateFilterOption("3D / Digital Art", "25"),
@@ -670,18 +634,6 @@ abstract class Luscious(
     private inline fun <reified T> Iterable<*>.findInstance() = find { it is T } as? T
 
     companion object {
-
-        const val ENGLISH_LUS_LANG_VAL = "1"
-        const val JAPANESE_LUS_LANG_VAL = "2"
-        const val SPANISH_LUS_LANG_VAL = "3"
-        const val ITALIAN_LUS_LANG_VAL = "4"
-        const val GERMAN_LUS_LANG_VAL = "5"
-        const val FRENCH_LUS_LANG_VAL = "6"
-        const val CHINESE_LUS_LANG_VAL = "8"
-        const val KOREAN_LUS_LANG_VAL = "9"
-        const val OTHERS_LUS_LANG_VAL = "99"
-        const val PORTUGESE_LUS_LANG_VAL = "100"
-        const val THAI_LUS_LANG_VAL = "101"
 
         private const val POPULAR_DEFAULT_SORT_STATE = 0
         private const val LATEST_DEFAULT_SORT_STATE = 7
