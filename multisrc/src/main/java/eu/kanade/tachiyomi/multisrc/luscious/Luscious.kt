@@ -196,7 +196,7 @@ abstract class Luscious(
 
     override fun fetchChapterList(manga: SManga): Observable<List<SChapter>> {
         val id = manga.url.substringAfterLast("_").removeSuffix("/")
-        val pageSort = getSortFilters().toString()
+        val pageSort = getSortPref()!!
 
         return client.newCall(GET(buildAlbumPicturesPageUrl(id, 1, pageSort)))
             .asObservableSuccess()
@@ -323,7 +323,7 @@ abstract class Luscious(
     }
 
     override fun fetchPageList(chapter: SChapter): Observable<List<Page>> {
-        val pageSort = getSortPref().toString()
+        val pageSort = getSortPref()!!
         return when (getMergeChapterPref()) {
             true -> {
                 val id = chapter.url.substringAfterLast("_").removeSuffix("/")
