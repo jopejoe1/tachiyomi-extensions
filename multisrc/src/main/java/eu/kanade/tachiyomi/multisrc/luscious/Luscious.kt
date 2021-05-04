@@ -42,18 +42,22 @@ abstract class Luscious(
     private val apiBaseUrl: String = "$baseUrl/graphql/nobatch/"
     private val gson = Gson()
     override val client: OkHttpClient = network.cloudflareClient
-    private val lusLang: String = when (lang) {
-        "en" -> "1"
-        "ja" -> "2"
-        "es" -> "3"
-        "it" -> "4"
-        "de" -> "5"
-        "fr" -> "6"
-        "zh" -> "8"
-        "ko" -> "9"
-        "pt" -> "100"
-        "th" -> "101"
-        else -> "99"
+    private val lusLang: String = toLusLang(lang)
+    private fun toLusLang (lang: String): String {
+        return when (lang) {
+            "all" -> FILTER_VALUE_IGNORE
+            "en" -> "1"
+            "ja" -> "2"
+            "es" -> "3"
+            "it" -> "4"
+            "de" -> "5"
+            "fr" -> "6"
+            "zh" -> "8"
+            "ko" -> "9"
+            "pt" -> "100"
+            "th" -> "101"
+            else -> "99"
+        }
     }
 
     private val preferences: SharedPreferences by lazy {
@@ -103,11 +107,14 @@ abstract class Luscious(
                                 add(this.toJsonObject("audience_ids"))
                             }
 
-                            add(
-                                languagesFilter.toJsonObject("language_ids").apply {
-                                    set("value", "+$lusLang${get("value").asString}")
-                                }
-                            )
+                            if (lusLang != FILTER_VALUE_IGNORE){
+                                add(
+                                    languagesFilter.toJsonObject("language_ids").apply {
+                                        set("value", "+$lusLang${get("value").asString}")
+                                    }
+                                )
+                            }
+
                             if (tagsFilter.state.isNotEmpty()) {
                                 val tags = "+${tagsFilter.state.toLowerCase()}".replace(" ", "_").replace("_,", "+").replace(",_", "+").replace(",", "+").replace("+-", "-").replace("-_", "-").trim()
                                 add(
@@ -574,17 +581,17 @@ abstract class Luscious(
     )
 
     private fun getLanguageFilters() = listOf(
-        CheckboxFilterOption("English", "1", false),
-        CheckboxFilterOption("Japanese", "2", false),
-        CheckboxFilterOption("Spanish", "3", false),
-        CheckboxFilterOption("Italian", "4", false),
-        CheckboxFilterOption("German", "5", false),
-        CheckboxFilterOption("French", "6", false),
-        CheckboxFilterOption("Chinese", "8", false),
-        CheckboxFilterOption("Korean", "9", false),
-        CheckboxFilterOption("Others", "99", false),
-        CheckboxFilterOption("Portugese", "100", false),
-        CheckboxFilterOption("Thai", "101", false)
+        CheckboxFilterOption("English", toLusLang("en"), false),
+        CheckboxFilterOption("Japanese", toLusLang("ja"), false),
+        CheckboxFilterOption("Spanish", toLusLang("es"), false),
+        CheckboxFilterOption("Italian", toLusLang("it"), false),
+        CheckboxFilterOption("German", toLusLang("de"), false),
+        CheckboxFilterOption("French", toLusLang("fr"), false),
+        CheckboxFilterOption("Chinese", toLusLang("zh"), false),
+        CheckboxFilterOption("Korean", toLusLang("ko"), false),
+        CheckboxFilterOption("Others", toLusLang("other"), false),
+        CheckboxFilterOption("Portugese", toLusLang("pt"), false),
+        CheckboxFilterOption("Thai", toLusLang("th"), false)
     ).filterNot { it.value == lusLang }
 
 
