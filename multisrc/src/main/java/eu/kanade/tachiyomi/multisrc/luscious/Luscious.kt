@@ -189,10 +189,11 @@ abstract class Luscious(
 
     override fun fetchChapterList(manga: SManga): Observable<List<SChapter>> {
         val id = manga.url.substringAfterLast("_").removeSuffix("/")
+        val pageSort = getSortFilters().toString()
 
-        return client.newCall(GET(buildAlbumPicturesPageUrl(id, 1, "position")))
+        return client.newCall(GET(buildAlbumPicturesPageUrl(id, 1, pageSort)))
             .asObservableSuccess()
-            .map { parseAlbumPicturesResponse(it, "position", manga.url) }
+            .map { parseAlbumPicturesResponse(it, pageSort, manga.url) }
     }
 
     private fun parseAlbumPicturesResponse(response: Response, sortPagesByOption: String, mangaUrl: String): List<SChapter> {
@@ -315,13 +316,14 @@ abstract class Luscious(
     }
 
     override fun fetchPageList(chapter: SChapter): Observable<List<Page>> {
+        val pageSort = getSortPref().toString()
         return when (getMergeChapterPref()) {
             true -> {
                 val id = chapter.url.substringAfterLast("_").removeSuffix("/")
 
-                client.newCall(GET(buildAlbumPicturesPageUrl(id, 1, "position")))
+                client.newCall(GET(buildAlbumPicturesPageUrl(id, 1, pageSort)))
                     .asObservableSuccess()
-                    .map { parseAlbumPicturesResponseMergeChapter(it, "position") }
+                    .map { parseAlbumPicturesResponseMergeChapter(it, pageSort) }
             }
             false -> {
                 Observable.just(listOf(Page(0, chapter.url, chapter.url)))
@@ -479,7 +481,7 @@ abstract class Luscious(
     )
 
 
-    fun getSortFilters() = listOf(
+    private fun getSortFilters() = listOf(
         SelectFilterOption("Rating - All Time", "rating_all_time"),
         SelectFilterOption("Rating - Last 7 Days", "rating_7_days"),
         SelectFilterOption("Rating - Last 14 Days", "rating_14_days"),
@@ -530,7 +532,7 @@ abstract class Luscious(
         SelectFilterOption("First Letter - Z", "alpha_z"),
     )
 
-    fun getAlbumTypeFilters() = listOf(
+    private fun getAlbumTypeFilters() = listOf(
         SelectFilterOption("All", FILTER_VALUE_IGNORE),
         SelectFilterOption("Manga", "manga"),
         SelectFilterOption("Pictures", "pictures")
@@ -542,7 +544,7 @@ abstract class Luscious(
         SelectFilterOption("Strict", "strict")
     )
 
-    fun getContentTypeFilters() = listOf(
+    private fun getContentTypeFilters() = listOf(
         SelectFilterOption("All", FILTER_VALUE_IGNORE),
         SelectFilterOption("Hentai", "0"),
         SelectFilterOption("Non-Erotic", "5"),
@@ -560,7 +562,7 @@ abstract class Luscious(
         SelectFilterOption("3200-12800", "6"),
     )
 
-    fun getInterestFilters() = listOf(
+    private fun getInterestFilters() = listOf(
         CheckboxFilterOption("Straight Sex", "1"),
         CheckboxFilterOption("Trans x Girl", "10"),
         CheckboxFilterOption("Gay / Yaoi", "2"),
@@ -571,7 +573,7 @@ abstract class Luscious(
         CheckboxFilterOption("Trans x Guy", "9")
     )
 
-    fun getLanguageFilters() = listOf(
+    private fun getLanguageFilters() = listOf(
         CheckboxFilterOption("English", "1", false),
         CheckboxFilterOption("Japanese", "2", false),
         CheckboxFilterOption("Spanish", "3", false),
@@ -586,7 +588,7 @@ abstract class Luscious(
     ).filterNot { it.value == lusLang }
 
 
-    fun getGenreFilters() = listOf(
+    private fun getGenreFilters() = listOf(
         TriStateFilterOption("3D / Digital Art", "25"),
         TriStateFilterOption("Amateurs", "20"),
         TriStateFilterOption("Artist Collection", "19"),
@@ -708,6 +710,12 @@ abstract class Luscious(
         private val RESOLUTION_PREF_ENTRIES = arrayOf("Low", "Medium", "High", "Original")
         private val RESOLUTION_PREF_ENTRY_VALUES = arrayOf("2", "1", "0", "-1")
         private val RESOLUTION_PREF_DEFAULT_VALUE = RESOLUTION_PREF_ENTRY_VALUES[2]
+
+        private const val SORT_PREF_KEY = "SORT"
+        private const val SORT_PREF_TITLE = "Page Sort"
+        private val SORT_PREF_ENTRIES = arrayOf("Position", "Date", "Rating")
+        private val SORT_PREF_ENTRY_VALUES = arrayOf("position", "date_newest", "rating_all_time")
+        private val SORT_PREF_DEFAULT_VALUE = SORT_PREF_ENTRY_VALUES[0]
     }
 
     override fun setupPreferenceScreen(screen: PreferenceScreen) {
@@ -717,6 +725,21 @@ abstract class Luscious(
             entries = RESOLUTION_PREF_ENTRIES
             entryValues = RESOLUTION_PREF_ENTRY_VALUES
             setDefaultValue(RESOLUTION_PREF_DEFAULT_VALUE)
+            summary = "%s"
+
+            setOnPreferenceChangeListener { _, newValue ->
+                val selected = newValue as String
+                val index = findIndexOfValue(selected)
+                val entry = entryValues[index] as String
+                preferences.edit().putString("${RESOLUTION_PREF_KEY}_$lang", entry).commit()
+            }
+        }
+        val sortPref = ListPreference(screen.context).apply {
+            key = "${SORT_PREF_KEY}_$lang"
+            title = SORT_PREF_TITLE
+            entries = SORT_PREF_ENTRIES
+            entryValues = SORT_PREF_ENTRY_VALUES
+            setDefaultValue(SORT_PREF_DEFAULT_VALUE)
             summary = "%s"
 
             setOnPreferenceChangeListener { _, newValue ->
@@ -738,9 +761,11 @@ abstract class Luscious(
             }
         }
         screen.addPreference(resolutionPref)
+        screen.addPreference(sortPref)
         screen.addPreference(mergeChapterPref)
     }
 
     private fun getMergeChapterPref(): Boolean = preferences.getBoolean("${MERGE_CHAPTER_PREF_KEY}_$lang", MERGE_CHAPTER_PREF_DEFAULT_VALUE)
     private fun getResolutionPref(): String? = preferences.getString("${RESOLUTION_PREF_KEY}_$lang", RESOLUTION_PREF_DEFAULT_VALUE)
+    private fun getSortPref(): String? = preferences.getString("${SORT_PREF_KEY}_$lang", SORT_PREF_DEFAULT_VALUE)
 }
