@@ -271,7 +271,7 @@ abstract class Luscious(
                             )
                         }
                     )
-                    addProperty("display", "position")
+                    addProperty("display", getSortPref()) // alternative values "date_newest", "rating_all_time", "position"
                     addProperty("page", page)
                 }
             )
@@ -751,7 +751,7 @@ abstract class Luscious(
                 val selected = newValue as String
                 val index = findIndexOfValue(selected)
                 val entry = entryValues[index] as String
-                preferences.edit().putString("${RESOLUTION_PREF_KEY}_$lang", entry).commit()
+                preferences.edit().putString("${SORT_PREF_KEY}_$lang", entry).commit()
             }
         }
         val mergeChapterPref = CheckBoxPreference(screen.context).apply {
