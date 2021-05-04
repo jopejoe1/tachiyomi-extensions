@@ -646,7 +646,7 @@ abstract class Luscious(
 
     private inline fun <reified T> Iterable<*>.findInstance() = find { it is T } as? T
 
-    fun validYears(): List<Int>{
+    private fun validYears(): List<Int>{
         val years = mutableListOf<Int>()
         val current = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy")
@@ -657,7 +657,7 @@ abstract class Luscious(
             years.add(firstYear)
             firstYear++
         }
-        return years
+        return years.reversed()
     }
 
     companion object {
