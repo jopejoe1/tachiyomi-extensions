@@ -1,5 +1,32 @@
 [
   {
+    "name": "Tachiyomi: Luscious",
+    "pkg": "eu.kanade.tachiyomi.extension.all.luscious",
+    "apk": "tachiyomi-all.luscious-v1.2.6.apk",
+    "lang": "all",
+    "code": 6,
+    "version": "1.2.6",
+    "nsfw": 1
+  },
+  {
+    "name": "Tachiyomi: Luscious (API)",
+    "pkg": "eu.kanade.tachiyomi.extension.all.lusciousapi",
+    "apk": "tachiyomi-all.lusciousapi-v1.2.4.apk",
+    "lang": "all",
+    "code": 4,
+    "version": "1.2.4",
+    "nsfw": 1
+  },
+  {
+    "name": "Tachiyomi: Luscious (Members)",
+    "pkg": "eu.kanade.tachiyomi.extension.all.lusciousmembers",
+    "apk": "tachiyomi-all.lusciousmembers-v1.2.4.apk",
+    "lang": "all",
+    "code": 4,
+    "version": "1.2.4",
+    "nsfw": 1
+  },
+  {
     "name": "Tachiyomi: Mangabat",
     "pkg": "eu.kanade.tachiyomi.extension.en.mangabat",
     "apk": "tachiyomi-en.mangabat-v1.2.6.apk",
@@ -137,10 +164,10 @@
   {
     "name": "Tachiyomi: Read Berserk Manga",
     "pkg": "eu.kanade.tachiyomi.extension.en.readberserkmanga",
-    "apk": "tachiyomi-en.readberserkmanga-v1.2.2.apk",
+    "apk": "tachiyomi-en.readberserkmanga-v1.2.1.apk",
     "lang": "en",
-    "code": 2,
-    "version": "1.2.2",
+    "code": 1,
+    "version": "1.2.1",
     "nsfw": 0
   },
   {
@@ -155,55 +182,55 @@
   {
     "name": "Tachiyomi: Read Chainsaw Man Manga Online",
     "pkg": "eu.kanade.tachiyomi.extension.en.readchainsawmanmangaonline",
-    "apk": "tachiyomi-en.readchainsawmanmangaonline-v1.2.2.apk",
+    "apk": "tachiyomi-en.readchainsawmanmangaonline-v1.2.1.apk",
     "lang": "en",
-    "code": 2,
-    "version": "1.2.2",
+    "code": 1,
+    "version": "1.2.1",
     "nsfw": 0
   },
   {
     "name": "Tachiyomi: Read Dragon Ball Super/Chou Manga Online",
     "pkg": "eu.kanade.tachiyomi.extension.en.readdragonballsuperchoumangaonline",
-    "apk": "tachiyomi-en.readdragonballsuperchoumangaonline-v1.2.2.apk",
+    "apk": "tachiyomi-en.readdragonballsuperchoumangaonline-v1.2.1.apk",
     "lang": "en",
-    "code": 2,
-    "version": "1.2.2",
+    "code": 1,
+    "version": "1.2.1",
     "nsfw": 0
   },
   {
     "name": "Tachiyomi: Read Dr. Stone Manga Online",
     "pkg": "eu.kanade.tachiyomi.extension.en.readdrstonemangaonline",
-    "apk": "tachiyomi-en.readdrstonemangaonline-v1.2.2.apk",
+    "apk": "tachiyomi-en.readdrstonemangaonline-v1.2.1.apk",
     "lang": "en",
-    "code": 2,
-    "version": "1.2.2",
+    "code": 1,
+    "version": "1.2.1",
     "nsfw": 0
   },
   {
     "name": "Tachiyomi: Read Fairy Tail & Edens Zero Manga Online",
     "pkg": "eu.kanade.tachiyomi.extension.en.readfairytailedenszeromangaonline",
-    "apk": "tachiyomi-en.readfairytailedenszeromangaonline-v1.2.2.apk",
+    "apk": "tachiyomi-en.readfairytailedenszeromangaonline-v1.2.1.apk",
     "lang": "en",
-    "code": 2,
-    "version": "1.2.2",
+    "code": 1,
+    "version": "1.2.1",
     "nsfw": 0
   },
   {
     "name": "Tachiyomi: Read Goblin Slayer Manga Online",
     "pkg": "eu.kanade.tachiyomi.extension.en.readgoblinslayermangaonline",
-    "apk": "tachiyomi-en.readgoblinslayermangaonline-v1.2.2.apk",
+    "apk": "tachiyomi-en.readgoblinslayermangaonline-v1.2.1.apk",
     "lang": "en",
-    "code": 2,
-    "version": "1.2.2",
+    "code": 1,
+    "version": "1.2.1",
     "nsfw": 0
   },
   {
     "name": "Tachiyomi: Read Haikyuu!! Manga Online",
     "pkg": "eu.kanade.tachiyomi.extension.en.readhaikyuumangaonline",
-    "apk": "tachiyomi-en.readhaikyuumangaonline-v1.2.2.apk",
+    "apk": "tachiyomi-en.readhaikyuumangaonline-v1.2.1.apk",
     "lang": "en",
-    "code": 2,
-    "version": "1.2.2",
+    "code": 1,
+    "version": "1.2.1",
     "nsfw": 0
   },
   {
@@ -236,10 +263,10 @@
   {
     "name": "Tachiyomi: Read Kingdom Manga Online",
     "pkg": "eu.kanade.tachiyomi.extension.en.readkingdommangaonline",
-    "apk": "tachiyomi-en.readkingdommangaonline-v1.2.2.apk",
+    "apk": "tachiyomi-en.readkingdommangaonline-v1.2.1.apk",
     "lang": "en",
-    "code": 2,
-    "version": "1.2.2",
+    "code": 1,
+    "version": "1.2.1",
     "nsfw": 0
   },
   {
@@ -254,28 +281,28 @@
   {
     "name": "Tachiyomi: Read Naruto/Boruto/Samurai 8 Manga Online",
     "pkg": "eu.kanade.tachiyomi.extension.en.readnarutoborutosamurai8mangaonline",
-    "apk": "tachiyomi-en.readnarutoborutosamurai8mangaonline-v1.2.2.apk",
+    "apk": "tachiyomi-en.readnarutoborutosamurai8mangaonline-v1.2.1.apk",
     "lang": "en",
-    "code": 2,
-    "version": "1.2.2",
+    "code": 1,
+    "version": "1.2.1",
     "nsfw": 0
   },
   {
     "name": "Tachiyomi: Read Noblesse Manhwa Online",
     "pkg": "eu.kanade.tachiyomi.extension.en.readnoblessemanhwaonline",
-    "apk": "tachiyomi-en.readnoblessemanhwaonline-v1.2.2.apk",
+    "apk": "tachiyomi-en.readnoblessemanhwaonline-v1.2.1.apk",
     "lang": "en",
-    "code": 2,
-    "version": "1.2.2",
+    "code": 1,
+    "version": "1.2.1",
     "nsfw": 0
   },
   {
     "name": "Tachiyomi: Read One Piece Manga Online",
     "pkg": "eu.kanade.tachiyomi.extension.en.readonepiecemangaonline",
-    "apk": "tachiyomi-en.readonepiecemangaonline-v1.2.2.apk",
+    "apk": "tachiyomi-en.readonepiecemangaonline-v1.2.1.apk",
     "lang": "en",
-    "code": 2,
-    "version": "1.2.2",
+    "code": 1,
+    "version": "1.2.1",
     "nsfw": 0
   },
   {
@@ -299,10 +326,10 @@
   {
     "name": "Tachiyomi: Read Sword Art Online Manga Online",
     "pkg": "eu.kanade.tachiyomi.extension.en.readswordartonlinemangaonline",
-    "apk": "tachiyomi-en.readswordartonlinemangaonline-v1.2.2.apk",
+    "apk": "tachiyomi-en.readswordartonlinemangaonline-v1.2.1.apk",
     "lang": "en",
-    "code": 2,
-    "version": "1.2.2",
+    "code": 1,
+    "version": "1.2.1",
     "nsfw": 0
   },
   {
@@ -335,10 +362,10 @@
   {
     "name": "Tachiyomi: Read Vinland Saga Manga Online",
     "pkg": "eu.kanade.tachiyomi.extension.en.readvinlandsagamangaonline",
-    "apk": "tachiyomi-en.readvinlandsagamangaonline-v1.2.2.apk",
+    "apk": "tachiyomi-en.readvinlandsagamangaonline-v1.2.1.apk",
     "lang": "en",
-    "code": 2,
-    "version": "1.2.2",
+    "code": 1,
+    "version": "1.2.1",
     "nsfw": 0
   }
 ]
