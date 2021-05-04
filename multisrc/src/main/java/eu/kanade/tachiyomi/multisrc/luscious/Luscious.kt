@@ -196,14 +196,13 @@ abstract class Luscious(
 
     override fun fetchChapterList(manga: SManga): Observable<List<SChapter>> {
         val id = manga.url.substringAfterLast("_").removeSuffix("/")
-        val pageSort = getSortPref()!!
 
-        return client.newCall(GET(buildAlbumPicturesPageUrl(id, 1, pageSort)))
+        return client.newCall(GET(buildAlbumPicturesPageUrl(id, 1)))
             .asObservableSuccess()
-            .map { parseAlbumPicturesResponse(it, pageSort, manga.url) }
+            .map { parseAlbumPicturesResponse(it, manga.url) }
     }
 
-    private fun parseAlbumPicturesResponse(response: Response, sortPagesByOption: String, mangaUrl: String): List<SChapter> {
+    private fun parseAlbumPicturesResponse(response: Response, mangaUrl: String): List<SChapter> {
         val chapters = mutableListOf<SChapter>()
         when (getMergeChapterPref()){
             true -> {
@@ -239,7 +238,7 @@ abstract class Luscious(
                         chapters.add(chapter)
                     }
                     if (nextPage) {
-                        val newPage = client.newCall(GET(buildAlbumPicturesPageUrl(id, page, sortPagesByOption))).execute()
+                        val newPage = client.newCall(GET(buildAlbumPicturesPageUrl(id, page))).execute()
                         data = gson.fromJson<JsonObject>(newPage.body!!.string())
                             .let { it["data"]["picture"]["list"].asJsonObject }
                     }
@@ -256,7 +255,7 @@ abstract class Luscious(
 
     // Pages
 
-    private fun buildAlbumPicturesRequestInput(id: String, page: Int, sortPagesByOption: String): JsonObject {
+    private fun buildAlbumPicturesRequestInput(id: String, page: Int): JsonObject {
         return JsonObject().apply {
             addProperty(
                 "input",
@@ -272,15 +271,15 @@ abstract class Luscious(
                             )
                         }
                     )
-                    addProperty("display", sortPagesByOption)
+                    addProperty("display", getSortPref())
                     addProperty("page", page)
                 }
             )
         }
     }
 
-    private fun buildAlbumPicturesPageUrl(id: String, page: Int, sortPagesByOption: String): String {
-        val input = buildAlbumPicturesRequestInput(id, page, sortPagesByOption)
+    private fun buildAlbumPicturesPageUrl(id: String, page: Int): String {
+        val input = buildAlbumPicturesRequestInput(id, page)
         return apiBaseUrl.toHttpUrlOrNull()!!.newBuilder()
             .addQueryParameter("operationName", "AlbumListOwnPictures")
             .addQueryParameter("query", ALBUM_PICTURES_REQUEST_GQL)
@@ -288,7 +287,7 @@ abstract class Luscious(
             .toString()
     }
 
-    private fun parseAlbumPicturesResponseMergeChapter(response: Response, sortPagesByOption: String): List<Page> {
+    private fun parseAlbumPicturesResponseMergeChapter(response: Response): List<Page> {
         val pages = mutableListOf<Page>()
         var nextPage = true
         var page = 2
@@ -313,7 +312,7 @@ abstract class Luscious(
                 pages.add(Page(index, url, url))
             }
             if (nextPage) {
-                val newPage = client.newCall(GET(buildAlbumPicturesPageUrl(id, page, sortPagesByOption))).execute()
+                val newPage = client.newCall(GET(buildAlbumPicturesPageUrl(id, page))).execute()
                 data = gson.fromJson<JsonObject>(newPage.body!!.string())
                     .let { it["data"]["picture"]["list"].asJsonObject }
             }
@@ -323,14 +322,13 @@ abstract class Luscious(
     }
 
     override fun fetchPageList(chapter: SChapter): Observable<List<Page>> {
-        val pageSort = getSortPref()!!
         return when (getMergeChapterPref()) {
             true -> {
                 val id = chapter.url.substringAfterLast("_").removeSuffix("/")
 
-                client.newCall(GET(buildAlbumPicturesPageUrl(id, 1, pageSort)))
+                client.newCall(GET(buildAlbumPicturesPageUrl(id, 1)))
                     .asObservableSuccess()
-                    .map { parseAlbumPicturesResponseMergeChapter(it, pageSort) }
+                    .map { parseAlbumPicturesResponseMergeChapter(it) }
             }
             false -> {
                 Observable.just(listOf(Page(0, chapter.url, chapter.url)))
