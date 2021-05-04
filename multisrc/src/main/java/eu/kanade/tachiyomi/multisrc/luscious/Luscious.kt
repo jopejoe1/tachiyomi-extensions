@@ -68,7 +68,7 @@ abstract class Luscious(
         val albumTypeFilter = filters.findInstance<AlbumTypeSelectFilter>()!!
         val interestsFilter = filters.findInstance<InterestGroupFilter>()!!
         val languagesFilter = filters.findInstance<LanguageGroupFilter>()!!
-        val tagsFilter = filters.findInstance<TagGroupFilter>()!!
+        val tagsFilter = filters.findInstance<TagTextFilters>()!!
         val genreFilter = filters.findInstance<GenreGroupFilter>()!!
         val contentTypeFilter = filters.findInstance<ContentTypeSelectFilter>()!!
         val albumSizeFilter = filters.findInstance<AlbumSizeSelectFilter>()!!
@@ -108,9 +108,14 @@ abstract class Luscious(
                                     set("value", "+$lusLang${get("value").asString}")
                                 }
                             )
-
-                            if (tagsFilter.anyNotIgnored()) {
-                                add(tagsFilter.toJsonObject("tagged"))
+                            if (tagsFilter.toString().isNotEmpty()) {
+                                val tags = tagsFilter.toString().replace(" ", "_").replace("_,", "+").replace(",", "+").replace("+-", "-").trim()
+                                add(
+                                    JsonObject().apply {
+                                        addProperty("name", "tagged")
+                                        addProperty("value", tags)
+                                    }
+                                )
                             }
 
                             if (genreFilter.anyNotIgnored()) {
@@ -428,7 +433,8 @@ abstract class Luscious(
         }
     }
 
-    private class TagGroupFilter(filters: List<TriStateFilterOption>) : TriStateGroupFilter("Tags", filters)
+    open class TextFilter(name: String) : Filter.Text(name)
+
     private class GenreGroupFilter(filters: List<TriStateFilterOption>) : TriStateGroupFilter("Genres", filters)
 
     class CheckboxFilterOption(name: String, val value: String, default: Boolean = true) : Filter.CheckBox(name, default)
@@ -455,7 +461,7 @@ abstract class Luscious(
     class ContentTypeSelectFilter(options: List<SelectFilterOption>) : SelectFilter("Content Type", options)
     class RestrictGenresSelectFilter(options: List<SelectFilterOption>) : SelectFilter("Restrict Genres", options)
     class AlbumSizeSelectFilter(options: List<SelectFilterOption>) : SelectFilter("Album Size", options)
-
+    class TagTextFilters : TextFilter("Tags")
     override fun getFilterList(): FilterList = getSortFilters(POPULAR_DEFAULT_SORT_STATE)
 
     private fun getSortFilters(sortState: Int) = FilterList(
@@ -466,9 +472,12 @@ abstract class Luscious(
         RestrictGenresSelectFilter(getRestrictGenresFilters()),
         InterestGroupFilter(getInterestFilters()),
         LanguageGroupFilter(getLanguageFilters()),
-        TagGroupFilter(getTagFilters()),
-        GenreGroupFilter(getGenreFilters())
+        GenreGroupFilter(getGenreFilters()),
+        Filter.Header("Separate tags with commas (,)"),
+        Filter.Header("Prepend with dash (-) to exclude"),
+        TagTextFilters(),
     )
+
 
     fun getSortFilters() = listOf(
         SelectFilterOption("Rating - All Time", "rating_all_time"),
@@ -478,7 +487,7 @@ abstract class Luscious(
         SelectFilterOption("Rating - Last 90 Days", "rating_90_days"),
         SelectFilterOption("Rating - Last Year", "rating_1_year"),
         SelectFilterOption("Date - Newest First", "date_newest"),
-        SelectFilterOption("Date - 2020", "date_2021"),
+        SelectFilterOption("Date - 2021", "date_2021"),
         SelectFilterOption("Date - 2020", "date_2020"),
         SelectFilterOption("Date - 2019", "date_2019"),
         SelectFilterOption("Date - 2018", "date_2018"),
@@ -492,11 +501,6 @@ abstract class Luscious(
         SelectFilterOption("Date - Trending", "date_trending"),
         SelectFilterOption("Date - Featured", "date_featured"),
         SelectFilterOption("Date - Last Viewed", "date_last_interaction"),
-        SelectFilterOption("First Letter - Any", "alpha_any"),
-        SelectFilterOption("First Letter - A", "alpha_a"),
-        SelectFilterOption("First Letter - B", "alpha_b"),
-        SelectFilterOption("First Letter - C", "alpha_c"),
-        SelectFilterOption("First Letter - D", "alpha_d"),
         SelectFilterOption("First Letter - Any", "alpha_any"),
         SelectFilterOption("First Letter - A", "alpha_a"),
         SelectFilterOption("First Letter - B", "alpha_b"),
@@ -623,7 +627,6 @@ abstract class Luscious(
         TriStateFilterOption("Amateurs", "20"),
         TriStateFilterOption("Artist Collection", "19"),
         TriStateFilterOption("Asian Girls", "12"),
-        TriStateFilterOption("Cosplay", "22"),
         TriStateFilterOption("BDSM", "27"),
         TriStateFilterOption("Cross-Dressing", "30"),
         TriStateFilterOption("Defloration / First Time", "59"),
@@ -655,8 +658,8 @@ abstract class Luscious(
         TriStateFilterOption("Sex Workers", "47"),
         TriStateFilterOption("Softcore / Ecchi", "9"),
         TriStateFilterOption("Superheroes", "17"),
-        TriStateFilterOption("Tankobon", "45"),
         TriStateFilterOption("TV / Movies", "51"),
+        TriStateFilterOption("Tankōbon", "45"),
         TriStateFilterOption("Trans", "14"),
         TriStateFilterOption("Video Games", "15"),
         TriStateFilterOption("Vintage", "58"),
@@ -752,7 +755,7 @@ abstract class Luscious(
         private const val RESOLUTION_PREF_TITLE = "Image resolution"
         private val RESOLUTION_PREF_ENTRIES = arrayOf("Low", "Medium", "High", "Original")
         private val RESOLUTION_PREF_ENTRY_VALUES = arrayOf("2", "1", "0", "-1")
-        private val RESOLUTION_PREF_DEFAULT_VALUE = RESOLUTION_PREF_ENTRY_VALUES[3]
+        private val RESOLUTION_PREF_DEFAULT_VALUE = RESOLUTION_PREF_ENTRY_VALUES[2]
     }
 
     override fun setupPreferenceScreen(screen: PreferenceScreen) {
