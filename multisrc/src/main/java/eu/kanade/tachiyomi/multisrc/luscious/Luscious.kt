@@ -271,7 +271,7 @@ abstract class Luscious(
                             )
                         }
                     )
-                    addProperty("display", getSortPref())
+                    addProperty("display", "position")
                     addProperty("page", page)
                 }
             )
