@@ -11,4 +11,17 @@ class ReadNoblesseManhwaOnline : MangaCatalog("Read Noblesse Manhwa Online", "ht
         Pair("NOBLESSE S", "$baseUrl/manga/noblesse-s/"),
         Pair("Ability", "$baseUrl/manga/ability/"),
     ).sortedBy { it.first }.distinctBy { it.second }
+
+    override fun chapterListSelector(): String = "div.w-full > div > div.flex"
+    override fun chapterFromElement(element: Element): SChapter = SChapter.create().apply {
+        val name1 = element.select(".flex-col > a:not(.text-xs)").text()
+        val name2 = element.select(".text-xs:not(a)").text()
+        if (name2 == ""){
+            name = name1
+        } else {
+            name = "$name1 - $name2"
+        }
+        url = element.select(".flex-col > a:not(.text-xs)").attr("abs:href")
+        date_upload = System.currentTimeMillis()
+    }
 }
