@@ -22,6 +22,12 @@ class ReadNoblesseManhwaOnline : MangaCatalog("Read Noblesse Manhwa Online", "ht
         Pair("Ability", "$baseUrl/manga/ability/"),
     ).sortedBy { it.first }.distinctBy { it.second }
 
+    override fun mangaDetailsParse(document: Document): SManga = SManga.create().apply {
+        description = document.select("div.flex > div.py-2 > div:not(:first-child)").text()
+        title = document.select(".container h1").text()
+        thumbnail_url = document.select("img.rounded-full").attr("src")
+    }
+
     override fun chapterListSelector(): String = "div.w-full > div > div.flex"
     override fun chapterFromElement(element: Element): SChapter = SChapter.create().apply {
         val name1 = element.select(".flex-col > a:not(.text-xs)").text()
