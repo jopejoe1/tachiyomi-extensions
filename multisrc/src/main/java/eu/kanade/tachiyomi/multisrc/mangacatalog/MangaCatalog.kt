@@ -57,7 +57,9 @@ abstract class MangaCatalog(
                 mangas.add(popularMangaFromPair(it.first, it.second))
             }
         }
-        return Observable.just(MangasPage(mangas, false))
+        if (mangas.isNotEmpty()){
+            return Observable.just(MangasPage(mangas, false))
+        }
         return super.fetchSearchManga(page, query, filters)
     }
 
