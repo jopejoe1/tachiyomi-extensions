@@ -57,10 +57,7 @@ abstract class MangaCatalog(
                 mangas.add(popularMangaFromPair(it.first, it.second))
             }
         }
-        if (mangas.isNotEmpty()){
-            return Observable.just(MangasPage(mangas, false))
-        }
-        return super.fetchSearchManga(page, query, filters)
+        return Observable.just(MangasPage(mangas, false))
     }
 
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList) = throw Exception("Not used")
