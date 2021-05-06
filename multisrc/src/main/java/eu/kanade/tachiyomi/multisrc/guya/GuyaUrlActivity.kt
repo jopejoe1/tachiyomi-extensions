@@ -1,4 +1,4 @@
-package eu.kanade.tachiyomi.extension.en.guya
+package eu.kanade.tachiyomi.multisrc.guya
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
