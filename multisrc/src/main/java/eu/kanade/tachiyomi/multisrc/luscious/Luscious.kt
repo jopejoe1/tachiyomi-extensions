@@ -36,7 +36,7 @@ abstract class Luscious(
     override val baseUrl: String,
     override val lang: String ) : ConfigurableSource, HttpSource() {
 
-    //Based on Luscios single source extension form https://github.com/tachiyomiorg/tachiyomi-extensions/commit/aacf56d0c0ddb173372aac69d798ae998f178377
+    //Based on Luscious single source extension form https://github.com/tachiyomiorg/tachiyomi-extensions/commit/aacf56d0c0ddb173372aac69d798ae998f178377
     //with modifiaction to make it support multisrc
 
     override val supportsLatest: Boolean = true
@@ -234,7 +234,7 @@ abstract class Luscious(
                             else -> it["thumbnails"][getResolutionPref()?.toInt()!!]["url"].asString
                         }
                         chapter.name = it["title"].asString
-                        //chapter.date_upload = it["created"].asLong // not parsing correctly for some reason
+                        chapter.date_upload = it["created"].asLong // not parsing correctly for some reason
                         chapter.chapter_number = it["position"].asInt.toFloat()
                         chapters.add(chapter)
                     }
