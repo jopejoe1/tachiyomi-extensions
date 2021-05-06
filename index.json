@@ -27,6 +27,24 @@
     "nsfw": 1
   },
   {
+    "name": "Tachiyomi: Danke fürs Lesen",
+    "pkg": "eu.kanade.tachiyomi.extension.en.dankefurslesen",
+    "apk": "tachiyomi-en.dankefurslesen-v1.2.1.apk",
+    "lang": "en",
+    "code": 1,
+    "version": "1.2.1",
+    "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Guya",
+    "pkg": "eu.kanade.tachiyomi.extension.en.guya",
+    "apk": "tachiyomi-en.guya-v1.2.19.apk",
+    "lang": "en",
+    "code": 19,
+    "version": "1.2.19",
+    "nsfw": 0
+  },
+  {
     "name": "Tachiyomi: Mangabat",
     "pkg": "eu.kanade.tachiyomi.extension.en.mangabat",
     "apk": "tachiyomi-en.mangabat-v1.2.6.apk",
