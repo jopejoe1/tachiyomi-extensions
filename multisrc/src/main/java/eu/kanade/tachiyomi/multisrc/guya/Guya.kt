@@ -25,7 +25,10 @@ import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import java.util.HashMap
 
-abstract class Guya(name: String, baseUrl: String, lang: String) : ConfigurableSource, HttpSource() {
+abstract class Guya(
+    override val name: String,
+    override val baseUrl: String,
+    override val lang: String) : ConfigurableSource, HttpSource() {
 
     override val supportsLatest = false
 
