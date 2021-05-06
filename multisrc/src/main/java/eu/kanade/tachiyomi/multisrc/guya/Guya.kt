@@ -27,7 +27,7 @@ import java.util.HashMap
 
 abstract class Guya(name: String, baseUrl: String, lang: String) : ConfigurableSource, HttpSource() {
 
-    final override val supportsLatest = false
+    override val supportsLatest = false
 
     private val scanlatorCacheUrl = "$baseUrl/api/get_all_groups"
 
