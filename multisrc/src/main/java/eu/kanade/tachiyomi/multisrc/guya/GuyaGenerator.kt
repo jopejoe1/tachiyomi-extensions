@@ -5,9 +5,9 @@ import generator.ThemeSourceGenerator
 
 class GuyaGenerator : ThemeSourceGenerator {
 
-    override val themePkg = "luscious"
+    override val themePkg = "guya"
 
-    override val themeClass = "Luscious"
+    override val themeClass = "Guya"
 
     override val baseVersionCode: Int = 2
 
