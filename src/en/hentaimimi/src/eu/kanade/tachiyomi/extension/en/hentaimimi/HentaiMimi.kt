@@ -33,11 +33,11 @@ class HentaiMimi : ParsedHttpSource() {
         val title = element.select(".white-text")
         manga.url = title.attr("abs:href")
         manga.title = title.text()
-        manga.thumbnail_url = element.select(".card-img-top").attr("abd:src")
+        manga.thumbnail_url = element.select(".card-img-top").attr("abs:src")
         return manga
     }
 
-    override fun latestUpdatesNextPageSelector(): String? = throw UnsupportedOperationException("Not used")
+    override fun latestUpdatesNextPageSelector(): String? = popularMangaNextPageSelector()
 
     override fun latestUpdatesRequest(page: Int): Request {
         return GET(baseUrl, headers)
@@ -94,11 +94,6 @@ class HentaiMimi : ParsedHttpSource() {
 
     // Mangas
 
-    override fun mangaDetailsRequest(manga: SManga): Request {
-        return if (!manga.url.startsWith("http")) {
-            GET("$baseUrl${manga.url}", headers)
-        } else super.mangaDetailsRequest(manga)
-    }
 
     override fun mangaDetailsParse(document: Document): SManga {
         val manga = SManga.create()
@@ -145,12 +140,6 @@ class HentaiMimi : ParsedHttpSource() {
     override fun chapterListSelector(): String = throw UnsupportedOperationException("Not used")
 
     override fun imageUrlParse(document: Document): String = throw UnsupportedOperationException("Not used")
-
-    override fun pageListRequest(chapter: SChapter): Request {
-        return if (!chapter.url.startsWith("http")) {
-            GET("$baseUrl${chapter.url}", headers)
-        } else super.pageListRequest(chapter)
-    }
 
     override fun pageListParse(document: Document): List<Page> {
         val pages = mutableListOf<Page>()
