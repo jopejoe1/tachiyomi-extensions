@@ -1,5 +1,6 @@
 package eu.kanade.tachiyomi.extension.en.hentaimimi
 
+import eu.kanade.tachiyomi.annotations.Nsfw
 import eu.kanade.tachiyomi.network.GET
 import eu.kanade.tachiyomi.source.model.Filter
 import eu.kanade.tachiyomi.source.model.FilterList
@@ -18,6 +19,7 @@ import rx.Observable
 *
 *
  */
+@Nsfw
 class HentaiMimi : ParsedHttpSource() {
     // Meta Data
     override val baseUrl = "https://hentaimimi.com"
