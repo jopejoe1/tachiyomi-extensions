@@ -112,9 +112,9 @@ class HentaiMimi : ParsedHttpSource() {
                 "Tags" -> it.select("p:nth-child(2) > a > span").forEach { tag ->
                     tags.add(tag.text())
                 }
-                "Language" -> tags.add(it.select("p:nth-child(2) > a > span").text())
-                "Magazine" -> tags.add(it.select("p:nth-child(2) > a > span").text())
-                "Publisher" -> tags.add(it.select("p:nth-child(2) > a > span").text())
+                "Language" -> tags.add(it.select("p:nth-child(2)").text())
+                "Magazine" -> tags.add(it.select("p:nth-child(2)").text())
+                "Publisher" -> tags.add(it.select("p:nth-child(2)").text())
             }
         }
         manga.genre = tags.joinToString(", ")
@@ -143,10 +143,14 @@ class HentaiMimi : ParsedHttpSource() {
 
     override fun pageListParse(document: Document): List<Page> {
         val pages = mutableListOf<Page>()
-        document.select("div#lightgallery > a").forEachIndexed() { index, it ->
+        document.select("body main script").text().substringAfter("[").substringBefore("]").split(",").forEachIndexed { index, it ->
+            pages.add(Page(index, it, it))
+        }
+
+        /*document.select("div#lightgallery > a").forEachIndexed() { index, it ->
             val url = it.select("img").attr("abs:src")
             pages.add(Page(index, url, url))
-        }
+        }*/
         return pages
     }
 
