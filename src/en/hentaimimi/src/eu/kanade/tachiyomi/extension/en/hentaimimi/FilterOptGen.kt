@@ -36,7 +36,7 @@ class FilterOptGen {
                 val document = getDocument("https://hentaimimi.com/search")
                 val ids = parseIds(document!!, it)
 
-                buffer.append("val $it = listOf(\n")
+                buffer.append("fun $it() = listOf(\n")
                 for (id in ids) {
                     when (it) {
                         "tags" -> buffer.append("    HentaiMimi.TriStateFilterOption(\"${id.first}\",\"${id.second}\"),\n")

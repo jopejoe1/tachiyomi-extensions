@@ -1,9 +1,9 @@
 package eu.kanade.tachiyomi.extension.en.hentaimimi
 
 // GENERATED FILE, DO NOT MODIFY!
-// Generated Sat, 8 May 2021 00:48:29 +1200
+// Generated Sat, 8 May 2021 03:44:11 +1200
 
-val artists = listOf(
+fun artists() = listOf(
     HentaiMimi.CheckboxFilterOption("emily","2"),
     HentaiMimi.CheckboxFilterOption("yumoteliuce","3"),
     HentaiMimi.CheckboxFilterOption("higeta","4"),
@@ -1134,7 +1134,7 @@ val artists = listOf(
     HentaiMimi.CheckboxFilterOption("▲ chimaki","1129"),
 )
 
-val parodies = listOf(
+fun parodies() = listOf(
     HentaiMimi.CheckboxFilterOption("original work","2"),
     HentaiMimi.CheckboxFilterOption("haramase! honoo no oppai isekai ero mahou gakuen!","3"),
     HentaiMimi.CheckboxFilterOption("my little pony","4"),
@@ -1205,11 +1205,11 @@ val parodies = listOf(
     HentaiMimi.CheckboxFilterOption("minecraft","69"),
 )
 
-val langs = listOf(
+fun langs() = listOf(
     HentaiMimi.CheckboxFilterOption("english","1"),
 )
 
-val pubs = listOf(
+fun pubs() = listOf(
     HentaiMimi.CheckboxFilterOption("fakku","2"),
     HentaiMimi.CheckboxFilterOption("full moon","3"),
     HentaiMimi.CheckboxFilterOption("prismblush","4"),
@@ -1229,7 +1229,7 @@ val pubs = listOf(
     HentaiMimi.CheckboxFilterOption("burst crisis","18"),
 )
 
-val tags = listOf(
+fun tags() = listOf(
     HentaiMimi.TriStateFilterOption("vanilla","15"),
     HentaiMimi.TriStateFilterOption("busty","16"),
     HentaiMimi.TriStateFilterOption("teacher","17"),
