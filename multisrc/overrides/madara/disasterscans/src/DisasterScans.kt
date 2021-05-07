@@ -3,6 +3,7 @@ package eu.kanade.tachiyomi.extension.en.disasterscans
 import eu.kanade.tachiyomi.multisrc.madara.Madara
 import eu.kanade.tachiyomi.source.model.SManga
 import org.jsoup.nodes.Document
+
 class DisasterScans : Madara("Disaster Scans", "https://disasterscans.com", "en") {
     override val popularMangaUrlSelector = "div.post-title a:last-child"
 
