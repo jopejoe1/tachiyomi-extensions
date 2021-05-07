@@ -2,19 +2,24 @@ package eu.kanade.tachiyomi.extension.en.hentaimimi
 
 import eu.kanade.tachiyomi.network.GET
 import eu.kanade.tachiyomi.source.model.Filter
-import eu.kanade.tachiyomi.source.model.SManga
-import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.source.model.FilterList
 import eu.kanade.tachiyomi.source.model.Page
+import eu.kanade.tachiyomi.source.model.SChapter
+import eu.kanade.tachiyomi.source.model.SManga
 import eu.kanade.tachiyomi.source.online.ParsedHttpSource
-import eu.kanade.tachiyomi.util.asJsoup
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Request
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import rx.Observable
 
-class HentaiMimi: ParsedHttpSource() {
+
+/*
+* To Update Filter Values Run "FilterOptGen.kt"
+*
+*
+ */
+class HentaiMimi : ParsedHttpSource() {
     // Meta Data
     override val baseUrl = "https://hentaimimi.com"
     override val lang = "en"
@@ -64,20 +69,20 @@ class HentaiMimi: ParsedHttpSource() {
         filters.forEach { filter ->
             when (filter) {
                 is ArtistGroupFilter -> {
-                    filter.state.filter { it.state }.map { it.value }. forEach { url.addQueryParameter("artists[]", it) }
+                    filter.state.filter { it.state }.map { it.value }.forEach { url.addQueryParameter("artists[]", it) }
                 }
                 is ParodiesGroupFilter -> {
-                    filter.state.filter { it.state }.map { it.value }. forEach { url.addQueryParameter("parodies[]", it) }
+                    filter.state.filter { it.state }.map { it.value }.forEach { url.addQueryParameter("parodies[]", it) }
                 }
                 is LanguageGroupFilter -> {
-                    filter.state.filter { it.state }.map { it.value }. forEach { url.addQueryParameter("langs[]", it) }
+                    filter.state.filter { it.state }.map { it.value }.forEach { url.addQueryParameter("langs[]", it) }
                 }
                 is PublishersGroupFilter -> {
-                    filter.state.filter { it.state }.map { it.value }. forEach { url.addQueryParameter("pubs[]", it) }
+                    filter.state.filter { it.state }.map { it.value }.forEach { url.addQueryParameter("pubs[]", it) }
                 }
                 is TagGroupFilter -> {
-                    filter.state.filter { it.isExcluded() }.map { it.value }. forEach { url.addQueryParameter("tags_ex[]", it) }
-                    filter.state.filter { it.isIncluded() }.map { it.value }. forEach { url.addQueryParameter("tags[]", it) }
+                    filter.state.filter { it.isExcluded() }.map { it.value }.forEach { url.addQueryParameter("tags_ex[]", it) }
+                    filter.state.filter { it.isIncluded() }.map { it.value }.forEach { url.addQueryParameter("tags[]", it) }
                 }
             }
         }
@@ -92,8 +97,7 @@ class HentaiMimi: ParsedHttpSource() {
     override fun mangaDetailsRequest(manga: SManga): Request {
         return if (!manga.url.startsWith("http")) {
             GET("$baseUrl${manga.url}", headers)
-        }
-        else super.mangaDetailsRequest(manga)
+        } else super.mangaDetailsRequest(manga)
     }
 
     override fun mangaDetailsParse(document: Document): SManga {
@@ -104,7 +108,7 @@ class HentaiMimi: ParsedHttpSource() {
         manga.url = document.location()
         manga.thumbnail_url = document.select("div.col-md-4 img").attr("abs:src")
         details.select(".mb-3").forEach {
-            when (it.select(".lead").text()){
+            when (it.select(".lead").text()) {
                 "Artist" -> {
                     manga.artist = it.select("p:nth-child(2)").text()
                     manga.author = manga.artist
@@ -125,12 +129,16 @@ class HentaiMimi: ParsedHttpSource() {
     // Chapters
 
     override fun fetchChapterList(manga: SManga): Observable<List<SChapter>> {
-        return Observable.just(listOf(SChapter.create().apply {
-            name = "Chapter"
-            url = manga.url
-            chapter_number = 1F
-            date_upload = System.currentTimeMillis()
-        }))
+        return Observable.just(
+            listOf(
+                SChapter.create().apply {
+                    name = "Chapter"
+                    url = manga.url
+                    chapter_number = 1F
+                    date_upload = System.currentTimeMillis()
+                }
+            )
+        )
     }
     override fun chapterFromElement(element: Element): SChapter = throw UnsupportedOperationException("Not used")
 
@@ -141,8 +149,7 @@ class HentaiMimi: ParsedHttpSource() {
     override fun pageListRequest(chapter: SChapter): Request {
         return if (!chapter.url.startsWith("http")) {
             GET("$baseUrl${chapter.url}", headers)
-        }
-        else super.pageListRequest(chapter)
+        } else super.pageListRequest(chapter)
     }
 
     override fun pageListParse(document: Document): List<Page> {
@@ -159,7 +166,6 @@ class HentaiMimi: ParsedHttpSource() {
     class TriStateFilterOption(name: String, val value: String) : Filter.TriState(name)
     class CheckboxFilterOption(name: String, val value: String, default: Boolean = false) : Filter.CheckBox(name, default)
 
-
     private class TagGroupFilter(filters: List<TriStateFilterOption>) : Filter.Group<TriStateFilterOption>("Tags", filters)
     private class LanguageGroupFilter(options: List<CheckboxFilterOption>) : Filter.Group<CheckboxFilterOption>("Languages", options)
     private class ArtistGroupFilter(options: List<CheckboxFilterOption>) : Filter.Group<CheckboxFilterOption>("Artist", options)
@@ -167,36 +173,10 @@ class HentaiMimi: ParsedHttpSource() {
     private class PublishersGroupFilter(options: List<CheckboxFilterOption>) : Filter.Group<CheckboxFilterOption>("Publishers", options)
 
     override fun getFilterList(): FilterList = FilterList(
-        ArtistGroupFilter(getFilters("artist")),
-        ParodiesGroupFilter(getFilters("parodies")),
-        LanguageGroupFilter(getFilters("languages")),
-        PublishersGroupFilter(getFilters("publishers")),
-        TagGroupFilter(getTagFilters()),
+        ArtistGroupFilter(artists),
+        ParodiesGroupFilter(parodies),
+        LanguageGroupFilter(langs),
+        PublishersGroupFilter(pubs),
+        TagGroupFilter(tags),
     )
-
-    private fun getFilters(type: String): List<CheckboxFilterOption> {
-        val options = mutableListOf<CheckboxFilterOption>()
-        val document = client.newCall(GET("$baseUrl/search", headers)).execute().asJsoup()
-        val selector = when (type) {
-            "artist" -> "[name=\"artists[]\"]"
-            "parodies" -> "[name=\"parodies[]\"]"
-            "languages" -> "[name=\"langs[]\"]"
-            "publishers" -> "[name=\"pubs[]\"]"
-            else -> return options
-        }
-        document.select("$selector > option").forEach { it ->
-            options.add(CheckboxFilterOption(it.text(), it.attr("abs:value")))
-        }
-        return options
-    }
-
-    private fun getTagFilters(): List<TriStateFilterOption> {
-        val options = mutableListOf<TriStateFilterOption>()
-        val document = client.newCall(GET("$baseUrl/search", headers)).execute().asJsoup()
-        val selector = "name=\"tags[]\""
-        document.select("$selector > option").forEach { it ->
-            options.add(TriStateFilterOption(it.text(), it.attr("abs:value")))
-        }
-        return options
-    }
 }
