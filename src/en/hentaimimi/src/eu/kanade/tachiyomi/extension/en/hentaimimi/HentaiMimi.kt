@@ -68,9 +68,9 @@ class HentaiMimi : ParsedHttpSource() {
         if (query.isNotEmpty()) url.addQueryParameter("title", query)
         filters.forEach { filter ->
             when (filter) {
-                is ArtistGroupFilter -> {
+                /*is ArtistGroupFilter -> {
                     filter.state.filter { it.state }.map { it.value }.forEach { url.addQueryParameter("artists[]", it) }
-                }
+                }*/
                 is ParodiesGroupFilter -> {
                     filter.state.filter { it.state }.map { it.value }.forEach { url.addQueryParameter("parodies[]", it) }
                 }
@@ -117,6 +117,7 @@ class HentaiMimi : ParsedHttpSource() {
                 "Publisher" -> tags.add(it.select("p:nth-child(2)").text())
             }
         }
+        manga.status = 2
         manga.genre = tags.joinToString(", ")
         return manga
     }
@@ -167,7 +168,7 @@ class HentaiMimi : ParsedHttpSource() {
     private class PublishersGroupFilter(options: List<CheckboxFilterOption>) : Filter.Group<CheckboxFilterOption>("Publishers", options)
 
     override fun getFilterList(): FilterList = FilterList(
-        ArtistGroupFilter(artists),
+        //ArtistGroupFilter(artists),
         ParodiesGroupFilter(parodies),
         LanguageGroupFilter(langs),
         PublishersGroupFilter(pubs),
