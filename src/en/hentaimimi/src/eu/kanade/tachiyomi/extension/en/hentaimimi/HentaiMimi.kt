@@ -144,7 +144,8 @@ class HentaiMimi : ParsedHttpSource() {
     override fun pageListParse(document: Document): List<Page> {
         val pages = mutableListOf<Page>()
         document.select("body main script").text().substringAfter("[").substringBefore("]").split(",").forEachIndexed { index, it ->
-            pages.add(Page(index, it, it))
+            val url = "$baseUrl/${it.replace("\\", "").replace("\"", "")}"
+            pages.add(Page(index, url, url))
         }
 
         /*document.select("div#lightgallery > a").forEachIndexed() { index, it ->
