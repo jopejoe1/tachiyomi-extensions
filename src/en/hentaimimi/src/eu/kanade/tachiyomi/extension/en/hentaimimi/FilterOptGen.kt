@@ -15,7 +15,9 @@ import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
-
+/*
+* Based on the one in MMRCMS extension
+ */
 class FilterOptGen {
     init {
         System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2,TLSv1.3")

@@ -2,9 +2,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 ext {
-    extName = 'HentaiMini'
-    pkgNameSuffix = 'en.hentaimini'
-    extClass = '.HentaiMini'
+    extName = 'HentaiMimi'
+    pkgNameSuffix = 'en.hentaimimi'
+    extClass = '.HentaiMimi'
     extVersionCode = 1
     libVersion = '1.2'
 }
