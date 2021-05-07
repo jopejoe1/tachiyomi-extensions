@@ -169,12 +169,12 @@ class HentaiMimi : ParsedHttpSource() {
 
     override fun getFilterList(): FilterList = FilterList(
         //ArtistGroupFilter(artists),
-        ParodiesGroupFilter(parodies2()),
+        ParodiesGroupFilter(parodies()),
         //LanguageGroupFilter(langs),
         //PublishersGroupFilter(pubs),
         //TagGroupFilter(tags),
     )
-    private fun parodies2() = listOf(
+    fun parodies() = listOf(
         CheckboxFilterOption("original work","2"),
         CheckboxFilterOption("haramase! honoo no oppai isekai ero mahou gakuen!","3"),
         CheckboxFilterOption("my little pony","4"),
