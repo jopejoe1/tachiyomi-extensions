@@ -1,4 +1,4 @@
-package eu.kanade.tachiyomi.extension.en.patchfriday
+package eu.kanade.tachiyomi.extension.en.hentaimimi
 
 import eu.kanade.tachiyomi.network.GET
 import eu.kanade.tachiyomi.source.model.Filter
