@@ -31,13 +31,13 @@ class HentaiMimi : ParsedHttpSource() {
     override fun latestUpdatesFromElement(element: Element): SManga {
         val manga = SManga.create()
         val title = element.select(".white-text")
-        manga.url = title.attr("abs:href")
+        manga.url = title.attr("abs:href").replace(baseUrl, "").trim()
         manga.title = title.text()
         manga.thumbnail_url = element.select(".card-img-top").attr("abs:src")
         return manga
     }
 
-    override fun latestUpdatesNextPageSelector(): String? = popularMangaNextPageSelector()
+    override fun latestUpdatesNextPageSelector(): String? = ":not(*)"
 
     override fun latestUpdatesRequest(page: Int): Request {
         return GET(baseUrl, headers)
@@ -100,7 +100,7 @@ class HentaiMimi : ParsedHttpSource() {
         val details = document.select("div.p-0")
         val tags = mutableListOf<String>()
         manga.title = details.select("h3").text()
-        manga.url = document.location()
+        manga.url = document.location().replace(baseUrl, "").trim()
         manga.thumbnail_url = document.select("div.col-md-4 img").attr("abs:src")
         details.select(".mb-3").forEach {
             when (it.select(".lead").text()) {
