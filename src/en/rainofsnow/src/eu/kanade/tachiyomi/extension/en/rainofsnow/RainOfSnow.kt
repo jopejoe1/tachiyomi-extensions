@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import rx.Observable
 
 open class RainOfSnow() : ParsedHttpSource() {
@@ -115,8 +116,6 @@ open class RainOfSnow() : ParsedHttpSource() {
     }
 
     override fun fetchPageList(chapter: SChapter): Observable<List<Page>> {
-        val id = chapter.url.substringAfterLast("_").removeSuffix("/")
-
         return client.newCall(GET(chapter.url))
             .asObservableSuccess()
             .map { parsePages(it, chapter.url) }
@@ -124,11 +123,10 @@ open class RainOfSnow() : ParsedHttpSource() {
     private fun parsePages(response: Response, refUrl: String): List<Page>{
         val pages = mutableListOf<Page>()
         val document = response.asJsoup()
-        var postUrl = "$baseUrl/wp-admin/admin-ajax.php"
-        var morePages = false
-        var postNonce = ""
-        var postOffset =""
-        var postId = ""
+        val postUrl = "$baseUrl/wp-admin/admin-ajax.php"
+        val requestBody = mutableListOf<String>()
+        requestBody.add("action=my_repeater_show_more")
+        var morePages = true
         var pageNum = 0
 
         document.select("[style=display: block;] img").forEachIndexed { index, element ->
@@ -139,13 +137,16 @@ open class RainOfSnow() : ParsedHttpSource() {
         for (s in js.split(";")) {
             when{
                 s.contains("var my_repeater_field_post_id =") -> {
-                    postId = s.substringAfter("=").substringBefore(";").trim()
+                    val postId = s.substringAfter("=").substringBefore(";").trim()
+                    requestBody.add("post_id=$postId")
                 }
                 s.contains("var my_repeater_field_offset =") -> {
-                    postOffset = s.substringAfter("=").substringBefore(";").trim()
+                    val postOffset = s.substringAfter("=").substringBefore(";").trim()
+                    requestBody.add("offset=$postOffset")
                 }
                 s.contains("var my_repeater_field_nonce =") -> {
-                    postNonce = s.substringAfter("=").substringBefore(";").trim()
+                    val postNonce = s.substringAfter("=").substringBefore(";").trim()
+                    requestBody.add("nonce=$postNonce")
                 }
                 s.contains("var my_repeater_more =") -> {
                     morePages = s.substringAfter("=").substringBefore(";").trim().toBoolean()
@@ -155,8 +156,7 @@ open class RainOfSnow() : ParsedHttpSource() {
 
         while (morePages){
             var content = ""
-            val postBody = RequestBody.create(null, "action=my_repeater_show_more&post_id=$postId&offset=$postOffset&nonce=$postNonce")
-            val request = POST("$postUrl", headers, postBody)
+            val request = POST("$postUrl", headers, requestBody.joinToString("&").toRequestBody(null))
             val document = client.newCall(request).execute()
             val data = document.body!!.string()
             for (s in data.split(",")) {
@@ -169,7 +169,12 @@ open class RainOfSnow() : ParsedHttpSource() {
                         morePages = s.substringAfter("\":").trim().toBoolean()
                     }
                     s.contains("\"offset\":") -> {
-                        postOffset = s.substringAfter("\":").trim()
+                        requestBody.forEachIndexed {index,it ->
+                            if (it.contains("offset=")) {
+                                requestBody.removeAt(index)
+                            }
+                        }
+                        requestBody.add("offset=${s.substringAfter("\":").trim()}")
                     }
                 }
             }
