@@ -73,7 +73,7 @@ class HentaiMimi : ParsedHttpSource() {
                 }*/
                 is ParodiesGroupFilter -> {
                     filter.state.filter { it.state }.map { it.value }.forEach { url.addQueryParameter("parodies[]", it) }
-                }
+                }/*
                 is LanguageGroupFilter -> {
                     filter.state.filter { it.state }.map { it.value }.forEach { url.addQueryParameter("langs[]", it) }
                 }
@@ -83,7 +83,7 @@ class HentaiMimi : ParsedHttpSource() {
                 is TagGroupFilter -> {
                     filter.state.filter { it.isExcluded() }.map { it.value }.forEach { url.addQueryParameter("tags_ex[]", it) }
                     filter.state.filter { it.isIncluded() }.map { it.value }.forEach { url.addQueryParameter("tags[]", it) }
-                }
+                }*/
             }
         }
         url.addQueryParameter("page", page.toString())
@@ -169,9 +169,79 @@ class HentaiMimi : ParsedHttpSource() {
 
     override fun getFilterList(): FilterList = FilterList(
         //ArtistGroupFilter(artists),
-        ParodiesGroupFilter(parodies),
-        LanguageGroupFilter(langs),
-        PublishersGroupFilter(pubs),
-        TagGroupFilter(tags),
+        ParodiesGroupFilter(parodies2),
+        //LanguageGroupFilter(langs),
+        //PublishersGroupFilter(pubs),
+        //TagGroupFilter(tags),
+    )
+    private val parodies2 = listOf(
+        CheckboxFilterOption("original work","2"),
+        CheckboxFilterOption("haramase! honoo no oppai isekai ero mahou gakuen!","3"),
+        CheckboxFilterOption("my little pony","4"),
+        CheckboxFilterOption("toaru majutsu no index","5"),
+        CheckboxFilterOption("gintama","6"),
+        CheckboxFilterOption("girls und panzer","7"),
+        CheckboxFilterOption("fate series","8"),
+        CheckboxFilterOption("azur lane","9"),
+        CheckboxFilterOption("kantai collection","10"),
+        CheckboxFilterOption("precure","11"),
+        CheckboxFilterOption("kagai jugyou","12"),
+        CheckboxFilterOption("dragon's crown","13"),
+        CheckboxFilterOption("the ryuo's work is never done!","14"),
+        CheckboxFilterOption("granblue fantasy","15"),
+        CheckboxFilterOption("sword art online","16"),
+        CheckboxFilterOption("the irregular at magic high school","17"),
+        CheckboxFilterOption("delicious in dungeon","18"),
+        CheckboxFilterOption("persona 5","19"),
+        CheckboxFilterOption("fire emblem fates","20"),
+        CheckboxFilterOption("touhou","21"),
+        CheckboxFilterOption("a kiss for the petals","22"),
+        CheckboxFilterOption("rwby","23"),
+        CheckboxFilterOption("utawarerumono","24"),
+        CheckboxFilterOption("the [email protected] cinderella girls","25"),
+        CheckboxFilterOption("to love-ru","26"),
+        CheckboxFilterOption("love live","27"),
+        CheckboxFilterOption("my hero academia","28"),
+        CheckboxFilterOption("hundred","29"),
+        CheckboxFilterOption("cardfight!! vanguard","30"),
+        CheckboxFilterOption("amagi brilliant park","31"),
+        CheckboxFilterOption("schoolgirl strikers","32"),
+        CheckboxFilterOption("fantasy earth zero","33"),
+        CheckboxFilterOption("puyo puyo","34"),
+        CheckboxFilterOption("vocaloid, dragon quest, voiceroid","35"),
+        CheckboxFilterOption("voiceroid","36"),
+        CheckboxFilterOption("god eater 2","37"),
+        CheckboxFilterOption("puzzle & dragons","38"),
+        CheckboxFilterOption("zelda","39"),
+        CheckboxFilterOption("nier: automata","40"),
+        CheckboxFilterOption("super mario odyssey","41"),
+        CheckboxFilterOption("street fighter","42"),
+        CheckboxFilterOption("wendy","43"),
+        CheckboxFilterOption("go! princess precure","44"),
+        CheckboxFilterOption("konosuba: god's blessing on this wonderful world!","45"),
+        CheckboxFilterOption("food wars! shokugeki no soma","46"),
+        CheckboxFilterOption("gambling emperor legend zero","47"),
+        CheckboxFilterOption("the human reignition project","48"),
+        CheckboxFilterOption("vocaloid, voiceroid","49"),
+        CheckboxFilterOption("ane doki","50"),
+        CheckboxFilterOption("kantai collection, hyperdimension neptunia","51"),
+        CheckboxFilterOption("muv-luv","52"),
+        CheckboxFilterOption("millennium war aigis","53"),
+        CheckboxFilterOption("crawling dreams","54"),
+        CheckboxFilterOption("dragon quest","55"),
+        CheckboxFilterOption("dagashi kashi","56"),
+        CheckboxFilterOption("watamote","57"),
+        CheckboxFilterOption("last period","58"),
+        CheckboxFilterOption("doraemon","59"),
+        CheckboxFilterOption("puella magi madoka magica","60"),
+        CheckboxFilterOption("gate","61"),
+        CheckboxFilterOption("darling in the franxx","62"),
+        CheckboxFilterOption("league of legends","63"),
+        CheckboxFilterOption("pokemon go","64"),
+        CheckboxFilterOption("steven universe","65"),
+        CheckboxFilterOption("kill la kill","66"),
+        CheckboxFilterOption("is it wrong to try to pick up girls in a dungeon?","67"),
+        CheckboxFilterOption("dark souls","68"),
+        CheckboxFilterOption("minecraft","69"),
     )
 }
