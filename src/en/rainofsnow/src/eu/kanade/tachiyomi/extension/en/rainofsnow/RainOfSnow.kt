@@ -67,7 +67,7 @@ open class RainOfSnow() : ParsedHttpSource() {
             when (filter) {
                 is AlbumTypeSelectFilter -> {
                     if (filter.state != 0) {
-                        url.addQueryParameter("chapters", filter.toUriPart())
+                        url.addQueryParameter("n_orderby", filter.toUriPart())
                     }
                 }
             }
@@ -200,6 +200,7 @@ open class RainOfSnow() : ParsedHttpSource() {
                 pages.add(Page(pageNum, image, image))
                 pageNum++
             }
+            morePages.add("Test")
         }
         return pages
     }
