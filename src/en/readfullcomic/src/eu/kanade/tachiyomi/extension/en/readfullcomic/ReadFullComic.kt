@@ -74,9 +74,7 @@ open class ReadFullComic(): ParsedHttpSource() {
         }
     }
 
-    override fun mangaDetailsParse(document: Document): SManga {
-        TODO("Not yet implemented")
-    }
+
 
     // Chapter
 
@@ -106,7 +104,7 @@ open class ReadFullComic(): ParsedHttpSource() {
     }
 
     // Unused
-
+    override fun mangaDetailsParse(document: Document): SManga = throw UnsupportedOperationException("Not used")
     override fun imageUrlParse(document: Document): String = throw UnsupportedOperationException("Not used")
     override fun latestUpdatesFromElement(element: Element): SManga = throw UnsupportedOperationException("Not supported")
     override fun latestUpdatesNextPageSelector(): String? = throw UnsupportedOperationException("Not supported")
