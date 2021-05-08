@@ -150,7 +150,7 @@ open class RainOfSnow() : ParsedHttpSource() {
         val postId = js.substringAfter("var my_repeater_field_post_id = ").substringBefore(";").trim()
         var postOffset = js.substringAfter("var my_repeater_field_offset = ").substringBefore(";").trim()
         val postNonce = js.substringAfter("var my_repeater_field_nonce = ").substringBefore(";").trim()
-        var morePages = js.substringAfter("var my_repeater_more = ").substringBefore(";").trim().toBoolean()
+        var morePages = true //.js.substringAfter("var my_repeater_more = ").substringBefore(";").trim().toBoolean()
 
 
         while (morePages){
