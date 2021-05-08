@@ -142,5 +142,14 @@
     "code": 5,
     "version": "1.2.5",
     "nsfw": 0
+  },
+  {
+    "name": "Tachiyomi: Read Full Comic",
+    "pkg": "eu.kanade.tachiyomi.extension.en.readfullcomic",
+    "apk": "tachiyomi-en.readfullcomic-v1.2.1.apk",
+    "lang": "en",
+    "code": 1,
+    "version": "1.2.1",
+    "nsfw": 0
   }
 ]
