@@ -135,72 +135,34 @@ open class RainOfSnow() : ParsedHttpSource() {
     }
     private fun parsePages(response: Response, refUrl: String): List<Page>{
         val pages = mutableListOf<Page>()
+        val images = mutableListOf<String>()
         val document = response.asJsoup()
-        val postUrl = "$baseUrl/wp-admin/admin-ajax.php"
-        val requestBody = mutableListOf<String>()
-        requestBody.add("action=my_repeater_show_more")
-        var morePages = mutableListOf<String>()
-        var pageNum = 0
 
-        document.select("[style=display: block;] img").forEachIndexed { index, element ->
-            pages.add(Page(pageNum, "", element.attr("abs:src")))
-            pageNum++
+        document.select("[style=display: block;] img").forEach { element ->
+            images.add(element.attr("abs:src")))
         }
+
         val js = document.select(".zoomdesc-cont .chap-img-smlink + script").html()
-        for (s in js.split(";")) {
-            when{
-                s.contains("var my_repeater_field_post_id =") -> {
-                    val postId = s.substringAfter("=").substringBefore(";").trim()
-                    requestBody.add("post_id=$postId")
-                }
-                s.contains("var my_repeater_field_offset =") -> {
-                    val postOffset = s.substringAfter("=").substringBefore(";").trim()
-                    requestBody.add("offset=$postOffset")
-                }
-                s.contains("var my_repeater_field_nonce =") -> {
-                    val postNonce = s.substringAfter("=").substringBefore(";").trim()
-                    requestBody.add("nonce=$postNonce")
-                }
-                s.contains("var my_repeater_more =") -> {
-                    if (!s.substringAfter("=").substringBefore(";").trim().toBoolean())
-                    morePages.add(s)
-                }
+        val postId = js.substringAfter("var my_repeater_field_post_id = ").substringBefore(";").trim()
+        var postOffset = js.substringAfter("var my_repeater_field_offset = ").substringBefore(";").trim()
+        val postNonce = js.substringAfter("var my_repeater_field_nonce = ").substringBefore(";").trim()
+        var morePages = js.substringAfter("var my_repeater_more = ").substringBefore(";").trim().toBoolean()
+
+
+        while (morePages){
+            val url = "$baseUrl/wp-admin/admin-ajax.php".toHttpUrlOrNull()!!.newBuilder()
+            val requestBody = "action=my_repeater_show_more&post_id=$postId&offset=$postOffset&nonce=$postNonce".toRequestBody(null)
+            val request = POST(url.toString(), headers, requestBody)
+            val document = client.newCall(request).execute().asJsoup()
+            document.select("img").forEach {
+                images.add(it.attr("abs:src"))
             }
+            morePages = document.select("body").html().contains("\"more\":true")
+            postOffset = document.select("body").html().substringAfterLast(":").substringBefore("}")
         }
 
-        while (morePages.isEmpty()){
-            var images = mutableListOf<String>()
-            val request = POST("$postUrl", headers, requestBody.joinToString("&").toRequestBody(null))
-            val document = client.newCall(request).execute().body!!.string()
-            for (s in document.split(",")) {
-                when{
-                    s.contains("\"content\":") -> {
-                        val image = s.substringAfter("\"content\":").substringBeforeLast("\"").replace("\\\"", "").replace("\\&quot;","")
-                        Jsoup.parse(image).select("img").forEach {
-                            images.add(it.attr("abs:src"))
-                        }
-                    }
-                    s.contains("\"more\":") -> {
-                        if (!s.substringAfter("\":").trim().toBoolean()){
-                            morePages.add(s)
-                        }
-
-                    }
-                    s.contains("\"offset\":") -> {
-                        requestBody.forEachIndexed {index,it ->
-                            if (it.contains("offset=")) {
-                                requestBody.removeAt(index)
-                            }
-                        }
-                        requestBody.add("offset=${s.substringAfter("\":").trim()}")
-                    }
-                }
-            }
-            for (image in images) {
-                pages.add(Page(pageNum, image, image))
-                pageNum++
-            }
-            morePages.add("Test")
+        for ((pageNum, image) in images.withIndex()) {
+            pages.add(Page(pageNum, image, image))
         }
         return pages
     }
