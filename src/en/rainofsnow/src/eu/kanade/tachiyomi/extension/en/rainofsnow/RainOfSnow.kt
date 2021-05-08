@@ -161,8 +161,8 @@ open class RainOfSnow() : ParsedHttpSource() {
             ajax.select("img").forEach {
                 images.add(it.attr("abs:src"))
             }
-            morePages = ajax.select("body").html().contains("\"more\":true")
-            postOffset = ajax.select("body").html().substringAfterLast(":").substringBefore("}")
+            morePages = ajax.html().contains("\"more\":true")
+            postOffset = ajax.html().substringAfterLast(":").substringBefore("}")
         }
 
         for ((pageNum, image) in images.withIndex()) {
