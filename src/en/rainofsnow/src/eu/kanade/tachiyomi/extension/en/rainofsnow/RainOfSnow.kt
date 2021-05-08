@@ -20,9 +20,9 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.TimeUnit
-import okhttp3.RequestBody
+import okhttp3.Headers
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.jsoup.Jsoup
+import okhttp3.internal.userAgent
 import rx.Observable
 
 open class RainOfSnow() : ParsedHttpSource() {
@@ -131,15 +131,19 @@ open class RainOfSnow() : ParsedHttpSource() {
     override fun fetchPageList(chapter: SChapter): Observable<List<Page>> {
         return client.newCall(GET(chapter.url))
             .asObservableSuccess()
-            .map { parsePages(it, chapter.url) }
+            .map { parsePages(it) }
     }
-    private fun parsePages(response: Response, refUrl: String): List<Page>{
+    private fun parsePages(response: Response): List<Page>{
         val pages = mutableListOf<Page>()
         val images = mutableListOf<String>()
         val document = response.asJsoup()
+        fun headersBuilder(): Headers.Builder = Headers.Builder()
+            .add("Referer", baseUrl)
+            .add("User-Agent", userAgent)
+            .add("Content-Type", "application/x-www-form-urlencoded")
 
         document.select("[style=display: block;] img").forEach { element ->
-            images.add(element.attr("abs:src")))
+            images.add(element.attr("abs:src"))
         }
 
         val js = document.select(".zoomdesc-cont .chap-img-smlink + script").html()
@@ -152,18 +156,19 @@ open class RainOfSnow() : ParsedHttpSource() {
         while (morePages){
             val url = "$baseUrl/wp-admin/admin-ajax.php".toHttpUrlOrNull()!!.newBuilder()
             val requestBody = "action=my_repeater_show_more&post_id=$postId&offset=$postOffset&nonce=$postNonce".toRequestBody(null)
-            val request = POST(url.toString(), headers, requestBody)
-            val document = client.newCall(request).execute().asJsoup()
-            document.select("img").forEach {
+            val request = POST(url.toString(), headersBuilder().build(), requestBody)
+            val ajax = client.newCall(request).execute().asJsoup()
+            ajax.select("img").forEach {
                 images.add(it.attr("abs:src"))
             }
-            morePages = document.select("body").html().contains("\"more\":true")
-            postOffset = document.select("body").html().substringAfterLast(":").substringBefore("}")
+            morePages = ajax.select("body").html().contains("\"more\":true")
+            postOffset = ajax.select("body").html().substringAfterLast(":").substringBefore("}")
         }
 
         for ((pageNum, image) in images.withIndex()) {
             pages.add(Page(pageNum, image, image))
         }
+
         return pages
     }
 
