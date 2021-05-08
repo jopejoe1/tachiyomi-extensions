@@ -10,20 +10,20 @@ import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.source.model.SManga
 import eu.kanade.tachiyomi.source.online.ParsedHttpSource
 import eu.kanade.tachiyomi.util.asJsoup
+import okhttp3.Headers
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
+import okhttp3.internal.userAgent
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import rx.Observable
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.TimeUnit
-import okhttp3.Headers
-import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.internal.userAgent
-import rx.Observable
 
 open class RainOfSnow() : ParsedHttpSource() {
 
@@ -57,7 +57,7 @@ open class RainOfSnow() : ParsedHttpSource() {
     override fun popularMangaNextPageSelector() = ".page-numbers .next"
 
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
-        if (query.isNotEmpty()){
+        if (query.isNotEmpty()) {
             val url = "$baseUrl/".toHttpUrlOrNull()!!.newBuilder()
             url.addQueryParameter("s", query)
             return GET(url.build().toString(), headers)
@@ -133,7 +133,7 @@ open class RainOfSnow() : ParsedHttpSource() {
             .asObservableSuccess()
             .map { parsePages(it) }
     }
-    private fun parsePages(response: Response): List<Page>{
+    private fun parsePages(response: Response): List<Page> {
         val pages = mutableListOf<Page>()
         val images = mutableListOf<String>()
         val document = response.asJsoup()
@@ -150,10 +150,9 @@ open class RainOfSnow() : ParsedHttpSource() {
         val postId = js.substringAfter("var my_repeater_field_post_id = ").substringBefore(";").trim()
         var postOffset = js.substringAfter("var my_repeater_field_offset = ").substringBefore(";").trim()
         val postNonce = js.substringAfter("var my_repeater_field_nonce = ").substringBefore(";").trim()
-        var morePages = true //.js.substringAfter("var my_repeater_more = ").substringBefore(";").trim().toBoolean()
+        var morePages = true // .js.substringAfter("var my_repeater_more = ").substringBefore(";").trim().toBoolean()
 
-
-        while (morePages){
+        while (morePages) {
             val url = "$baseUrl/wp-admin/admin-ajax.php".toHttpUrlOrNull()!!.newBuilder()
             val requestBody = "action=my_repeater_show_more&post_id=$postId&offset=$postOffset&nonce=$postNonce".toRequestBody(null)
             val request = POST(url.toString(), headersBuilder().build(), requestBody)
@@ -172,8 +171,6 @@ open class RainOfSnow() : ParsedHttpSource() {
         return pages
     }
 
-
-
     // Filters
     override fun getFilterList(): FilterList = FilterList(
         Filter.Header("NOTE: Ignored if using text search!"),
@@ -189,7 +186,6 @@ open class RainOfSnow() : ParsedHttpSource() {
             Pair("Vietnamese Comic", "306"),
         )
     )
-
 
     private open class UriPartFilter(displayName: String, val vals: Array<Pair<String, String>>) :
         Filter.Select<String>(displayName, vals.map { it.first }.toTypedArray()) {
