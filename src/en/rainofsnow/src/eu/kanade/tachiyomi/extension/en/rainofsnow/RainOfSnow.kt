@@ -22,6 +22,7 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.jsoup.Jsoup
 import rx.Observable
 
 open class RainOfSnow() : ParsedHttpSource() {
@@ -56,9 +57,21 @@ open class RainOfSnow() : ParsedHttpSource() {
     override fun popularMangaNextPageSelector() = ".page-numbers .next"
 
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
-        val url = "$baseUrl/".toHttpUrlOrNull()!!.newBuilder()
-        url.addQueryParameter("serchfor", "comics")
-        url.addQueryParameter("s", query)
+        if (query.isNotEmpty()){
+            val url = "$baseUrl/".toHttpUrlOrNull()!!.newBuilder()
+            url.addQueryParameter("s", query)
+            return GET(url.build().toString(), headers)
+        }
+        val url = "$baseUrl/comics/".toHttpUrlOrNull()!!.newBuilder()
+        filters.forEach { filter ->
+            when (filter) {
+                is AlbumTypeSelectFilter -> {
+                    if (filter.state != 0) {
+                        url.addQueryParameter("chapters", filter.toUriPart())
+                    }
+                }
+            }
+        }
         return GET(url.build().toString(), headers)
     }
 
@@ -126,7 +139,7 @@ open class RainOfSnow() : ParsedHttpSource() {
         val postUrl = "$baseUrl/wp-admin/admin-ajax.php"
         val requestBody = mutableListOf<String>()
         requestBody.add("action=my_repeater_show_more")
-        var morePages = true
+        var morePages = mutableListOf<String>()
         var pageNum = 0
 
         document.select("[style=display: block;] img").forEachIndexed { index, element ->
@@ -149,24 +162,29 @@ open class RainOfSnow() : ParsedHttpSource() {
                     requestBody.add("nonce=$postNonce")
                 }
                 s.contains("var my_repeater_more =") -> {
-                    morePages = s.substringAfter("=").substringBefore(";").trim().toBoolean()
+                    if (!s.substringAfter("=").substringBefore(";").trim().toBoolean())
+                    morePages.add(s)
                 }
             }
         }
 
-        while (morePages){
-            var content = ""
+        while (morePages.isEmpty()){
+            var images = mutableListOf<String>()
             val request = POST("$postUrl", headers, requestBody.joinToString("&").toRequestBody(null))
-            val document = client.newCall(request).execute()
-            val data = document.body!!.string()
-            for (s in data.split(",")) {
+            val document = client.newCall(request).execute().body!!.string()
+            for (s in document.split(",")) {
                 when{
                     s.contains("\"content\":") -> {
-                        content = s.substringAfter("\":\"").substringBeforeLast("\"").replace("\\t","").replace("\\n","").replace("\\","")
-                        content = content.replace("\" /><img class=\"img-responsive comicimgcls\" src=\"",",").replace("<img class=\"img-responsive comicimgcls\" src=\"","").replace("\" />","").trim()
+                        val image = s.substringAfter("\"content\":").substringBeforeLast("\"").replace("\\\"", "").replace("\\&quot;","")
+                        Jsoup.parse(image).select("img").forEach {
+                            images.add(it.attr("abs:src"))
+                        }
                     }
                     s.contains("\"more\":") -> {
-                        morePages = s.substringAfter("\":").trim().toBoolean()
+                        if (!s.substringAfter("\":").trim().toBoolean()){
+                            morePages.add(s)
+                        }
+
                     }
                     s.contains("\"offset\":") -> {
                         requestBody.forEachIndexed {index,it ->
@@ -178,39 +196,36 @@ open class RainOfSnow() : ParsedHttpSource() {
                     }
                 }
             }
-            for (s in content.split(",")){
-                pages.add(Page(pageNum, "", s))
+            for (image in images) {
+                pages.add(Page(pageNum, image, image))
                 pageNum++
             }
         }
         return pages
-
     }
 
 
 
     // Filters
-    abstract class SelectFilter(name: String, private val options: List<SelectFilterOption>, default: Int = 0) : Filter.Select<String>(name, options.map { it.name }.toTypedArray(), default) {
-        val selected: String
-            get() = options[state].value
-
-        override fun toString(): String = selected
-    }
-
-    class SelectFilterOption(val name: String, val value: String)
-
-    class AlbumTypeSelectFilter(options: List<SelectFilterOption>) : SelectFilter("Album Type", options)
-
-    fun getAlbumTypeFilters() = listOf(
-        SelectFilterOption("", "All"),
-        SelectFilterOption("95", "Manga"),
-        SelectFilterOption("115", "Manhua"),
-        SelectFilterOption("105", "Manhwa"),
-        SelectFilterOption("306", "Vietnamese Comic"),
-    )
     override fun getFilterList(): FilterList = FilterList(
-        AlbumTypeSelectFilter(getAlbumTypeFilters()),
+        Filter.Header("NOTE: Ignored if using text search!"),
+        AlbumTypeSelectFilter(),
     )
+    private class AlbumTypeSelectFilter() : UriPartFilter(
+        "Type",
+        arrayOf(
+            Pair("All", ""),
+            Pair("Manga", "95"),
+            Pair("Manhua", "115"),
+            Pair("Manhwa", "105"),
+            Pair("Vietnamese Comic", "306"),
+        )
+    )
+
+    private open class UriPartFilter(displayName: String, val vals: Array<Pair<String, String>>) :
+        Filter.Select<String>(displayName, vals.map { it.first }.toTypedArray()) {
+        fun toUriPart() = vals[state].second
+    }
 
     // Unused
     override fun pageListRequest(chapter: SChapter): Request = throw Exception("Not used")
