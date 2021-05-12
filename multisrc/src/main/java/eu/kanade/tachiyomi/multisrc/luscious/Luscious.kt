@@ -384,7 +384,7 @@ abstract class Luscious(
     // Details
 
     override fun mangaDetailsRequest(manga: SManga): Request {
-        return GET("$baseUrl{manga.url}", headers)
+        return GET("$baseUrl${manga.url}", headers)
     }
 
     override fun fetchMangaDetails(manga: SManga): Observable<SManga> {
