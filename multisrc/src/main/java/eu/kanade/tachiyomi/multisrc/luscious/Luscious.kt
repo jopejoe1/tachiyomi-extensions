@@ -384,11 +384,17 @@ abstract class Luscious(
     // Details
 
     override fun mangaDetailsRequest(manga: SManga): Request {
-        val id = manga.url.substringAfterLast("_").removeSuffix("/")
-        return buildAlbumInfoRequest(id)
+        return GET(manga.url, headers)
     }
 
-    override fun mangaDetailsParse(response: Response): SManga {
+    override fun fetchMangaDetails(manga: SManga): Observable<SManga> {
+        val id = manga.url.substringAfterLast("_").removeSuffix("/")
+        return client.newCall(buildAlbumInfoRequest(id))
+            .asObservableSuccess()
+            .map { detailsParse(it) }
+    }
+
+    private fun detailsParse(response: Response): SManga {
         val data = gson.fromJson<JsonObject>(response.body!!.string())
         with(data["data"]["album"]["get"]) {
             val manga = SManga.create()
@@ -420,6 +426,7 @@ abstract class Luscious(
             return manga
         }
     }
+    override fun mangaDetailsParse(response: Response): SManga = throw UnsupportedOperationException("Not used")
 
     // Popular
 
