@@ -165,6 +165,9 @@ abstract class Madara(
                         }
                     }
                 }
+                is AdultContentFilter -> {
+                    url.addQueryParameter("adult", filter.toUriPart())
+                }
                 is OrderByFilter -> {
                     if (filter.state != 0) {
                         url.addQueryParameter("m_orderby", filter.toUriPart())
