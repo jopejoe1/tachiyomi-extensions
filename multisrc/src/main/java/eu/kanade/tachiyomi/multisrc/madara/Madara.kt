@@ -295,7 +295,7 @@ abstract class Madara(
         Filter.Separator(),
         Filter.Header("Genres may not work for all sources"),
         GenreConditionFilter(),
-        GenreList(getGenreList())
+        GenreList(generateGenres(baseUrl))
     )
 
     private fun getStatusList() = listOf(
