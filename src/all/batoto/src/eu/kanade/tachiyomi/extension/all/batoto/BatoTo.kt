@@ -2,12 +2,15 @@ package eu.kanade.tachiyomi.extension.all.batoto
 
 import com.squareup.duktape.Duktape
 import eu.kanade.tachiyomi.network.GET
+import eu.kanade.tachiyomi.network.asObservableSuccess
 import eu.kanade.tachiyomi.source.model.Filter
 import eu.kanade.tachiyomi.source.model.FilterList
+import eu.kanade.tachiyomi.source.model.MangasPage
 import eu.kanade.tachiyomi.source.model.Page
 import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.source.model.SManga
 import eu.kanade.tachiyomi.source.online.ParsedHttpSource
+import eu.kanade.tachiyomi.util.asJsoup
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -17,6 +20,8 @@ import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
+import okhttp3.Response
+import rx.Observable
 
 open class BatoTo(
     override val lang: String,
@@ -67,65 +72,108 @@ open class BatoTo(
 
     override fun popularMangaNextPageSelector() = latestUpdatesNextPageSelector()
 
-    override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
-        return if (query.isNotBlank()) {
-            GET("$baseUrl/search?word=$query&page=$page")
-        } else {
-            val sortFilter = filters.findInstance<SortFilter>()!!
-            val reverseSortFilter = filters.findInstance<ReverseSortFilter>()!!
-            val statusFilter = filters.findInstance<StatusFilter>()!!
-            val langFilter = filters.findInstance<LangGroupFilter>()!!
-            val originFilter = filters.findInstance<OriginGroupFilter>()!!
-            val genreFilter = filters.findInstance<GenreGroupFilter>()!!
-            val minChapterFilter = filters.findInstance<MinChapterTextFilter>()!!
-            val maxChapterFilter = filters.findInstance<MaxChapterTextFilter>()!!
-
-            val url = "$baseUrl/browse".toHttpUrlOrNull()!!.newBuilder()
-            url.addQueryParameter("page", page.toString())
-
-            with (langFilter) {
-                if (this.selected.isEmpty()) {
-                    url.addQueryParameter("langs", siteLang)
-                } else {
-                    val selection = "${this.selected.joinToString(",")},$siteLang"
-                    url.addQueryParameter("langs", selection)
+    override fun fetchSearchManga(page: Int, query: String, filters: FilterList): Observable<MangasPage> {
+        return when {
+            query.startsWith("ID:") -> {
+                val id = query.substringAfter("ID:")
+                client.newCall(GET("https://bato.to/series/$id", headers)).asObservableSuccess()
+                    .map { response ->
+                        queryIDParse(response, id)
+                    }
+            }
+            query.isNotBlank() -> {
+                val url = "$baseUrl/search".toHttpUrlOrNull()!!.newBuilder()
+                val letterFilter = filters.findInstance<LetterFilter>()!!
+                url.addQueryParameter("word", query)
+                url.addQueryParameter("page", "$page")
+                if (letterFilter.state){
+                    url.addQueryParameter("mode", "letter")
                 }
+                client.newCall(GET(url.build().toString(), headers)).asObservableSuccess()
+                    .map { response ->
+                        queryParse(response)
+                    }
             }
 
-            with (genreFilter) {
-                url.addQueryParameter("genres", included.joinToString(",") + "|" + excluded.joinToString(",")
-                )
-            }
+            else -> {
+                val sortFilter = filters.findInstance<SortFilter>()!!
+                val reverseSortFilter = filters.findInstance<ReverseSortFilter>()!!
+                val statusFilter = filters.findInstance<StatusFilter>()!!
+                val langFilter = filters.findInstance<LangGroupFilter>()!!
+                val originFilter = filters.findInstance<OriginGroupFilter>()!!
+                val genreFilter = filters.findInstance<GenreGroupFilter>()!!
+                val minChapterFilter = filters.findInstance<MinChapterTextFilter>()!!
+                val maxChapterFilter = filters.findInstance<MaxChapterTextFilter>()!!
+                val url = "$baseUrl/browse".toHttpUrlOrNull()!!.newBuilder()
+                url.addQueryParameter("page", page.toString())
 
-            with (statusFilter) {
-                url.addQueryParameter("release", this.selected)
-            }
-
-            with (sortFilter) {
-                if (reverseSortFilter.state) {
-                    url.addQueryParameter("sort","${this.selected}.az")
-                } else {
-                    url.addQueryParameter("sort","${this.selected}.za")
+                with (langFilter) {
+                    if (this.selected.isEmpty()) {
+                        url.addQueryParameter("langs", siteLang)
+                    } else {
+                        val selection = "${this.selected.joinToString(",")},$siteLang"
+                        url.addQueryParameter("langs", selection)
+                    }
                 }
-            }
 
-            if (originFilter.selected.isNotEmpty()) {
-                url.addQueryParameter("origs", originFilter.selected.joinToString(","))
-            }
+                with (genreFilter) {
+                    url.addQueryParameter("genres", included.joinToString(",") + "|" + excluded.joinToString(",")
+                    )
+                }
 
-            if (maxChapterFilter.state.isNotEmpty() or minChapterFilter.state.isNotEmpty()) {
-                url.addQueryParameter("chapters", minChapterFilter.state + "-" + maxChapterFilter.state)
-            }
+                with (statusFilter) {
+                    url.addQueryParameter("release", this.selected)
+                }
 
-            GET(url.build().toString(), headers)
+                with (sortFilter) {
+                    if (reverseSortFilter.state) {
+                        url.addQueryParameter("sort","${this.selected}.az")
+                    } else {
+                        url.addQueryParameter("sort","${this.selected}.za")
+                    }
+                }
+
+                if (originFilter.selected.isNotEmpty()) {
+                    url.addQueryParameter("origs", originFilter.selected.joinToString(","))
+                }
+
+                if (maxChapterFilter.state.isNotEmpty() or minChapterFilter.state.isNotEmpty()) {
+                    url.addQueryParameter("chapters", minChapterFilter.state + "-" + maxChapterFilter.state)
+                }
+
+                client.newCall(GET(url.build().toString(), headers)).asObservableSuccess()
+                    .map { response ->
+                        queryParse(response)
+                    }
+            }
         }
     }
 
-    override fun searchMangaSelector() = latestUpdatesSelector()
+    private fun queryIDParse(response: Response, id: String): MangasPage {
+        val document = response.asJsoup()
+        val infoElement = document.select("div#mainer div.container-fluid")
+        val manga = SManga.create()
+        manga.title = infoElement.select("h3").text()
+        manga.thumbnail_url = document.select("div.attr-cover img")
+            .attr("abs:src")
+        manga.url = "$baseUrl/series/$id"
+        return MangasPage(listOf(manga), false)
+    }
 
-    override fun searchMangaFromElement(element: Element) = latestUpdatesFromElement(element)
+    private fun queryParse(response: Response): MangasPage {
+        val mangas = mutableListOf<SManga>()
+        val document = response.asJsoup()
+        document.select(latestUpdatesSelector()).forEach { element ->
+            mangas.add(latestUpdatesFromElement(element))
+        }
+        val nextPage = document.select(latestUpdatesNextPageSelector()) != null
+        return MangasPage(mangas, nextPage)
+    }
 
-    override fun searchMangaNextPageSelector() = latestUpdatesNextPageSelector()
+    override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request = throw UnsupportedOperationException("Not used")
+    override fun searchMangaSelector() = throw UnsupportedOperationException("Not used")
+    override fun searchMangaFromElement(element: Element) = throw UnsupportedOperationException("Not used")
+    override fun searchMangaNextPageSelector() = throw UnsupportedOperationException("Not used")
 
     override fun mangaDetailsRequest(manga: SManga): Request {
         if (manga.url.startsWith("http")) {
@@ -305,17 +353,17 @@ open class BatoTo(
     override fun imageUrlParse(document: Document): String = throw UnsupportedOperationException("Not used")
 
     override fun getFilterList() = FilterList(
-        //Done
+        LetterFilter(),
         Filter.Header("NOTE: Ignored if using text search!"),
         Filter.Separator(),
         SortFilter(getSortFilter(), 5),
-        ReverseSortFilter(),
         StatusFilter(getStatusFilter(), 0),
-        OriginGroupFilter(getOrginFilter()),
         GenreGroupFilter(getGenreFilter()),
+        OriginGroupFilter(getOrginFilter()),
+        LangGroupFilter(getLangFilter()),
         MinChapterTextFilter(),
         MaxChapterTextFilter(),
-        LangGroupFilter(getLangFilter()),
+        ReverseSortFilter(),
     )
 
     class SelectFilterOption(val name: String, val value: String)
@@ -340,13 +388,14 @@ open class BatoTo(
     abstract class TextFilter(name: String) : Filter.Text(name)
 
     class SortFilter(options: List<SelectFilterOption>, default: Int) : SelectFilter("Sort By", options, default)
-    class ReverseSortFilter(default: Boolean = false) : Filter.CheckBox("Revers Search", default)
-    class StatusFilter(options: List<SelectFilterOption>, default: Int) : SelectFilter("Sort By", options, default)
+    class ReverseSortFilter(default: Boolean = false) : Filter.CheckBox("Revers Sort", default)
+    class StatusFilter(options: List<SelectFilterOption>, default: Int) : SelectFilter("Status", options, default)
     class OriginGroupFilter(options: List<CheckboxFilterOption>) : CheckboxGroupFilter("Origin", options)
     class GenreGroupFilter(options: List<TriStateFilterOption>) : TriStateGroupFilter("Genre", options)
     class MinChapterTextFilter : TextFilter("Min. Chapters")
     class MaxChapterTextFilter : TextFilter("Max. Chapters")
     class LangGroupFilter(options: List<CheckboxFilterOption>) : CheckboxGroupFilter("Languages", options)
+    class LetterFilter(default: Boolean = false) : Filter.CheckBox("Letter matching mode (Slow)", default)
 
     private fun getSortFilter() = listOf(
         SelectFilterOption("Z-A", "title"),
