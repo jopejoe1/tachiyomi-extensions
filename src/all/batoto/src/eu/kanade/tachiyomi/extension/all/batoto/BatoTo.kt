@@ -156,7 +156,7 @@ open class BatoTo(
         manga.title = infoElement.select("h3").text()
         manga.thumbnail_url = document.select("div.attr-cover img")
             .attr("abs:src")
-        manga.setUrlWithoutDomain(infoElement.select("h3 a").attr("abs:href"))
+        manga.url = infoElement.select("h3 a").attr("abs:href")
         return MangasPage(listOf(manga), false)
     }
 
