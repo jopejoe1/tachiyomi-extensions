@@ -82,12 +82,7 @@ open class BatoTo(
                     }
             }
             query.isNotBlank() -> {
-                val letterFilter = filters.findInstance<LetterFilter>()!!
-                val url = if (letterFilter.state){
-                    "$baseUrl/search?word=$query&page=$page&mode=letter"
-                } else {
-                    "$baseUrl/search?word=$query&page=$page"
-                }
+                val url = "$baseUrl/search?word=$query&page=$page"
                 client.newCall(GET(url, headers)).asObservableSuccess()
                     .map { response ->
                         queryParse(response)
