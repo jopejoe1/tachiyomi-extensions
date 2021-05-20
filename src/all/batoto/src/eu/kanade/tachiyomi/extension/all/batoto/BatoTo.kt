@@ -76,25 +76,25 @@ open class BatoTo(
         return when {
             query.startsWith("ID:") -> {
                 val id = query.substringAfter("ID:")
-                client.newCall(GET("https://bato.to/series/$id", headers)).asObservableSuccess()
+                client.newCall(GET("$baseUrl/series/$id", headers)).asObservableSuccess()
                     .map { response ->
                         queryIDParse(response, id)
                     }
             }
             query.isNotBlank() -> {
-                val url = "$baseUrl/search".toHttpUrlOrNull()!!.newBuilder()
                 val letterFilter = filters.findInstance<LetterFilter>()!!
-                url.addQueryParameter("word", query)
+                val url = "$baseUrl/search".toHttpUrlOrNull()!!.newBuilder()
+                url.addQueryParameter("word", "$query")
                 url.addQueryParameter("page", "$page")
                 if (letterFilter.state){
                     url.addQueryParameter("mode", "letter")
                 }
+
                 client.newCall(GET(url.build().toString(), headers)).asObservableSuccess()
                     .map { response ->
                         queryParse(response)
                     }
             }
-
             else -> {
                 val sortFilter = filters.findInstance<SortFilter>()!!
                 val reverseSortFilter = filters.findInstance<ReverseSortFilter>()!!
@@ -747,6 +747,4 @@ open class BatoTo(
     ).filterNot { it.value == siteLang }
 
     private inline fun <reified T> Iterable<*>.findInstance() = find { it is T } as? T
-    // Old Filters
-
 }
