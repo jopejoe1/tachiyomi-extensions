@@ -257,7 +257,7 @@ abstract class Luscious(
                             else -> it["thumbnails"][getResolutionPref()?.toInt()!!]["url"].asString
                         }
                         chapter.name = it["title"].asString
-                        //chapter.date_upload = it["created"].asLong // not parsing correctly for some reason
+                        chapter.date_upload = "${it["created"].asLong}000".toLong()
                         chapter.chapter_number = it["position"].asInt.toFloat()
                         chapters.add(chapter)
                     }
