@@ -1,4 +1,4 @@
-package eu.kanade.tachiyomi.luscious
+package eu.kanade.tachiyomi.multisrc.luscious
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
