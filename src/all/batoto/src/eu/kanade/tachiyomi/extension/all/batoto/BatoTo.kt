@@ -346,7 +346,7 @@ open class BatoTo(
     override fun imageUrlParse(document: Document): String = throw UnsupportedOperationException("Not used")
 
     override fun getFilterList() = FilterList(
-        LetterFilter(),
+        //LetterFilter(),
         Filter.Header("NOTE: Ignored if using text search!"),
         Filter.Separator(),
         SortFilter(getSortFilter(), 5),
