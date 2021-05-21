@@ -159,7 +159,7 @@ open class BatoTo(
         document.select(latestUpdatesSelector()).forEach { element ->
             mangas.add(latestUpdatesFromElement(element))
         }
-        val nextPage = document.select(latestUpdatesNextPageSelector()) != null
+        val nextPage = document.select("div#mainer .pagination .page-item:not(.disabled) a.page-link:contains(»)").first() != null
         return MangasPage(mangas, nextPage)
     }
 
