@@ -41,7 +41,7 @@ class LusciousUrlActivity : Activity() {
 
     private fun fromLuscious(pathSegments: MutableList<String>): String? {
         return if (pathSegments.size >= 2) {
-            val id = pathSegments[1].substringAfterLast("_")
+            val id = if(pathSegments[1].contains("_")) {pathSegments[1].substringAfterLast("_") }else { pathSegments[1] }
             "ID:$id"
         } else {
             null
