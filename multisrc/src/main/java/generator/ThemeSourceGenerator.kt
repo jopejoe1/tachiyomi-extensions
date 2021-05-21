@@ -1,5 +1,6 @@
 package generator
 
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -54,12 +55,14 @@ interface ThemeSourceGenerator {
 
             val defaultAdditionalGradleText = File(defaultAdditionalGradlePath).readTextOrEmptyString()
             val additionalGradleOverrideText = File(additionalGradleOverridePath).readTextOrEmptyString()
-
+            val placeholders = mapOf(
+                "SOURCEHOST" to source.baseUrl.toHttpUrlOrNull()?.host,
+                "SOURCESCHEME" to source.baseUrl.toHttpUrlOrNull()?.scheme
+            ).filter { it.value != null }
             gradle.writeText("""
                 // THIS FILE IS AUTO-GENERATED; DO NOT EDIT
                 apply plugin: 'com.android.application'
                 apply plugin: 'kotlin-android'
-
                 ext {
                     extName = '${source.name}'
                     pkgNameSuffix = '${pkgNameSuffix(source, ".")}'
@@ -72,13 +75,23 @@ interface ThemeSourceGenerator {
                 $defaultAdditionalGradleText
                 $additionalGradleOverrideText
                 apply from: "${'$'}rootDir/common.gradle"
+                android {
+                    defaultConfig {
+                        manifestPlaceholders += [
+${placeholders.map { "${" ".repeat(28)}${it.key}: \"${it.value}\""}.joinToString(",\n")}
+                        ]
+                    }
+                }
             """.trimIndent())
         }
 
-        private fun writeAndroidManifest(androidManifestFile: File, manifestOverridesPath: String) {
+        private fun writeAndroidManifest(androidManifestFile: File, manifestOverridesPath: String, defaultAndroidManifestPath: String) {
             val androidManifestOverride = File(manifestOverridesPath)
+            val defaultAndroidManifest = File(defaultAndroidManifestPath)
             if (androidManifestOverride.exists())
                 androidManifestOverride.copyTo(androidManifestFile)
+            else if (defaultAndroidManifest.exists())
+                defaultAndroidManifest.copyTo(androidManifestFile)
             else
                 androidManifestFile.writeText("""
                 <?xml version="1.0" encoding="utf-8"?>
@@ -92,6 +105,7 @@ interface ThemeSourceGenerator {
             val projectSrcPath = "$projectRootPath/src/eu/kanade/tachiyomi/extension/${pkgNameSuffix(source, "/")}"
             val overridesPath = "$userDir/multisrc/overrides/$themePkg/${source.pkgName}" // userDir = tachiyomi-extensions project root path
             val defaultResPath = "$userDir/multisrc/overrides/$themePkg/default/res"
+            val defaultAndroidManifestPath = "$userDir/multisrc/overrides/$themePkg/default/AndroidManifest.xml"
             val defaultAdditionalGradlePath = "$userDir/multisrc/overrides/$themePkg/default/additional.gradle.kts"
             val resOverridePath = "$overridesPath/res"
             val srcOverridePath = "$overridesPath/src"
@@ -108,7 +122,7 @@ interface ThemeSourceGenerator {
                 cleanDirectory(projectRootFile)
 
                 writeGradle(projectGradleFile, source, themePkg, baseVersionCode, defaultAdditionalGradlePath, additionalGradleOverridePath)
-                writeAndroidManifest(projectAndroidManifestFile, manifestOverridePath)
+                writeAndroidManifest(projectAndroidManifestFile, manifestOverridePath, defaultAndroidManifestPath)
 
                 writeSourceClasses(projectSrcPath, srcOverridePath, source, themePkg, themeClass)
                 copyThemeClasses(userDir, themePkg, projectRootPath)
@@ -126,8 +140,8 @@ interface ThemeSourceGenerator {
             themeDestFile.mkdirs()
 
             themeSrcFile.list()!!
-                    .filter { it.endsWith(".kt") && !it.endsWith("Generator.kt") }
-                    .forEach { Files.copy(File("$themeSrcPath/$it").toPath(), File("$themeDestPath/$it").toPath(), StandardCopyOption.REPLACE_EXISTING) }
+                .filter { it.endsWith(".kt") && !it.endsWith("Generator.kt") }
+                .forEach { Files.copy(File("$themeSrcPath/$it").toPath(), File("$themeDestPath/$it").toPath(), StandardCopyOption.REPLACE_EXISTING) }
         }
 
         private fun copyResFiles(resOverridePath: String, defaultResPath: String, source: ThemeSourceData, projectRootPath: String): Any {
@@ -176,11 +190,9 @@ interface ThemeSourceGenerator {
             File("$classPath/${source.className}.kt").writeText("""/* ktlint-disable */
                 // THIS FILE IS AUTO-GENERATED; DO NOT EDIT
                 package eu.kanade.tachiyomi.extension.${pkgNameSuffix(source, ".")}
-
                 import eu.kanade.tachiyomi.multisrc.$themePkg.$themeClass
                 ${if (source is ThemeSourceData.MultiLang) "import eu.kanade.tachiyomi.source.SourceFactory" else ""}
                 ${if (source.isNsfw) "import eu.kanade.tachiyomi.annotations.Nsfw" else ""}
-
                 ${if (source.isNsfw) "\n@Nsfw" else ""}
                 ${factoryClassText()}
             """.trimIndent())
@@ -213,23 +225,23 @@ sealed class ThemeSourceData {
     abstract val overrideVersionCode: Int
 
     data class SingleLang(
-            override val name: String,
-            override val baseUrl: String,
-            val lang: String,
-            override val isNsfw: Boolean = false,
-            override val className: String = name.replace(" ", ""),
-            override val pkgName: String = className.toLowerCase(Locale.ENGLISH),
-            override val overrideVersionCode: Int = 0,
+        override val name: String,
+        override val baseUrl: String,
+        val lang: String,
+        override val isNsfw: Boolean = false,
+        override val className: String = name.replace(" ", ""),
+        override val pkgName: String = className.toLowerCase(Locale.ENGLISH),
+        override val overrideVersionCode: Int = 0,
     ) : ThemeSourceData()
 
     data class MultiLang(
-            override val name: String,
-            override val baseUrl: String,
-            val langs: List<String>,
-            override val isNsfw: Boolean = false,
-            override val className: String = name.replace(" ", "") + "Factory",
-            override val pkgName: String = className.substringBefore("Factory").toLowerCase(Locale.ENGLISH),
-            override val overrideVersionCode: Int = 0,
+        override val name: String,
+        override val baseUrl: String,
+        val langs: List<String>,
+        override val isNsfw: Boolean = false,
+        override val className: String = name.replace(" ", "") + "Factory",
+        override val pkgName: String = className.substringBefore("Factory").toLowerCase(Locale.ENGLISH),
+        override val overrideVersionCode: Int = 0,
     ) : ThemeSourceData()
 }
 
