@@ -1,25 +1,18 @@
 package eu.kanade.tachiyomi.extension.en.rainofsnow
 
 import eu.kanade.tachiyomi.network.GET
-import eu.kanade.tachiyomi.network.POST
-import eu.kanade.tachiyomi.network.asObservableSuccess
 import eu.kanade.tachiyomi.source.model.Filter
 import eu.kanade.tachiyomi.source.model.FilterList
 import eu.kanade.tachiyomi.source.model.Page
 import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.source.model.SManga
 import eu.kanade.tachiyomi.source.online.ParsedHttpSource
-import eu.kanade.tachiyomi.util.asJsoup
-import okhttp3.Headers
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
-import okhttp3.internal.userAgent
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import rx.Observable
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -128,52 +121,23 @@ open class RainOfSnow() : ParsedHttpSource() {
         return parsedDate
     }
 
-    override fun fetchPageList(chapter: SChapter): Observable<List<Page>> {
-        return client.newCall(GET(chapter.url))
-            .asObservableSuccess()
-            .map { parsePages(it) }
+    override fun pageListRequest(chapter: SChapter): Request {
+        if (chapter.url.startsWith("http")) {
+            return GET(chapter.url, headers)
+        }
+        return super.pageListRequest(chapter)
     }
-    private fun parsePages(response: Response): List<Page> {
-        val pages = mutableListOf<Page>()
-        val images = mutableListOf<String>()
-        val document = response.asJsoup()
-        fun headersBuilder(): Headers.Builder = Headers.Builder()
-            .add("Referer", baseUrl)
-            .add("User-Agent", userAgent)
-            .add("Content-Type", "application/x-www-form-urlencoded")
 
-        document.select("[style=display: block;] img").forEach { element ->
-            images.add(element.attr("abs:src"))
+    override fun pageListParse(document: Document): List<Page> = mutableListOf<Page>().apply {
+        document.select("[style=display: block;] img").forEachIndexed { index, element ->
+            add(Page(index, "", element.attr("abs:data-src")))
         }
-
-        val js = document.select(".zoomdesc-cont .chap-img-smlink + script").html()
-        val postId = js.substringAfter("var my_repeater_field_post_id = ").substringBefore(";").trim()
-        var postOffset = js.substringAfter("var my_repeater_field_offset = ").substringBefore(";").trim()
-        val postNonce = js.substringAfter("var my_repeater_field_nonce = ").substringBefore(";").trim()
-        var morePages = true // .js.substringAfter("var my_repeater_more = ").substringBefore(";").trim().toBoolean()
-
-        while (morePages) {
-            val url = "$baseUrl/wp-admin/admin-ajax.php".toHttpUrlOrNull()!!.newBuilder()
-            val requestBody = "action=my_repeater_show_more&post_id=$postId&offset=$postOffset&nonce=$postNonce".toRequestBody(null)
-            val request = POST(url.toString(), headersBuilder().build(), requestBody)
-            val ajax = client.newCall(request).execute().asJsoup()
-            ajax.select("img").forEach {
-                images.add(it.attr("abs:src"))
-            }
-            morePages = ajax.html().contains("\"more\":true")
-            postOffset = ajax.html().substringAfterLast(":").substringBefore("}")
-        }
-
-        for ((pageNum, image) in images.withIndex()) {
-            pages.add(Page(pageNum, image, image))
-        }
-
-        return pages
     }
 
     // Filters
     override fun getFilterList(): FilterList = FilterList(
         Filter.Header("NOTE: Ignored if using text search!"),
+        Filter.Separator(),
         AlbumTypeSelectFilter(),
     )
     private class AlbumTypeSelectFilter() : UriPartFilter(
@@ -192,9 +156,6 @@ open class RainOfSnow() : ParsedHttpSource() {
         fun toUriPart() = vals[state].second
     }
 
-    // Unused
-    override fun pageListRequest(chapter: SChapter): Request = throw Exception("Not used")
-    override fun pageListParse(document: Document): List<Page> = throw Exception("Not used")
     override fun latestUpdatesFromElement(element: Element) = throw Exception("Not used")
     override fun latestUpdatesNextPageSelector() = throw Exception("Not used")
     override fun latestUpdatesRequest(page: Int) = throw Exception("Not used")

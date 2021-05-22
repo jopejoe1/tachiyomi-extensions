@@ -65,3 +65,4 @@ body:
         placeholder: "If i try searching just Dragon it find it"
       validations:
         required: false
+
