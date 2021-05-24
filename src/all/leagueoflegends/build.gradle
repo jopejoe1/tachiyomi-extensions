@@ -1,0 +1,13 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+ext {
+    extName = 'League of Legends'
+    pkgNameSuffix = 'all.leagueoflegends'
+    extClass = '.LeagueOfLegendsFactory'
+    extVersionCode = 1
+    libVersion = '1.2'
+    containsNsfw = false
+}
+
+apply from: "$rootDir/common.gradle"
