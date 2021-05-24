@@ -26,7 +26,7 @@ open class ReadFullComic(): ParsedHttpSource() {
     override fun popularMangaFromElement(element: Element): SManga {
         return SManga.create().apply {
             title = element.select("a").text()
-            url = "$baseUrl/" + element.select("a").attr("abs:href")
+            url = element.select("a").attr("abs:href").replace(Regex("$apiUrl/comic_search_ajax_load/kval/[0-1a-zA-Z]*/"), "")
         }
     }
 
@@ -79,13 +79,13 @@ open class ReadFullComic(): ParsedHttpSource() {
     // Chapter
 
     override fun chapterListRequest(manga: SManga): Request {
-        return GET("https://api.readfullcomic.com/ajax/comic/comic_cat_ajax_load/kval/${manga.genre}/")
+        return GET("$apiUrl/comic_cat_ajax_load/kval/${manga.genre}/")
     }
 
     override fun chapterFromElement(element: Element): SChapter {
         return SChapter.create().apply {
             name = element.select("h3").text()
-            url = "$baseUrl/" + element.select("a").attr("abs:href")
+            url = element.select("a").attr("abs:href").replace(Regex("$apiUrl/comic_cat_ajax_load/kval/[0-1a-zA-Z]*/"), "")
             date_upload - System.currentTimeMillis()
         }
     }
@@ -102,6 +102,9 @@ open class ReadFullComic(): ParsedHttpSource() {
         }
         return pages
     }
+
+    // Filter
+
 
     // Unused
     override fun mangaDetailsParse(document: Document): SManga = throw UnsupportedOperationException("Not used")
