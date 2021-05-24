@@ -2,6 +2,7 @@ package eu.kanade.tachiyomi.extension.en.readfullcomic
 
 import eu.kanade.tachiyomi.network.GET
 import eu.kanade.tachiyomi.network.asObservableSuccess
+import eu.kanade.tachiyomi.source.model.Filter
 import eu.kanade.tachiyomi.source.model.FilterList
 import eu.kanade.tachiyomi.source.model.Page
 import eu.kanade.tachiyomi.source.model.SChapter
@@ -26,7 +27,7 @@ open class ReadFullComic(): ParsedHttpSource() {
     override fun popularMangaFromElement(element: Element): SManga {
         return SManga.create().apply {
             title = element.select("a").text()
-            url = element.select("a").attr("abs:href").replace(Regex("$apiUrl/comic_search_ajax_load/kval/[0-1a-zA-Z]*/"), "")
+            url = "/" + element.select("a").attr("abs:href").replace(Regex("$apiUrl/comic_(search|az)_ajax_load/kval/[0-1a-zA-Z]*/"), "")
         }
     }
 
@@ -48,7 +49,11 @@ open class ReadFullComic(): ParsedHttpSource() {
     override fun searchMangaNextPageSelector(): String? = ":not(*)"
 
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
-        return GET("$apiUrl/comic_search_ajax_load/kval/$query/")
+        return if (filters[0].state == true){
+            GET("$apiUrl/comic_az_ajax_load/kval/$query/")
+        } else {
+            GET("$apiUrl/comic_search_ajax_load/kval/$query/")
+        }
     }
 
     override fun searchMangaSelector(): String = popularMangaSelector()
@@ -85,7 +90,7 @@ open class ReadFullComic(): ParsedHttpSource() {
     override fun chapterFromElement(element: Element): SChapter {
         return SChapter.create().apply {
             name = element.select("h3").text()
-            url = element.select("a").attr("abs:href").replace(Regex("$apiUrl/comic_cat_ajax_load/kval/[0-1a-zA-Z]*/"), "")
+            url = "/" + element.select("a").attr("abs:href").replace(Regex("$apiUrl/comic_cat_ajax_load/kval/[0-1a-zA-Z]*/"), "")
             date_upload - System.currentTimeMillis()
         }
     }
@@ -105,6 +110,11 @@ open class ReadFullComic(): ParsedHttpSource() {
 
     // Filter
 
+    override fun getFilterList() = FilterList(
+        StartFilter()
+    )
+
+    private class StartFilter() : Filter.CheckBox("Start with", false)
 
     // Unused
     override fun mangaDetailsParse(document: Document): SManga = throw UnsupportedOperationException("Not used")
