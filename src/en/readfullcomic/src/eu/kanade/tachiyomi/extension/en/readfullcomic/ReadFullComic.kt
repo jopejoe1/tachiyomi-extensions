@@ -16,7 +16,7 @@ import rx.Observable
 
 open class ReadFullComic(): ParsedHttpSource() {
     override val baseUrl = "https://readfullcomic.com"
-    val apiUrl = "https://api.readfullcomic.com/ajax/comic/comic_az_ajax_load/kval"
+    val apiUrl = "https://api.readfullcomic.com/ajax/comic"
     override val lang= "en"
     override val name= "Read Full Comic"
     override val supportsLatest = false
@@ -26,7 +26,7 @@ open class ReadFullComic(): ParsedHttpSource() {
     override fun popularMangaFromElement(element: Element): SManga {
         return SManga.create().apply {
             title = element.select("a").text()
-            url = element.select("a").attr("abs:href")
+            url = "$baseUrl/" + element.select("a").attr("abs:href")
         }
     }
 
@@ -35,7 +35,7 @@ open class ReadFullComic(): ParsedHttpSource() {
     override fun popularMangaRequest(page: Int): Request {
         val validChars = "#ABCDEFGHIJKLMNOPQRSTUVWXYZ{".toCharArray()
         val pageChar = validChars[page -1]
-        return GET("$apiUrl/$pageChar/")
+        return GET("$apiUrl/comic_az_ajax_load/kval/$pageChar/")
     }
 
     override fun popularMangaSelector(): String = "li"
@@ -48,7 +48,7 @@ open class ReadFullComic(): ParsedHttpSource() {
     override fun searchMangaNextPageSelector(): String? = ":not(*)"
 
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
-        return GET("$apiUrl/$query/")
+        return GET("$apiUrl/comic_search_ajax_load/kval/$query/")
     }
 
     override fun searchMangaSelector(): String = popularMangaSelector()
@@ -65,7 +65,7 @@ open class ReadFullComic(): ParsedHttpSource() {
         val html = response.asJsoup()
         val id = html.select("#fajax_comic_view > input[name=\"kval\"]").attr("abs:value")
         val mangaName = html.select(".title-list > h2 > a").text()
-        val document = client.newCall(GET("https://api.readfullcomic.com/ajax/comic/comic_cat_ajax_load/kval/$id/", headers)).execute().asJsoup()
+        val document = client.newCall(GET("$apiUrl/comic_cat_ajax_load/kval/$id/", headers)).execute().asJsoup()
         return SManga.create().apply {
             url = mangaUrl
             title = mangaName
@@ -85,7 +85,7 @@ open class ReadFullComic(): ParsedHttpSource() {
     override fun chapterFromElement(element: Element): SChapter {
         return SChapter.create().apply {
             name = element.select("h3").text()
-            url = element.select("a").attr("abs:href")
+            url = "$baseUrl/" + element.select("a").attr("abs:href")
             date_upload - System.currentTimeMillis()
         }
     }
