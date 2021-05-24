@@ -27,7 +27,7 @@ open class ReadFullComic(): ParsedHttpSource() {
     override fun popularMangaFromElement(element: Element): SManga {
         return SManga.create().apply {
             title = element.select("a").text()
-            url = element.select("a").attr("abs:href").replace(Regex("$apiUrl/comic_(search|az)_ajax_load/kval/[0-1a-zA-Z]*"), "/category/")
+            url = element.select("a").attr("abs:href").replace(Regex("$apiUrl/comic_(search|az)_ajax_load/kval/[0-1a-zA-Z]*"), "/category")
         }
     }
 
