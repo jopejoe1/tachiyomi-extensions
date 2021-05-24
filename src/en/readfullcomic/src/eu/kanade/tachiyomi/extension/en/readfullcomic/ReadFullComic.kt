@@ -68,7 +68,7 @@ open class ReadFullComic(): ParsedHttpSource() {
 
     private fun getMangaDetails(response: Response, mangaUrl: String): SManga{
         val html = response.asJsoup()
-        val id = html.select("#fajax_comic_view > input[name=\"kval\"]").attr("abs:value")
+        val id = html.select("#fajax_comic_view > input[name=\"kval\"]").attr("abs:value").replace("\"", "")
         val mangaName = html.select(".title-list > h2 > a").text()
         val document = client.newCall(GET("$apiUrl/comic_cat_ajax_load/kval/$id/", headers)).execute().asJsoup()
         return SManga.create().apply {
