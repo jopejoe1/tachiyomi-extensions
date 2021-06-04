@@ -203,11 +203,131 @@ abstract class Luscious(
     private fun buildAlbumInfoRequest(id: String): Request {
         val input = buildAlbumInfoRequestInput(id)
         val url = apiBaseUrl.toHttpUrlOrNull()!!.newBuilder()
-            .addQueryParameter("operationName", "AlbumGet")
+            .addQueryParameter("operationName", "ProfileGet")
             .addQueryParameter("query", albumInfoQuery)
             .addQueryParameter("variables", input.toString())
             .toString()
         return GET(url, headers)
+    }
+
+    private fun buildUserInfoRequestInput(user: String): JsonObject{
+        return JsonObject().apply {
+            addProperty("user_id", user)
+        }
+    }
+
+    private fun buildUserInfoRequest(user: String): Request{
+        val input = buildUserInfoRequestInput(user)
+        val url = apiBaseUrl.toHttpUrlOrNull()!!.newBuilder()
+            .addQueryParameter("operationName", "AlbumGet")
+            .addQueryParameter("query", userInfoQuery)
+            .addQueryParameter("variables", input.toString())
+            .toString()
+        return GET(url, headers)
+    }
+
+    private fun parseUserInfoRequest(response: Response): SManga {
+        val data = gson.fromJson<JsonObject>(response.body!!.string())
+        with(data["data"]["userprofile"]["get"]) {
+            val manga = SManga.create()
+            val genreList = mutableListOf<String>()
+            val descriptionPart = mutableListOf<String>()
+            val aboutme = this["about_me"].asString
+            val interests = this["interests"].asString
+            val website = this["website"].asString
+            val gender = this["gender"].asString
+            val location = this["location"].asString
+            val role = this["user"]["role"].asString
+            val userTitle = this["user"]["user_title"].asString
+            val badges = this["badges"].asJsonArray.map {
+                it["title"].asString
+            }
+            val moderates = this["moderates"].asJsonArray.map {
+                it["title"].asString
+            }
+
+            if (aboutme.isNullOrEmpty()) {
+                descriptionPart.add(aboutme)
+            }
+            if (interests.isNullOrEmpty()){
+                descriptionPart.add("Interests: $interests")
+            }
+            if (website.isNullOrEmpty()){
+                descriptionPart.add("Website: $website")
+            }
+            if (gender.isNullOrEmpty()){
+                descriptionPart.add("Gender: $gender")
+                genreList.add(gender)
+            }
+            if (role.isNullOrEmpty()){
+                descriptionPart.add("Role: $role")
+                genreList.add(role)
+            }
+            if (userTitle.isNullOrEmpty()){
+                descriptionPart.add("User Title: $userTitle")
+                genreList.add(userTitle)
+            }
+            if (location.isNullOrEmpty()){
+                descriptionPart.add("Location: $location")
+                genreList.add(location)
+            }
+            if (badges.isNotEmpty()){
+                for (badge in badges){
+                    genreList.add(badge)
+                }
+                descriptionPart.add("Badges: " + badges.joinToString(", "))
+            }
+            if (moderates.isNotEmpty()){
+                for (moderate in moderates){
+                    genreList.add(moderate)
+                }
+                descriptionPart.add("Moderates: " + moderates.joinToString(", "))
+            }
+
+            manga.description = descriptionPart.joinToString("\n")
+            manga.genre = genreList.joinToString(",")
+            manga.url = this["user"]["url"].asString
+            manga.title = this["user"]["display_name"].asString
+            manga.thumbnail_url = this["user"]["avatar"]["url"].asString
+            manga.artist = this["user"]["display_name"].asString
+            manga.author = this["user"]["name"].asString
+            return manga
+        }
+    }
+
+    private fun UserMangas(response: Response, content: String = "all"): List<SManga>{
+        val mangas = mutableListOf<SManga>()
+        val manga = parseUserInfoRequest(response)
+        when (content) {
+            "all" -> {
+                with(manga){
+                    this.title = manga.title + " (Favorite)"
+                    this.url = manga.url + "?favorite"
+                    mangas.add(this)
+                }
+                with(manga){
+                    this.title = manga.title + " (Uploaded)"
+                    this.url = manga.url + "?uploaded"
+                    mangas.add(this)
+                }
+            }
+            "favorite" -> {
+                with(manga){
+                    this.title = manga.title + " (Favorite)"
+                    this.url = manga.url + "?favorite"
+                    mangas.add(this)
+                }
+            }
+            "uploaded" -> {
+                with(manga){
+                    this.title = manga.title + " (Uploaded)"
+                    this.url = manga.url + "?uploaded"
+                    mangas.add(this)
+                }
+            }
+        }
+
+        return mangas
     }
 
     // Latest
@@ -391,6 +511,9 @@ abstract class Luscious(
     }
 
     override fun fetchMangaDetails(manga: SManga): Observable<SManga> {
+        if (manga.url.endsWith("?uploaded") or manga.url.endsWith("?favorite")){
+            return Observable.just(manga)
+        }
         val id = manga.url.substringAfterLast("_").removeSuffix("/")
         return client.newCall(buildAlbumInfoRequest(id))
             .asObservableSuccess()
@@ -451,13 +574,22 @@ abstract class Luscious(
     )
 
     override fun fetchSearchManga(page: Int, query: String, filters: FilterList): Observable<MangasPage> {
-        return if (query.startsWith("ID:")){
-            val id = query.substringAfterLast("ID:")
-            client.newCall(buildAlbumInfoRequest(id))
-                .asObservableSuccess()
-                .map { MangasPage(listOf(detailsParse(it)), false) }
-        } else {
-            super.fetchSearchManga(page, query, filters)
+        return when{
+            query.startsWith("ID:") -> {
+                val id = query.substringAfterLast("ID:")
+                client.newCall(buildAlbumInfoRequest(id))
+                    .asObservableSuccess()
+                    .map { MangasPage(listOf(detailsParse(it)), false) }
+            }
+            query.startsWith("USER:") -> {
+                val user = query.substringAfterLast("USER:")
+                client.newCall(buildUserInfoRequest(user))
+                    .asObservableSuccess()
+                    .map { MangasPage(UserMangas(it), false) }
+            }
+            else -> {
+                super.fetchSearchManga(page, query, filters)
+            }
         }
     }
 
@@ -544,6 +676,7 @@ abstract class Luscious(
             SelectFilterOption("Rating - Last 30 Days", "rating_30_days"),
             SelectFilterOption("Rating - Last 90 Days", "rating_90_days"),
             SelectFilterOption("Rating - Last Year", "rating_1_year"),
+            SelectFilterOption("Search Score", "search_score"),
             SelectFilterOption("Date - Newest First", "date_newest"),
             SelectFilterOption("Date - Oldest First", "date_oldest"),
             SelectFilterOption("Date - Upcoming", "date_upcoming"),
@@ -733,7 +866,7 @@ abstract class Luscious(
     companion object {
 
         private const val POPULAR_DEFAULT_SORT_STATE = 0
-        private const val LATEST_DEFAULT_SORT_STATE = 6
+        private const val LATEST_DEFAULT_SORT_STATE = 7
         private const val SEARCH_DEFAULT_SORT_STATE = 0
 
         private const val FILTER_VALUE_IGNORE = "<ignore>"
@@ -795,6 +928,39 @@ abstract class Luscious(
         }
         """.trimIndent()
 
+        val userInfoQuery = """
+            query ProfileGet(${"$"}user_id:ID!) {
+                userprofile {
+                    get(user_id:${"$"}user_id) {
+                        ... on UserProfile {
+                            user {
+                    	        id
+                    	        name
+                    	        display_name
+                    	        user_title
+                    	        role
+                    	        url
+                    	        avatar {
+                      	            url
+                    	        }
+                  	        }
+                  	        website
+                  	        about_me
+                  	        interests
+                  	        gender
+                  	        location
+                  	        badges {
+                    	        title
+                  	        }
+                  	        moderates {
+                    	        title
+                  	        }
+                	    }
+              	    }
+                }
+            }
+        """.trimIndent()
+
         private const val MERGE_CHAPTER_PREF_KEY = "MERGE_CHAPTER"
         private const val MERGE_CHAPTER_PREF_TITLE = "Merge Chapter"
         private const val MERGE_CHAPTER_PREF_SUMMARY = "If checked, merges all content of one Album into one Chapter"
@@ -808,8 +974,8 @@ abstract class Luscious(
 
         private const val SORT_PREF_KEY = "SORT"
         private const val SORT_PREF_TITLE = "Page Sort"
-        private val SORT_PREF_ENTRIES = arrayOf("Position", "Date", "Rating")
-        private val SORT_PREF_ENTRY_VALUES = arrayOf("position", "date_newest", "rating_all_time")
+        private val SORT_PREF_ENTRIES = arrayOf("Position", "Date", "Rating", "Score", "Newest Banned")
+        private val SORT_PREF_ENTRY_VALUES = arrayOf("position", "date_newest", "rating_all_time", "score", "banned_newest")
         private val SORT_PREF_DEFAULT_VALUE = SORT_PREF_ENTRY_VALUES[0]
     }
 
