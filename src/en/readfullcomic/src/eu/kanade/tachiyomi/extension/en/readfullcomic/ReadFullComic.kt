@@ -91,7 +91,7 @@ open class ReadFullComic(): ParsedHttpSource() {
         return SChapter.create().apply {
             name = element.select("h3").text()
             url = "/" + element.select("a").attr("abs:href").replace(Regex("$apiUrl/comic_cat_ajax_load/kval/[0-1a-zA-Z]*/"), "")
-            date_upload - System.currentTimeMillis()
+            date_upload = System.currentTimeMillis()
         }
     }
 
