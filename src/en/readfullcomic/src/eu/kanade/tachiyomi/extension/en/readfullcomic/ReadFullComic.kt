@@ -61,9 +61,16 @@ open class ReadFullComic(): ParsedHttpSource() {
     // Manga
 
     override fun fetchMangaDetails(manga: SManga): Observable<SManga> {
-        return client.newCall(GET(manga.url, headers))
-            .asObservableSuccess()
-            .map { getMangaDetails(it, manga.url) }
+        if (manga.url.startsWith("http")) {
+            return client.newCall(GET(manga.url, headers))
+                .asObservableSuccess()
+                .map { getMangaDetails(it, manga.url) }
+        } else{
+            return client.newCall(GET(baseUrl + manga.url, headers))
+                .asObservableSuccess()
+                .map { getMangaDetails(it, manga.url) }
+        }
+
     }
 
     private fun getMangaDetails(response: Response, mangaUrl: String): SManga{
@@ -78,8 +85,6 @@ open class ReadFullComic(): ParsedHttpSource() {
             genre = id
         }
     }
-
-
 
     // Chapter
 
