@@ -288,7 +288,7 @@ class MadaraGenerator : ThemeSourceGenerator {
             SingleLang("Manycomic", "https://manycomic.com", "en"),
             SingleLang("Time Naight", "https://timenaight.com", "tr"),
             SingleLang("ManhwaNelo", "https://manhwanelo.com", "en"),
-            SingleLang("MangaForFree.net", "https://mangaforfree.net", "en", isNsfw = true, className = "MangaForFreeNet"), //Multilang
+            MultiLang("MangaForFree.net", "https://mangaforfree.net",  listOf("en", "ko") , isNsfw = true, className = "MangaForFreeNetFactory", pkgName = "mangaforfreenet"), //Multilang
             SingleLang("Comichub", "https://comichub.net", "en"),
             SingleLang("Esomanga", "http://esomanga.com", "tr"),
             SingleLang("Hayalistic", "https://hayalistic.com", "tr"),

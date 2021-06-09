@@ -12,7 +12,7 @@ class MangaTK : Madara("MangaTK", "https://mangatk.com", "en") {
 
     override val popularMangaUrlSelector = "div > h3 > a"
 
-    /*
+
     override fun popularMangaRequest(page: Int): Request {
         return GET("$baseUrl/manga/page/$page?orderby=trending")
     }
@@ -74,6 +74,4 @@ class MangaTK : Madara("MangaTK", "https://mangatk.com", "en") {
         }
         return GET(url.toString(), headers)
     }
-
-     */
 }

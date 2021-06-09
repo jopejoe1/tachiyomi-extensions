@@ -12,7 +12,7 @@ class Manhwa18Cc : Madara("Manhwa18.cc", "https://manhwa18.cc", "en") {
 
     override val popularMangaUrlSelector = "div.data > h3 > a"
 
-    /*
+
     override fun popularMangaRequest(page: Int): Request {
         return GET("$baseUrl/webtoons/page/$page?orderby=trending")
     }
@@ -74,5 +74,4 @@ class Manhwa18Cc : Madara("Manhwa18.cc", "https://manhwa18.cc", "en") {
         }
         return GET(url.toString(), headers)
     }
-     */
 }
