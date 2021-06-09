@@ -13,11 +13,12 @@ class MadaraUrlActivity: Activity() {
         super.onCreate(savedInstanceState)
         val pathSegments = intent?.data?.pathSegments
 
-        if (pathSegments != null && pathSegments.size >= 1) {
+        if (pathSegments != null && pathSegments.size >= 2) {
+
 
             val mainIntent = Intent().apply {
                 action = "eu.kanade.tachiyomi.SEARCH"
-                putExtra("query","${Madara.URL_SEARCH_PREFIX}${intent?.data?.toString()}")
+                putExtra("query","${getSLUG(pathSegments)}")
                 putExtra("filter", packageName)
             }
             try {
@@ -31,5 +32,14 @@ class MadaraUrlActivity: Activity() {
 
         finish()
         exitProcess(0)
+    }
+
+    private fun getSLUG(pathSegments: MutableList<String>): String? {
+        return if (pathSegments.size >= 2) {
+            val slug = pathSegments[1]
+            "${Madara.URL_SEARCH_PREFIX}:$slug"
+        } else {
+            null
+        }
     }
 }
