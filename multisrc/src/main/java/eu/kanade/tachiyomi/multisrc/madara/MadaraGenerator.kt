@@ -284,18 +284,21 @@ class MadaraGenerator : ThemeSourceGenerator {
             SingleLang("Hentaidexy", "https://hentaidexy.com", "en", isNsfw = true),
             SingleLang("MangaPL", "https://mangapl.com", "en", isNsfw = true),
             // Testing
-            SingleLang("Sawateam", "https://sawateam.info", "en"),
+
             SingleLang("Manycomic", "https://manycomic.com", "en"),
             SingleLang("Time Naight", "https://timenaight.com", "tr"),
             SingleLang("ManhwaNelo", "https://manhwanelo.com", "en"),
-            SingleLang("MangaForFree.net", "https://mangaforfree.net", "en", isNsfw = true, className = "MangaForFreeNet"),
+            SingleLang("MangaForFree.net", "https://mangaforfree.net", "en", isNsfw = true, className = "MangaForFreeNet"), //Multilang
             SingleLang("Comichub", "https://comichub.net", "en"),
             SingleLang("Esomanga", "http://esomanga.com", "tr"),
             SingleLang("Hayalistic", "https://hayalistic.com", "tr"),
             SingleLang("Tumanga.net", "https://tumanga.net", "es", className = "TumangaNet"),
             SingleLang("Hz Manga", "https://www.hzmangas.com", "es"),
-            SingleLang("MangaTK", "https://mangatk.com", "en"),
-            SingleLang("Manhwa18.cc", "https://manhwa18.cc", "en", isNsfw = true, className = "Manhwa18Cc"),
+
+        // Needs Fixing
+        SingleLang("MangaTK", "https://mangatk.com", "en"),
+        SingleLang("Manhwa18.cc", "https://manhwa18.cc", "en", isNsfw = true, className = "Manhwa18Cc"), //Multilang
+        SingleLang("Sawateam", "https://sawateam.info", "en"),
     )
 
     companion object {
