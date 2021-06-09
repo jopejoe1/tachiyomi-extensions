@@ -65,58 +65,25 @@ class MangaTK : Madara("MangaTK", "https://mangatk.com", "en") {
 
     override val altNameSelector: String = "div.manga-info p:contains(Alternative)"
 
-    override fun searchPage(page: Int): String = "search"
-
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
-        val url = "$baseUrl/${searchPage(page)}".toHttpUrlOrNull()!!.newBuilder()
-        url.addQueryParameter("s", query)
-        url.addQueryParameter("page", "$page")
-        url.addQueryParameter("post_type", "wp-manga")
-        filters.forEach { filter ->
-            when (filter) {
-                is AuthorFilter -> {
-                    if (filter.state.isNotBlank()) {
-                        url.addQueryParameter("author", filter.state)
-                    }
-                }
-                is ArtistFilter -> {
-                    if (filter.state.isNotBlank()) {
-                        url.addQueryParameter("artist", filter.state)
-                    }
-                }
-                is YearFilter -> {
-                    if (filter.state.isNotBlank()) {
-                        url.addQueryParameter("release", filter.state)
-                    }
-                }
-                is StatusFilter -> {
-                    filter.state.forEach {
-                        if (it.state) {
-                            url.addQueryParameter("status[]", it.id)
-                        }
-                    }
-                }
-                is OrderByFilter -> {
-                    if (filter.state != 0) {
-                        url.addQueryParameter("m_orderby", filter.toUriPart())
-                    }
-                }
-                is AdultContentFilter -> {
-                    url.addQueryParameter("adult", filter.toUriPart())
-                }
-                is GenreConditionFilter -> {
-                    url.addQueryParameter("op", filter.toUriPart())
-                }
-                is GenreList -> {
-                    filter.state
-                        .filter { it.state }
-                        .let { list ->
-                            if (list.isNotEmpty()) { list.forEach { genre -> url.addQueryParameter("genre[]", genre.id) } }
-                        }
-                }
+        val url = "$baseUrl/search?q=$query&page=$page"
+        return GET(url, headers)
+    }
+
+    override fun searchMangaFromElement(element: Element): SManga {
+        val manga = SManga.create()
+
+        with(element) {
+            select("h3 a").first()?.let {
+                manga.setUrlWithoutDomain(it.attr("abs:href"))
+                manga.title = it.ownText()
+            }
+            select("thumb img").first()?.let {
+                manga.thumbnail_url = imageFromElement(it)
             }
         }
-        return GET(url.toString(), headers)
+
+        return manga
     }
 
     override val pageListParseSelector = "div.read-content img"

@@ -16,65 +16,34 @@ class Manhwa18Cc : Madara("Manhwa18.cc", "https://manhwa18.cc", "en") {
 
 
     override fun popularMangaRequest(page: Int): Request {
-        return GET("$baseUrl/webtoons/page/$page?orderby=trending")
+        return GET("$baseUrl/webtoons/$page?orderby=trending")
     }
 
     override fun latestUpdatesRequest(page: Int): Request {
-        return GET("$baseUrl/webtoons/page/$page?orderby=latest")
+        return GET("$baseUrl/webtoons/$page?orderby=latest")
     }
 
-    override fun searchPage(page: Int): String = "search"
+    open val mangaSubString = "webtoon"
 
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
-        val url = "$baseUrl/${searchPage(page)}".toHttpUrlOrNull()!!.newBuilder()
-        url.addQueryParameter("s", query)
-        url.addQueryParameter("page", "$page")
-        url.addQueryParameter("post_type", "wp-manga")
-        filters.forEach { filter ->
-            when (filter) {
-                is AuthorFilter -> {
-                    if (filter.state.isNotBlank()) {
-                        url.addQueryParameter("author", filter.state)
-                    }
-                }
-                is ArtistFilter -> {
-                    if (filter.state.isNotBlank()) {
-                        url.addQueryParameter("artist", filter.state)
-                    }
-                }
-                is YearFilter -> {
-                    if (filter.state.isNotBlank()) {
-                        url.addQueryParameter("release", filter.state)
-                    }
-                }
-                is StatusFilter -> {
-                    filter.state.forEach {
-                        if (it.state) {
-                            url.addQueryParameter("status[]", it.id)
-                        }
-                    }
-                }
-                is OrderByFilter -> {
-                    if (filter.state != 0) {
-                        url.addQueryParameter("m_orderby", filter.toUriPart())
-                    }
-                }
-                is AdultContentFilter -> {
-                    url.addQueryParameter("adult", filter.toUriPart())
-                }
-                is GenreConditionFilter -> {
-                    url.addQueryParameter("op", filter.toUriPart())
-                }
-                is GenreList -> {
-                    filter.state
-                        .filter { it.state }
-                        .let { list ->
-                            if (list.isNotEmpty()) { list.forEach { genre -> url.addQueryParameter("genre[]", genre.id) } }
-                        }
-                }
+        val url = "$baseUrl/search?q=$query&page=$page"
+        return GET(url, headers)
+    }
+
+    override fun searchMangaFromElement(element: Element): SManga {
+        val manga = SManga.create()
+
+        with(element) {
+            select("h3 a").first()?.let {
+                manga.setUrlWithoutDomain(it.attr("abs:href"))
+                manga.title = it.ownText()
+            }
+            select("thumb img").first()?.let {
+                manga.thumbnail_url = imageFromElement(it)
             }
         }
-        return GET(url.toString(), headers)
+
+        return manga
     }
 
     override fun chapterListSelector() = "li.wleft"
