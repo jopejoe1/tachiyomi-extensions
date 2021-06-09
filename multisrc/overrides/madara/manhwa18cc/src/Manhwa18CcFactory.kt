@@ -1,7 +1,9 @@
-package eu.kanade.tachiyomi.extension.en.manhwa18cc
+package eu.kanade.tachiyomi.extension.all.manhwa18cc
 
 import eu.kanade.tachiyomi.multisrc.madara.Madara
 import eu.kanade.tachiyomi.network.GET
+import eu.kanade.tachiyomi.source.Source
+import eu.kanade.tachiyomi.source.SourceFactory
 import eu.kanade.tachiyomi.source.model.FilterList
 import eu.kanade.tachiyomi.source.model.Page
 import eu.kanade.tachiyomi.source.model.SManga
@@ -10,10 +12,29 @@ import okhttp3.Request
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
-class Manhwa18Cc : Madara("Manhwa18.cc", "https://manhwa18.cc", "en") {
+class Manhwa18CcFactory : SourceFactory {
+    override fun createSources(): List<Source> = listOf(
+        Manhwa18CcEN(),
+        Manhwa18CcCN(),
+        Manhwa18CcALL(),
+    )
+}
+
+class Manhwa18CcEN : Manhwa18Cc("Manhwa18.cc", "https://manhwa18.cc", "en") {
+    override fun popularMangaSelector() = "div.manga-item:not(:contains(Raw))"
+}
+class Manhwa18CcCN : Manhwa18Cc("Manhwa18.cc", "https://manhwa18.cc", "cn") {
+    override fun popularMangaSelector() = "div.manga-item:contains(Raw)"
+}
+class Manhwa18CcALL : Manhwa18Cc("Manhwa18.cc", "https://manhwa18.cc", "all")
+
+abstract class Manhwa18Cc(
+    override val name: String,
+    override val baseUrl: String,
+    override val lang: String
+) : Madara(name, baseUrl, lang) {
 
     override fun popularMangaSelector() = "div.manga-item"
-    override fun searchMangaSelector() = popularMangaSelector()
     override val popularMangaUrlSelector = "div.data > h3 > a"
 
 
@@ -26,27 +47,6 @@ class Manhwa18Cc : Madara("Manhwa18.cc", "https://manhwa18.cc", "en") {
     }
 
     override val mangaSubString = "webtoon"
-
-    override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
-        val url = "$baseUrl/search?q=$query&page=$page"
-        return GET(url, headers)
-    }
-
-    override fun searchMangaFromElement(element: Element): SManga {
-        val manga = SManga.create()
-
-        with(element) {
-            select("h3 a").first()?.let {
-                manga.setUrlWithoutDomain(it.attr("abs:href"))
-                manga.title = it.ownText()
-            }
-            select("thumb img").first()?.let {
-                manga.thumbnail_url = imageFromElement(it)
-            }
-        }
-
-        return manga
-    }
 
     override fun chapterListSelector() = "li.wleft"
 
