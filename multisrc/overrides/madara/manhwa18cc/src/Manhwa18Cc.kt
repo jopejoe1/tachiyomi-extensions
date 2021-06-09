@@ -9,7 +9,7 @@ import okhttp3.Request
 class Manhwa18Cc : Madara("Manhwa18.cc", "https://manhwa18.cc", "en") {
 
     override fun popularMangaSelector() = "div.manga-item"
-
+    override fun searchMangaSelector() = popularMangaSelector()
     override val popularMangaUrlSelector = "div.data > h3 > a"
 
 
@@ -73,5 +73,21 @@ class Manhwa18Cc : Madara("Manhwa18.cc", "https://manhwa18.cc", "en") {
             }
         }
         return GET(url.toString(), headers)
+    }
+
+    override fun chapterListSelector() = "li.wleft"
+
+    override val pageListParseSelector = "div.read-content img"
+
+    override fun pageListParse(document: Document): List<Page> {
+        return document.select(pageListParseSelector).mapIndexed { index, element ->
+            Page(
+                index,
+                document.location(),
+                element.first()?.let {
+                    it.absUrl(if (it.hasAttr("data-src")) "data-src" else "src")
+                }
+            )
+        }
     }
 }
