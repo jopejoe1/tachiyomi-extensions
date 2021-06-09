@@ -25,7 +25,7 @@ class Manhwa18Cc : Madara("Manhwa18.cc", "https://manhwa18.cc", "en") {
         return GET("$baseUrl/webtoons/$page?orderby=latest")
     }
 
-    open val mangaSubString = "webtoon"
+    override val mangaSubString = "webtoon"
 
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
         val url = "$baseUrl/search?q=$query&page=$page"
