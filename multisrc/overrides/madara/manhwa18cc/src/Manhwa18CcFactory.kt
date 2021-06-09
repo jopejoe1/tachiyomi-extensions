@@ -15,7 +15,7 @@ import org.jsoup.nodes.Element
 class Manhwa18CcFactory : SourceFactory {
     override fun createSources(): List<Source> = listOf(
         Manhwa18CcEN(),
-        Manhwa18CcCN(),
+        Manhwa18CcKO(),
         Manhwa18CcALL(),
     )
 }
@@ -23,7 +23,7 @@ class Manhwa18CcFactory : SourceFactory {
 class Manhwa18CcEN : Manhwa18Cc("Manhwa18.cc", "https://manhwa18.cc", "en") {
     override fun popularMangaSelector() = "div.manga-item:not(:contains(Raw))"
 }
-class Manhwa18CcCN : Manhwa18Cc("Manhwa18.cc", "https://manhwa18.cc", "cn") {
+class Manhwa18CcKO : Manhwa18Cc("Manhwa18.cc", "https://manhwa18.cc", "ko") {
     override fun popularMangaSelector() = "div.manga-item:contains(Raw)"
 }
 class Manhwa18CcALL : Manhwa18Cc("Manhwa18.cc", "https://manhwa18.cc", "all")
