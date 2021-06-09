@@ -9,6 +9,7 @@ import java.util.Locale
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Request
 import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
 
 class MangaTK : Madara("MangaTK", "https://mangatk.com", "en") {
 
