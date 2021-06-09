@@ -293,8 +293,9 @@ class MadaraGenerator : ThemeSourceGenerator {
             SingleLang("Esomanga", "http://esomanga.com", "tr"),
             SingleLang("Hayalistic", "https://hayalistic.com", "tr"),
             SingleLang("Tumanga.net", "https://tumanga.net", "es", className = "TumangaNet"),
-            SingleLang("Hz Manga", "https://www.hzmangas.com/", "es"),
+            SingleLang("Hz Manga", "https://www.hzmangas.com", "es"),
             SingleLang("MangaTK", "https://mangatk.com", "en"),
+            SingleLang("Manhwa18.cc", "https://manhwa18.cc", "en", isNsfw = true, className = "Manhwa18Cc"),
     )
 
     companion object {
