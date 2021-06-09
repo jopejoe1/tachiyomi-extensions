@@ -297,7 +297,6 @@ class MadaraGenerator : ThemeSourceGenerator {
         // Needs Fixing
         SingleLang("MangaTK", "https://mangatk.com", "en"),
         SingleLang("Manhwa18.cc", "https://manhwa18.cc", "en", isNsfw = true, className = "Manhwa18Cc"), //Multilang
-        SingleLang("Sawateam", "https://sawateam.info", "en"),
     )
 
     companion object {
