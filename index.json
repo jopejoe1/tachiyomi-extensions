@@ -9,6 +9,15 @@
     "nsfw": 0
   },
   {
+    "name": "Tachiyomi: Manhwa18.cc",
+    "pkg": "eu.kanade.tachiyomi.extension.all.manhwa18cc",
+    "apk": "tachiyomi-all.manhwa18cc-v1.2.5.apk",
+    "lang": "all",
+    "code": 5,
+    "version": "1.2.5",
+    "nsfw": 1
+  },
+  {
     "name": "Tachiyomi: AkuManga",
     "pkg": "eu.kanade.tachiyomi.extension.ar.akumanga",
     "apk": "tachiyomi-ar.akumanga-v1.2.5.apk",
@@ -1033,15 +1042,6 @@
     "code": 7,
     "version": "1.2.7",
     "nsfw": 0
-  },
-  {
-    "name": "Tachiyomi: Manhwa18.cc",
-    "pkg": "eu.kanade.tachiyomi.extension.en.manhwa18cc",
-    "apk": "tachiyomi-en.manhwa18cc-v1.2.5.apk",
-    "lang": "en",
-    "code": 5,
-    "version": "1.2.5",
-    "nsfw": 1
   },
   {
     "name": "Tachiyomi: Manhwa18.org",
