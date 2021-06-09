@@ -117,7 +117,15 @@ abstract class Madara(
         return MangasPage(mangas, mp.hasNextPage)
     }
 
+    open val mangaSubString = "manga"
+
     override fun fetchSearchManga(page: Int, query: String, filters: FilterList): Observable<MangasPage> {
+        if (query.startsWith(URL_SEARCH_PREFIX)){
+            return client.newCall(GET("$baseUrl/$mangaSubString/${query.substringAfter(URL_SEARCH_PREFIX)}"))
+                .asObservable().map { response ->
+                    MangasPage(listOf(mangaDetailsParse(response.asJsoup())), false)
+                }
+        }
         return client.newCall(searchMangaRequest(page, query, filters))
             .asObservable().doOnNext { response ->
                 if (!response.isSuccessful) {
@@ -134,6 +142,7 @@ abstract class Madara(
     }
 
     // Search Manga
+
 
     protected open fun searchPage(page: Int): String = "page/$page/"
 
@@ -410,7 +419,7 @@ abstract class Madara(
     open val altName = "Alternative Name" + ": "
     open val updatingRegex = "Updating|Atualizando".toRegex(RegexOption.IGNORE_CASE)
 
-    private fun String.notUpdating(): Boolean {
+    public fun String.notUpdating(): Boolean {
         return this.contains(updatingRegex).not()
     }
 
@@ -536,6 +545,8 @@ abstract class Madara(
             WordSet("jam", "saat", "heure", "hora", "hour").anyWordIn(date) -> cal.apply { add(Calendar.HOUR, -number) }.timeInMillis
             WordSet("menit", "dakika", "min", "minute", "minuto").anyWordIn(date) -> cal.apply { add(Calendar.MINUTE, -number) }.timeInMillis
             WordSet("detik", "segundo", "second").anyWordIn(date) -> cal.apply { add(Calendar.SECOND, -number) }.timeInMillis
+            WordSet("month").anyWordIn(date) -> cal.apply { add(Calendar.MONTH, -number) }.timeInMillis
+            WordSet("year").anyWordIn(date) -> cal.apply { add(Calendar.YEAR, -number) }.timeInMillis
             else -> 0
         }
     }
@@ -566,6 +577,10 @@ abstract class Madara(
     }
 
     override fun imageUrlParse(document: Document) = throw UnsupportedOperationException("Not used")
+
+    companion object {
+        const val URL_SEARCH_PREFIX = "SLUG:"
+    }
 }
 
 class WordSet(private vararg val words: String) { fun anyWordIn(dateString: String): Boolean = words.any { dateString.contains(it, ignoreCase = true) } }

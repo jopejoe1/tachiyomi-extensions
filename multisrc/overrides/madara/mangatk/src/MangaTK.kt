@@ -3,8 +3,12 @@ package eu.kanade.tachiyomi.extension.en.mangatk
 import eu.kanade.tachiyomi.multisrc.madara.Madara
 import eu.kanade.tachiyomi.network.GET
 import eu.kanade.tachiyomi.source.model.FilterList
+import eu.kanade.tachiyomi.source.model.Page
+import eu.kanade.tachiyomi.source.model.SManga
+import java.util.Locale
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Request
+import org.jsoup.nodes.Document
 
 class MangaTK : Madara("MangaTK", "https://mangatk.com", "en") {
 
@@ -122,7 +126,7 @@ class MangaTK : Madara("MangaTK", "https://mangatk.com", "en") {
             Page(
                 index,
                 document.location(),
-                element.first()?.let {
+                element?.let {
                     it.absUrl(if (it.hasAttr("data-src")) "data-src" else "src")
                 }
             )

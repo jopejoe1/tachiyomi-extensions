@@ -3,8 +3,10 @@ package eu.kanade.tachiyomi.extension.en.manhwa18cc
 import eu.kanade.tachiyomi.multisrc.madara.Madara
 import eu.kanade.tachiyomi.network.GET
 import eu.kanade.tachiyomi.source.model.FilterList
+import eu.kanade.tachiyomi.source.model.Page
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Request
+import org.jsoup.nodes.Document
 
 class Manhwa18Cc : Madara("Manhwa18.cc", "https://manhwa18.cc", "en") {
 
@@ -84,7 +86,7 @@ class Manhwa18Cc : Madara("Manhwa18.cc", "https://manhwa18.cc", "en") {
             Page(
                 index,
                 document.location(),
-                element.first()?.let {
+                element?.let {
                     it.absUrl(if (it.hasAttr("data-src")) "data-src" else "src")
                 }
             )
