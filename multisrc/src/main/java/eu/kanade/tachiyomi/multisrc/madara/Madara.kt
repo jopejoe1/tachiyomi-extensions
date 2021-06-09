@@ -117,6 +117,12 @@ abstract class Madara(
         return MangasPage(mangas, mp.hasNextPage)
     }
 
+    override fun popularMangaParse(response: Response): MangasPage {
+        if (genresList == null)
+            genresList = parseGenres(client.newCall(searchMangaRequest(1,"genre", getFilterList())).execute().asJsoup())
+        return super.popularMangaParse(response)
+    }
+
     // Search Manga
 
     open val mangaSubString = "manga"
