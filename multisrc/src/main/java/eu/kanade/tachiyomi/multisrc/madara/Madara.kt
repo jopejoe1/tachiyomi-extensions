@@ -122,9 +122,9 @@ abstract class Madara(
     override fun fetchSearchManga(page: Int, query: String, filters: FilterList): Observable<MangasPage> {
         if (query.startsWith(URL_SEARCH_PREFIX)){
             val mangaUrl = "$baseUrl/$mangaSubString/${query.substringAfter(URL_SEARCH_PREFIX)}"
-            return client.newCall(GET(mangaUrl, headers))
+            return client.newCall(GET("$baseUrl/$mangaSubString/${query.substringAfter(URL_SEARCH_PREFIX)}", headers))
                 .asObservable().map { response ->
-                    MangasPage(listOf(mangaDetailsParse(response.asJsoup()).apply { url = mangaUrl }), false)
+                    MangasPage(listOf(mangaDetailsParse(response.asJsoup()).apply { url = "/$mangaSubString/${query.substringAfter(URL_SEARCH_PREFIX)}/" }), false)
                 }
         }
         return client.newCall(searchMangaRequest(page, query, filters))
