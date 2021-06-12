@@ -81,6 +81,7 @@ class MangaUpdates() : ParsedHttpSource() {
         val licenseFilter = filters.findInstance<LicenseFilter>()!!
         val typeFilter = filters.findInstance<TypeFilter>()!!
         val genreFilter = filters.findInstance<GenreGroupFilter>()!!
+        val tagFilter = filters.findInstance<TagTextFilter>()!!
         val startFilter = filters.findInstance<StartsTextFilter>()!!
 
         val url = "$baseUrl/series.html".toHttpUrlOrNull()!!.newBuilder()
@@ -107,6 +108,10 @@ class MangaUpdates() : ParsedHttpSource() {
         }
         if (genreFilter.excluded.isNotEmpty()) {
             url.addQueryParameter("exclude_genre", genreFilter.excluded.joinToString("_"))
+        }
+        if (tagFilter.state.isNotBlank()) {
+            val tags = "+${tagFilter.state.toLowerCase()}".replace(" ", "+").replace("+,", "_").replace(",+", "_").replace(",", "_").trim()
+            url.addQueryParameter("category", tags)
         }
 
         url.addQueryParameter("perpage", "50")
@@ -227,6 +232,7 @@ class MangaUpdates() : ParsedHttpSource() {
     class TypeFilter(options: List<SelectFilterOption>, default: Int) : SelectFilter("Type", options, default)
     class GenreGroupFilter(options: List<TriStateFilterOption>) : TriStateGroupFilter("Genre", options)
     class StartsTextFilter : TextFilter("Starts With")
+    class TagTextFilter : TextFilter("Starts With")
 
     override fun getFilterList(): FilterList {
         return FilterList(
@@ -236,6 +242,7 @@ class MangaUpdates() : ParsedHttpSource() {
             ExtendedFilter(getExtendedFilter(), 0),
             TypeFilter(getTypeFilter(), 0),
             GenreGroupFilter(getGenreFilter()),
+            TagTextFilter(),
             StartsTextFilter(),
         )
     }
