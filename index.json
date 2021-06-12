@@ -90,6 +90,15 @@
     "nsfw": 0
   },
   {
+    "name": "Tachiyomi: Baka-Updates Manga",
+    "pkg": "eu.kanade.tachiyomi.extension.meta.mangaupdates",
+    "apk": "tachiyomi-meta.mangaupdates-v1.2.1.apk",
+    "lang": "meta",
+    "code": 1,
+    "version": "1.2.1",
+    "nsfw": 0
+  },
+  {
     "name": "Tachiyomi: Adonis Fansub",
     "pkg": "eu.kanade.tachiyomi.extension.tr.adonisfansub",
     "apk": "tachiyomi-tr.adonisfansub-v1.2.7.apk",
