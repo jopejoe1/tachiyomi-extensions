@@ -14,7 +14,6 @@ class MadaraGenerator : ThemeSourceGenerator {
 
     override val sources = listOf(
         MultiLang("Leviatan Scans", "https://leviatanscans.com", listOf("en", "es"), className = "LeviatanScansFactory", overrideVersionCode = 4),
-        MultiLang("MangaForFree.net", "https://mangaforfree.net",  listOf("en", "ko", "all") , isNsfw = true, className = "MangaForFreeFactory", pkgName = "mangaforfree"),
         MultiLang("Manhwa18.cc", "https://manhwa18.cc", listOf("en", "ko", "all"), isNsfw = true, className = "Manhwa18CcFactory", pkgName = "manhwa18cc"),
         SingleLang("1st Kiss Manhua", "https://1stkissmanhua.com", "en", className = "FirstKissManhua", overrideVersionCode = 1),
         SingleLang("1st Kiss", "https://1stkissmanga.com", "en", className = "FirstKissManga", overrideVersionCode = 2),
