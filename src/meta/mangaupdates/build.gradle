@@ -1,0 +1,13 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+ext {
+    extName = 'Baka-Updates Manga'
+    pkgNameSuffix = 'meta.mangaupdates'
+    extClass = '.MangaUpdates'
+    extVersionCode = 1
+    libVersion = '1.2'
+    containsNsfw = false
+}
+
+apply from: "$rootDir/common.gradle"
