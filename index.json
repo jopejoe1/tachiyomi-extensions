@@ -153,6 +153,15 @@
     "nsfw": 0
   },
   {
+    "name": "Tachiyomi: Solo Leveling",
+    "pkg": "eu.kanade.tachiyomi.extension.en.sololeveling",
+    "apk": "tachiyomi-en.sololeveling-v1.2.6.apk",
+    "lang": "en",
+    "code": 6,
+    "version": "1.2.6",
+    "nsfw": 0
+  },
+  {
     "name": "Tachiyomi: 365Manga",
     "pkg": "eu.kanade.tachiyomi.extension.en.threesixtyfivemanga",
     "apk": "tachiyomi-en.threesixtyfivemanga-v1.2.7.apk",
