@@ -28,6 +28,7 @@ class MadaraGenerator : ThemeSourceGenerator {
         SingleLang("AkuManga", "https://akumanga.com", "ar"),
         SingleLang("AllPornComic", "https://allporncomic.com", "en", isNsfw = true),
         SingleLang("Hiperdex", "https://hiperdex2.com", "en", isNsfw = true, overrideVersionCode = 1),
+        SingleLang("Mangceh", "https://mangceh.me", "id", isNsfw = true, overrideVersionCode = 1),
     )
 
     companion object {
