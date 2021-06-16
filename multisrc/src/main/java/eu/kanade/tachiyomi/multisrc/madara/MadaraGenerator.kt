@@ -34,6 +34,7 @@ class MadaraGenerator : ThemeSourceGenerator {
         SingleLang("Hades no Fansub H", "https://h.mangareaderpro.com", "es", isNsfw = true),
         SingleLang("Mangaka3rb", "https://mangaka3rb.com", "ar"),
         SingleLang("Wekomic", "https://wekomic.com", "en"),
+        SingleLang("Solo Leveling", "https://readsololeveling.online", "en"),
     )
 
     companion object {
