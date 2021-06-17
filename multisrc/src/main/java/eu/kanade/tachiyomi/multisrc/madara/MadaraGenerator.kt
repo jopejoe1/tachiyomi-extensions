@@ -30,7 +30,7 @@ class MadaraGenerator : ThemeSourceGenerator {
         SingleLang("Hiperdex", "https://hiperdex2.com", "en", isNsfw = true, overrideVersionCode = 1),
         SingleLang("Mangceh", "https://mangceh.me", "id", isNsfw = true, overrideVersionCode = 1),
         SingleLang("InfraFandub", "https://infrafandub.xyz", "es"),
-        SingleLang("Hades no Fansub", "https://mangareaderpro.com", "es"),
+        SingleLang("Hades no Fansub", "https://mangareaderpro.com/es/", "es"),
         SingleLang("Hades no Fansub H", "https://h.mangareaderpro.com", "es", isNsfw = true),
         SingleLang("Mangaka3rb", "https://mangaka3rb.com", "ar"),
         SingleLang("Wekomic", "https://wekomic.com", "en"),

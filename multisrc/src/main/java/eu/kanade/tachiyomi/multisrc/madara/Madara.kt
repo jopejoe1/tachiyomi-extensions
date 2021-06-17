@@ -435,7 +435,7 @@ abstract class Madara(
             }
             // Dates can be part of a "new" graphic or plain text
             chapter.date_upload = select("img").firstOrNull()?.attr("alt")?.let { parseRelativeDate(it) }
-                ?: select("a").firstOrNull()?.attr("title")?.let { parseRelativeDate(it) }
+                ?: select("span a").firstOrNull()?.attr("title")?.let { parseRelativeDate(it) }
                     ?: parseChapterDate(select("span.chapter-release-date i").firstOrNull()?.text())
         }
 
