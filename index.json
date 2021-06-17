@@ -207,6 +207,15 @@
     "nsfw": 0
   },
   {
+    "name": "Tachiyomi: ComicsWorld",
+    "pkg": "eu.kanade.tachiyomi.extension.hi.comicsworld",
+    "apk": "tachiyomi-hi.comicsworld-v1.2.6.apk",
+    "lang": "hi",
+    "code": 6,
+    "version": "1.2.6",
+    "nsfw": 0
+  },
+  {
     "name": "Tachiyomi: Mangceh",
     "pkg": "eu.kanade.tachiyomi.extension.id.mangceh",
     "apk": "tachiyomi-id.mangceh-v1.2.7.apk",
