@@ -45,6 +45,11 @@ class NHentaiCom(override val lang: String) : HttpSource(), ConfigurableSource {
         else -> "nHentai.com"
     }
 
+    override val id = when (lang) {
+        "en" -> 5591830863732393712
+        else -> super.id
+    }
+
     override val baseUrl = "https://nhentai.com"
 
     private val langId = toLangId(lang)
