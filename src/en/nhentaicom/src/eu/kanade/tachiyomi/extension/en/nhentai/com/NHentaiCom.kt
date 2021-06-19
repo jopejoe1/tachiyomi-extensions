@@ -110,7 +110,7 @@ class NHentaiCom : HttpSource(), ConfigurableSource {
     override fun headersBuilder(): Headers.Builder = Headers.Builder()
         .add("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64)")
 
-    private fun AuthIntercept(chain: Interceptor.Chain): Response {
+    private fun nHentaiComAuthIntercept(chain: Interceptor.Chain): Response {
         if (usernameOrEmail.isNotBlank() && password.isNotBlank()) {
             if (apiToken.isNullOrEmpty()) {
                 val loginRequest = loginRequest(usernameOrEmail, password)
@@ -158,7 +158,9 @@ class NHentaiCom : HttpSource(), ConfigurableSource {
         return POST("$baseUrl/api/login", headers, "{\"username\":\"$user\",\"password\":\"$password\",\"remember_me\":false}".toRequestBody())
     }
 
-    override val client: OkHttpClient = network.cloudflareClient
+    override val client: OkHttpClient = network.cloudflareClient.newBuilder()
+        .addInterceptor(::nHentaiComAuthIntercept)
+        .build()
 
     private fun parseMangaFromJson(response: Response): MangasPage {
         val jsonRaw = response.body!!.string()
