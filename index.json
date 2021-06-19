@@ -18,6 +18,15 @@
     "nsfw": 1
   },
   {
+    "name": "Tachiyomi: nHentai.com",
+    "pkg": "eu.kanade.tachiyomi.extension.all.nhentaicom",
+    "apk": "tachiyomi-all.nhentaicom-v1.2.2.apk",
+    "lang": "all",
+    "code": 2,
+    "version": "1.2.2",
+    "nsfw": 1
+  },
+  {
     "name": "Tachiyomi: AkuManga",
     "pkg": "eu.kanade.tachiyomi.extension.ar.akumanga",
     "apk": "tachiyomi-ar.akumanga-v1.2.6.apk",
@@ -142,15 +151,6 @@
     "code": 6,
     "version": "1.2.6",
     "nsfw": 0
-  },
-  {
-    "name": "Tachiyomi: nHentai.com (unoriginal)",
-    "pkg": "eu.kanade.tachiyomi.extension.en.nhentai.com",
-    "apk": "tachiyomi-en.nhentai.com-v1.2.2.apk",
-    "lang": "en",
-    "code": 2,
-    "version": "1.2.2",
-    "nsfw": 1
   },
   {
     "name": "Tachiyomi: 24hRomance",
