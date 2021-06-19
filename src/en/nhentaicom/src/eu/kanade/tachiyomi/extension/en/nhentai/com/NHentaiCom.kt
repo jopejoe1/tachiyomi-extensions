@@ -19,6 +19,7 @@ import eu.kanade.tachiyomi.source.model.SManga
 import eu.kanade.tachiyomi.source.online.HttpSource
 import java.io.IOException
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
@@ -117,16 +118,16 @@ class NHentaiCom : HttpSource(), ConfigurableSource {
                 val loginResponse = chain.proceed(loginRequest)
 
                 // API returns 422 when the credentials are invalid.
-                if (loginResponse.code == 401) {
+                if (loginResponse.code >= 400) {
                     loginResponse.close()
                     throw IOException(ERROR_CANNOT_LOGIN)
                 }
 
                 try {
                     val loginResponseBody = loginResponse.body?.string().orEmpty()
-                    val authResult = json.parseToJsonElement(loginResponseBody).jsonObject
+                    val authResult = json.decodeFromString<nHentaiComAuthResultDto>(loginResponseBody)
 
-                    apiToken = authResult["auth"]!!.jsonObject["access_token"]!!.jsonPrimitive.content
+                    apiToken = authResult.auth["access_token"]!!.jsonPrimitive.content
 
                     loginResponse.close()
                 } catch (e: SerializationException) {
