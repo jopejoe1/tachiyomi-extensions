@@ -1,6 +1,5 @@
-package eu.kanade.tachiyomi.extension.en.nhentai.com
+package eu.kanade.tachiyomi.extension.all.nhentaicom
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
 

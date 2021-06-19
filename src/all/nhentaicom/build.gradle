@@ -2,9 +2,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 ext {
-    extName = 'nHentai.com (unoriginal)'
-    pkgNameSuffix = 'en.nhentai.com'
-    extClass = '.NHentaiCom'
+    extName = 'nHentai.com'
+    pkgNameSuffix = 'all.nhentaicom'
+    extClass = '.NHentaiComFactory'
     extVersionCode = 2
     libVersion = '1.2'
     containsNsfw = true

@@ -1,4 +1,4 @@
-package eu.kanade.tachiyomi.extension.en.nhentai.com
+package eu.kanade.tachiyomi.extension.all.nhentaicom
 
 import android.app.Application
 import android.content.SharedPreferences
@@ -37,13 +37,15 @@ import uy.kohesive.injekt.api.get
 import uy.kohesive.injekt.injectLazy
 
 @Nsfw
-class NHentaiCom : HttpSource(), ConfigurableSource {
+class NHentaiCom(override val lang: String) : HttpSource(), ConfigurableSource {
 
-    override val name = "nHentai.com (unoriginal)"
+    override val name = when (lang) {
+        "other" -> "nHentai.com (Text Cleaned)"
+        "all" -> "nHentai.com (Unfiltered)"
+        else -> "nHentai.com"
+    }
 
     override val baseUrl = "https://nhentai.com"
-
-    override val lang = "en"
 
     private val langId = toLangId(lang)
 
@@ -156,6 +158,11 @@ class NHentaiCom : HttpSource(), ConfigurableSource {
     }
 
     private fun loginRequest(user: String, password: String): Request {
+        val headers = Headers.Builder()
+            .add("Content-Type", "application/json;charset=utf-8")
+            .add("Host", "nhentai.com")
+            .build()
+
         return POST("$baseUrl/api/login", headers, "{\"username\":\"$user\",\"password\":\"$password\",\"remember_me\":false}".toRequestBody())
     }
 
