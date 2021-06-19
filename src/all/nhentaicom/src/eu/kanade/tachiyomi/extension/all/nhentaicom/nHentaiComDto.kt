@@ -8,3 +8,10 @@ data class nHentaiComDto(
     val auth: JsonObject,
     val user: JsonObject
 )
+
+@Serializable
+data class nHentaiComAuthRequestDto(
+    val username: String,
+    val password: String,
+    val remember_me: Boolean,
+)

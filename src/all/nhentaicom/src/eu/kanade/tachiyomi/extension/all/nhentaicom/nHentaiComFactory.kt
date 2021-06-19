@@ -5,7 +5,7 @@ import eu.kanade.tachiyomi.source.Source
 import eu.kanade.tachiyomi.source.SourceFactory
 
 @Nsfw
-class NHentaiComFactory : SourceFactory {
+class nHentaiComFactory : SourceFactory {
     override fun createSources(): List<Source> = languages.map { NHentaiCom(it) }
 }
 

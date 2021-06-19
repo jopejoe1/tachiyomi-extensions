@@ -20,6 +20,7 @@ import eu.kanade.tachiyomi.source.online.HttpSource
 import java.io.IOException
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
@@ -27,6 +28,7 @@ import kotlinx.serialization.json.jsonPrimitive
 import okhttp3.Headers
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Interceptor
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -37,7 +39,7 @@ import uy.kohesive.injekt.api.get
 import uy.kohesive.injekt.injectLazy
 
 @Nsfw
-class NHentaiCom(override val lang: String) : HttpSource(), ConfigurableSource {
+class nHentaiCom(override val lang: String) : HttpSource(), ConfigurableSource {
 
     override val name = when (lang) {
         "other" -> "nHentai.com (Text Cleaned)"
@@ -163,12 +165,9 @@ class NHentaiCom(override val lang: String) : HttpSource(), ConfigurableSource {
     }
 
     private fun loginRequest(user: String, password: String): Request {
-        val headers = Headers.Builder()
-            .add("Content-Type", "application/json;charset=utf-8")
-            .add("Host", "nhentai.com")
-            .build()
-
-        return POST("$baseUrl/api/login", headers, "{\"username\":\"$user\",\"password\":\"$password\",\"remember_me\":false}".toRequestBody())
+        val authInfo = nHentaiComAuthRequestDto(user, password, true)
+        val payload = json.encodeToString(authInfo).toRequestBody(JSON_MEDIA_TYPE)
+        return POST("$baseUrl/api/login", headers, payload)
     }
 
     override val client: OkHttpClient = network.cloudflareClient.newBuilder()
@@ -346,6 +345,8 @@ class NHentaiCom(override val lang: String) : HttpSource(), ConfigurableSource {
     )
 
     companion object {
+        private val JSON_MEDIA_TYPE = "application/json;charset=utf-8".toMediaType()
+
         private const val USERNAME_OR_EMAIL_PREF_KEY = "username_or_email"
         private const val USERNAME_OR_EMAIL_PREF_TITLE = "Username"
         private const val USERNAME_OR_EMAIL_PREF_SUMMARY = "Enter Username to login."
