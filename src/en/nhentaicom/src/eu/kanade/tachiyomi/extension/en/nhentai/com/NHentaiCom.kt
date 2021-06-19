@@ -125,7 +125,7 @@ class NHentaiCom : HttpSource(), ConfigurableSource {
 
                 try {
                     val loginResponseBody = loginResponse.body?.string().orEmpty()
-                    val authResult = json.decodeFromString<nHentaiComAuthResultDto>(loginResponseBody)
+                    val authResult = json.decodeFromString<nHentaiComDto>(loginResponseBody)
 
                     apiToken = authResult.auth["access_token"]!!.jsonPrimitive.content
 

@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
 
 @Serializable
-data class nHentaiComAuthResultDto(
+data class nHentaiComDto(
     val auth: JsonObject,
     val user: JsonObject
 )
