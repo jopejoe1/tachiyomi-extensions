@@ -2,12 +2,10 @@ package eu.kanade.tachiyomi.extension.all.nhentaicom
 
 import android.app.Application
 import android.content.SharedPreferences
-import android.text.InputType
 import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceScreen
 import eu.kanade.tachiyomi.annotations.Nsfw
 import eu.kanade.tachiyomi.network.GET
-import eu.kanade.tachiyomi.network.POST
 import eu.kanade.tachiyomi.network.asObservableSuccess
 import eu.kanade.tachiyomi.source.ConfigurableSource
 import eu.kanade.tachiyomi.source.model.Filter
@@ -17,10 +15,6 @@ import eu.kanade.tachiyomi.source.model.Page
 import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.source.model.SManga
 import eu.kanade.tachiyomi.source.online.HttpSource
-import java.io.IOException
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
@@ -28,10 +22,8 @@ import kotlinx.serialization.json.jsonPrimitive
 import okhttp3.Headers
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Interceptor
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import rx.Observable
 import uy.kohesive.injekt.Injekt
@@ -109,65 +101,24 @@ class nHentaiCom(override val lang: String) : HttpSource(), ConfigurableSource {
         Injekt.get<Application>().getSharedPreferences("source_$id", 0x0000)
     }
 
-    private val usernameOrEmail: String
-        get() = preferences.getString(USERNAME_OR_EMAIL_PREF_KEY, "")!!
-
-    private val password: String
-        get() = preferences.getString(PASSWORD_PREF_KEY, "")!!
-
-    private var apiToken: String? = null
+    private val apiToken: String
+        get() = preferences.getString(APITOKEN_PREF_KEY, "")!!
 
     override fun headersBuilder(): Headers.Builder = Headers.Builder()
         .add("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64)")
 
     private fun nHentaiComAuthIntercept(chain: Interceptor.Chain): Response {
-        if (usernameOrEmail.isNotBlank() && password.isNotBlank()) {
-            if (apiToken.isNullOrEmpty()) {
-                val loginRequest = loginRequest(usernameOrEmail, password)
-                val loginResponse = chain.proceed(loginRequest)
-
-                // API returns 422 when the credentials are invalid.
-                if (loginResponse.code >= 400) {
-                    loginResponse.close()
-                    throw IOException(ERROR_CANNOT_LOGIN)
-                }
-
-                try {
-                    val loginResponseBody = loginResponse.body?.string().orEmpty()
-                    val authResult = json.decodeFromString<nHentaiComDto>(loginResponseBody)
-
-                    apiToken = authResult.auth["access_token"]!!.jsonPrimitive.content
-
-                    loginResponse.close()
-                } catch (e: SerializationException) {
-                    loginResponse.close()
-                    throw IOException(ERROR_LOGIN_FAILED)
-                }
-            }
+        return if (apiToken.isNotBlank()) {
             val authorizedRequest = chain.request().newBuilder()
                 .addHeader("Authorization", "Bearer $apiToken")
                 .build()
 
-            val response = chain.proceed(authorizedRequest)
-
-            // API returns 403 when User-Agent permission is disabled
-            // and returns 401 when the token is invalid.
-            if (response.code == 401) {
-                response.close()
-                throw IOException(ERROR_INVALID_TOKEN)
-            }
-            return response
+            chain.proceed(authorizedRequest)
         } else {
             val authorizedRequest = chain.request().newBuilder()
                 .build()
-            return chain.proceed(authorizedRequest)
+            chain.proceed(authorizedRequest)
         }
-    }
-
-    private fun loginRequest(user: String, password: String): Request {
-        val authInfo = nHentaiComAuthRequestDto(user, password, true)
-        val payload = json.encodeToString(authInfo).toRequestBody(JSON_MEDIA_TYPE)
-        return POST("$baseUrl/api/login", headers, payload)
     }
 
     override val client: OkHttpClient = network.cloudflareClient.newBuilder()
@@ -345,62 +296,21 @@ class nHentaiCom(override val lang: String) : HttpSource(), ConfigurableSource {
     )
 
     companion object {
-        private val JSON_MEDIA_TYPE = "application/json;charset=utf-8".toMediaType()
 
-        private const val USERNAME_OR_EMAIL_PREF_KEY = "username_or_email"
-        private const val USERNAME_OR_EMAIL_PREF_TITLE = "Username"
-        private const val USERNAME_OR_EMAIL_PREF_SUMMARY = "Enter Username to login."
-
-        private const val PASSWORD_PREF_KEY = "password"
-        private const val PASSWORD_PREF_TITLE = "Password"
-        private const val PASSWORD_PREF_SUMMARY = "Enter Password login."
-
-        private const val ERROR_CANNOT_LOGIN = "Unable to login. " +
-            "Review your credentials in the extension settings."
-        private const val ERROR_LOGIN_FAILED = "Unable to login due to an unexpected error." +
-            "Try again later."
-        private const val ERROR_INVALID_TOKEN = "Token invalid. " +
-            "Review your credentials in the extension settings."
+        private const val APITOKEN_PREF_KEY = "api_token"
+        private const val APITOKEN_PREF_TITLE = "API Token"
+        private const val APITOKEN_PREF_SUMMARY = "Enter API Token"
     }
 
     override fun setupPreferenceScreen(screen: PreferenceScreen) {
         val usernameOrEmailPref = EditTextPreference(screen.context).apply {
-            key = USERNAME_OR_EMAIL_PREF_KEY
-            title = USERNAME_OR_EMAIL_PREF_TITLE
+            key = APITOKEN_PREF_KEY
+            title = APITOKEN_PREF_TITLE
             setDefaultValue("")
-            summary = USERNAME_OR_EMAIL_PREF_SUMMARY
-            dialogTitle = USERNAME_OR_EMAIL_PREF_TITLE
-
-            setOnPreferenceChangeListener { _, newValue ->
-                apiToken = null
-
-                preferences.edit()
-                    .putString(USERNAME_OR_EMAIL_PREF_KEY, newValue as String)
-                    .commit()
-            }
-        }
-
-        val passwordPref = EditTextPreference(screen.context).apply {
-            key = PASSWORD_PREF_KEY
-            title = PASSWORD_PREF_TITLE
-            setDefaultValue("")
-            summary = PASSWORD_PREF_SUMMARY
-            dialogTitle = PASSWORD_PREF_TITLE
-
-            setOnBindEditTextListener {
-                it.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-            }
-
-            setOnPreferenceChangeListener { _, newValue ->
-                apiToken = null
-
-                preferences.edit()
-                    .putString(PASSWORD_PREF_KEY, newValue as String)
-                    .commit()
-            }
+            summary = APITOKEN_PREF_SUMMARY
+            dialogTitle = APITOKEN_PREF_TITLE
         }
 
         screen.addPreference(usernameOrEmailPref)
-        screen.addPreference(passwordPref)
     }
 }
